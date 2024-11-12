@@ -1,0 +1,24 @@
+Tagesdokumentation vom 12.11.24
+
+Zu Beginn des Tages haben wir den geplanten Ablauf und die nächsten Schritte unseres Projekts durchgesprochen. 
+Ziele und Deadlines wurden abgesteckt, offene Fragen geklärt, und Zuständigkeiten verteilt.
+Dungeon-Programmierung und Test
+
+Anschließend haben wir an der Programmierung des neuen Dungeons gearbeitet. 
+Dies beinhaltete das Implementieren der Mechaniken und Features, die die Spielerfahrung verbessern sollen.
+Nach der Entwicklung folgte eine intensive Testphase, um Bugs aufzudecken und zu beheben. 
+Wir haben dabei auf ein reibungsloses Spielerlebnis geachtet und verschiedene Szenarien durchgespielt, um die Stabilität zu gewährleisten.
+Einfügen von lustigen Einzeilern
+
+Zusätzlich haben wir heute einige humorvolle Einzeiler verfasst, die dem Spiel eine persönliche Note verleihen sollen. 
+Diese Einzeiler wurden erstmal in einem seperaten Dokument gespeichert. 
+Morgen werden sie in den Code integriert und an passenden Stellen im Dungeon sowie den anderen Orten platziert, 
+sobald sie erstellt wurden. Dabei haben wir auf Variabilität und Spieleransprache geachtet, um das Spielerlebnis unterhaltsam zu gestalten.
+
+Ergebnisse und nächste Schritte:
+Der Dungeon läuft soweit  stabil, einige Einzeiler wurden integriert, aber noch nicht getestet. 
+Morgen werden wir uns auf das Inventar konzentrieren.
+
+Feedback und Anmerkungen:
+Das Einfügen humorvoller Elemente bringt frischen Wind und könnte besonders bei den Spielern gut ankommen.
+Für zukünftige Aufgaben planen wir, die Tests noch weiter auszubauen, um Fehler schneller zu identifizieren.
