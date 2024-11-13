@@ -1,45 +1,36 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+// src/App.js
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
+import Header from './orte/Header';
+import Inventory from './orte/Inventory/Inventory';
+import Dungeon from './orte/Dungeon/Dungeon';
+import Markt from './orte/Markt/Markt';
+import Schmiede from './orte/Schmiede/Schmiede';
+import Wald from './orte/Wald/Wald';
+import Mine from './orte/Mine/Mine';
+import Taverne from './orte/Taverne/Taverne';
 
 const App = () => {
-  const [raumZaehler, setRaumZaehler] = useState(0);
-  const [log, setLog] = useState([]);
-  const [spielerGesundheit, setSpielerGesundheit] = useState(50);
-  const [ereignis, setEreignis] = useState(null);
-
-  const handleEreignis = async () => {
-    try {
-      const schwierigkeit = 1; // Hier kann der Spieler eine Schwierigkeitsstufe einstellen
-      const response = await axios.get(`http://localhost:3000/ereignis?schwierigkeit=${schwierigkeit}`);
-      const ereignis = response.data;
-      setEreignis(ereignis);
-      setRaumZaehler(ereignis.raumZaehler);
-      setSpielerGesundheit(ereignis.spielerGesundheit);
-      setLog((prevLog) => [...prevLog, ...ereignis.kampfLog || [ereignis.beschreibung]]);
-    } catch (error) {
-      console.error('Fehler beim Abrufen des Ereignisses:', error);
-    }
-  };
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Text Adventure</h1>
-        <p>Spieler Gesundheit: {spielerGesundheit}</p>
-        <p>Raum Zähler: {raumZaehler}</p>
-        {spielerGesundheit === 0 && <p>Du wurdest besiegt! Deine Gesundheit wurde zurückgesetzt.</p>}
-        <button onClick={handleEreignis}>Nächstes Ereignis</button>
-        <div className="log-container">
-          <h2>Log</h2>
-          <div className="log">
-            {log.map((eintrag, index) => (
-              <p key={index}>{eintrag}</p>
-            ))}
-          </div>
+    <Router>
+      <div className="App">
+        <Header />
+        <div className="Content">
+          <Routes>
+            <Route path="/" element={<Navigate to="/inventar" replace />} />
+            <Route path="/inventar" element={<Inventory />} />
+            <Route path="/dungeon" element={<Dungeon />} />
+            <Route path="/markt" element={<Markt />} />
+            <Route path="/schmiede" element={<Schmiede />} />
+            <Route path="/wald" element={<Wald />} />
+            <Route path="/mine" element={<Mine />} />
+            <Route path="/taverne" element={<Taverne />} />
+            <Route path="*" element={<h2>404 - Seite nicht gefunden</h2>} />
+          </Routes>
         </div>
-      </header>
-    </div>
+      </div>
+    </Router>
   );
 };
 

@@ -1,0 +1,41 @@
+/* src/Dungeon.css */
+.Dungeon {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+    text-align: center; /* Beibehaltung der Zentrierung */
+  }
+  
+  .Dungeon-header h1 {
+    margin-bottom: 20px;
+  }
+  
+  .log-container {
+    margin-top: 20px;
+    width: 60%;
+    max-height: 300px;
+    overflow-y: auto;
+    text-align: left;
+  }
+  
+  .log {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 5px;
+  }
+  
+  .fehler {
+    color: red;
+    margin-top: 10px;
+  }
+  
+  .Dungeon p {
+    margin: 5px 0;
+    color: #a9a9a9;
+  }
+  

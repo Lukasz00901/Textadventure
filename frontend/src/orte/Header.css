@@ -1,0 +1,49 @@
+/* src/orte/Header/Header.css */
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+
+.Header {
+  background-color: #160e0c;
+  border-bottom: 3px solid #a58f2f;
+  padding: 15px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.Header ul {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.Header li {
+  margin: 0 20px;
+}
+
+.Header a {
+  color: #c9b040;
+  font-family: 'UnifrakturCook', cursive;
+  font-size: 1.5rem;
+  text-shadow: 2px 2px 4px #000;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.Header a:hover {
+  background-color: #d4af37;
+  color: #3e2723;
+  transform: scale(1.1);
+}
+
+.Header a.active {
+  border: 2px solid #a58f2f;
+  background-color: #7a2020;
+  color: #c9b040;
+}

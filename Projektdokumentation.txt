@@ -22,3 +22,42 @@ Morgen werden wir uns auf das Inventar konzentrieren.
 Feedback und Anmerkungen:
 Das Einfügen humorvoller Elemente bringt frischen Wind und könnte besonders bei den Spielern gut ankommen.
 Für zukünftige Aufgaben planen wir, die Tests noch weiter auszubauen, um Fehler schneller zu identifizieren.
+
+#################################################################################################################################################
+
+Tagesdokumentation vom 13.11.24
+
+Die geplante Weiterentwicklung des Dungeons musste verschoben werden, da während der Implementierung zu viele technische Probleme aufgetreten sind, 
+die eine reibungslose Fortführung verhindert haben. Stattdessen haben wir beschlossen, unseren Fokus auf die Entwicklung des Inventarsystems zu legen, 
+und neue Funktionen sowie ein ansprechendes Design zu integrieren.
+
+Heute stand die Entwicklung des Inventarsystems sowie die Fehlerbehebung im Frontend im Fokus. 
+Der Tag begann mit der Analyse und Behebung eines Problems, bei dem der Befehl react-scripts beim Starten des React-Servers nicht gefunden wurde. 
+Dieses Problem wurde durch die Neuinstallation der Abhängigkeiten (npm install) sowie durch das manuelle Hinzufügen von react-scripts gelöst. 
+Nach erfolgreicher Installation konnte der Server fehlerfrei gestartet werden.
+
+Im Anschluss wurde das Inventarsystem weiterentwickelt. Hierbei wurden drei Hauptkategorien für die Items definiert: 
+Ausrüstung, Verbrauchsgegenstände und sonstige Items. Das Inventar wurde dynamisch gestaltet, 
+sodass die Items vom Backend über eine API abgerufen und entsprechend der ausgewählten Kategorie angezeigt werden. 
+Zwei Sortierfunktionen wurden implementiert: eine alphabetische Sortierung (A-Z) sowie eine Sortierung nach Stärke der Ausrüstungsgegenstände. 
+Zusätzlich wurde die Löschfunktion optimiert, indem ein benutzerdefinierter Bestätigungsdialog hinzugefügt wurde, 
+der die Auswahl zwischen Ja und Nein ermöglicht. Dies ersetzt den Standard-Dialog von window.confirm() und bietet eine bessere Benutzererfahrung.
+
+Im Designprozess wurden weitere Anpassungen vorgenommen, um das Inventar optisch ansprechender zu gestalten. 
+Ein dunkelbraunes Farbschema wurde für Buttons und Hintergrundelemente gewählt, was zu einem klaren und kontrastreichen Erscheinungsbild führt. 
+Um eine rustikale, abenteuerliche Atmosphäre zu erzeugen, wurde der Hintergrund des Inventars in einer braunen Optik gestaltet. 
+Hierbei kam eine Kombination aus einer braunen Grundfarbe, einem radialen CSS-Gradienten und zusätzlichen Box-Schatten zum Einsatz, 
+um Tiefe und Struktur zu simulieren.
+
+Abschließend wurde die Benutzerfreundlichkeit durch die Anzeige von Attributen der Items verbessert. 
+Die Stärkewerte der Ausrüstungsgegenstände sowie die Heilungswerte der Verbrauchsgegenstände (wie Tränke) werden nun direkt im Inventar hinter dem Namen des jeweiligen Items angezeigt. 
+So können Benutzer auf einen Blick die relevanten Informationen erkennen, beispielsweise „Schwert (Stärke: 10)“ oder „Großer Heiltrank (Heilung: 30)“.
+
+Die Implementierung der weiteren Orte wurde heute vorbereitet. 
+Hierzu wurden die notwendigen Strukturen im Frontend angelegt und die API-Routen im Backend definiert, 
+um eine reibungslose Integration von Orten wie der Schmiede, der Taverne und der Erzhöhle zu ermöglichen. 
+Diese Vorbereitungen schaffen die Grundlage, um in den kommenden Tagen die Funktionalitäten der neuen Orte schrittweise zu implementieren.
+
+Insgesamt wurden heute erhebliche Fortschritte erzielt, die das Inventarsystem sowohl funktional als auch optisch verbessert haben. 
+Die Fehlerbehebung im Frontend sorgte für einen reibungslosen Entwicklungsablauf, 
+und die Anpassungen im Design trugen zu einer benutzerfreundlicheren und optisch ansprechenden Oberfläche bei.
