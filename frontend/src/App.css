@@ -1,4 +1,5 @@
 /* src/App.css */
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
 .App {
   text-align: center;
 }
@@ -31,4 +32,11 @@ button {
 p {
   margin: 5px 0;
   color: #a9a9a9;
+}
+
+.App {
+  font-family: 'UnifrakturCook', cursive;
+  background-color: #271816;
+  color: #c9b040;
+  
 }

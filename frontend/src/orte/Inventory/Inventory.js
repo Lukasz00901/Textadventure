@@ -123,7 +123,7 @@ const Inventory = () => {
           Ausrüstung & Waffen
         </button>
         <button onClick={() => setActiveTab('consumables')} className={activeTab === 'consumables' ? 'active' : ''}>
-          Heilung
+          Tränke & Nahrung 
         </button>
         <button onClick={() => setActiveTab('misc')} className={activeTab === 'misc' ? 'active' : ''}>
           Items

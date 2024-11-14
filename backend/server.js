@@ -1,309 +1,123 @@
+// Import necessary modules
 const express = require('express');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
+// Initialize Express app
 const app = express();
-const PORT = 3000;
 
+// Middleware
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 
-// Inventory items
-let inventoryItems = [
-  { id: 1, name: 'Schwert', strength: 10, category: 'equipment' }
+// Inventory array to store user's items
+let inventoryItems = [];
+
+// Function to generate random quantity for items
+const generateRandomQuantity = () => Math.floor(Math.random() * 10) + 1;
+
+// Sample market items
+const marketItems = [
+  { id: 1, name: 'Heiltrank', type: 'Trank', price: 15, strength: 15, quantity: generateRandomQuantity() },
+  { id: 2, name: 'Großer Heiltrank', type: 'Trank', price: 25, strength: 30, quantity: generateRandomQuantity() },
+  { id: 3, name: 'Mega Heiltrank', type: 'Trank', price: 40, strength: 50, quantity: generateRandomQuantity() },
+  { id: 4, name: 'Brot', type: 'Lebensmittel', price: 5, strength: 3, quantity: generateRandomQuantity() },
+  { id: 5, name: 'Apfel', type: 'Trank', price: 2, strength: 3, quantity: generateRandomQuantity() },
+  { id: 6, name: 'Ei', type: 'Trank', price: 5, strength: 3, quantity: generateRandomQuantity() },
+  { id: 7, name: 'Käserad', type: 'Trank', price: 30, strength: 3, quantity: generateRandomQuantity() },
+  { id: 8, name: 'Harzer Roller', type: 'Trank', price: 5, strength: 3, quantity: generateRandomQuantity() },
+  { id: 9, name: 'Kürbiskuchen', type: 'Trank', price: 8, strength: 3, quantity: generateRandomQuantity() },
+  { id: 10, name: 'Nüsse', type: 'Trank', price: 3, strength: 3, quantity: generateRandomQuantity() }
 ];
 
-// Initial player state
-let player = {
-  hp: 50,
-  roomCounter: 0,
-  equipment: {
-    weapon: {
-      type: 'weapon',
-      name: 'Basic Sword',
-      strength: 10
-    },
-    armor: {
-      type: 'armor',
-      name: 'Leather Armor',
-      defense: 6
+// Route to get all market items
+app.get('/market/items', (req, res) => {
+  res.json(marketItems);
+});
+
+// Route to buy an item from the market
+app.post('/market/buy', (req, res) => {
+  const itemId = req.body.itemId;
+  const item = marketItems.find((i) => i.id === itemId);
+
+  if (item && item.quantity > 0) {
+    const newItem = { ...item };
+    if (newItem.type === 'Trank') {
+      newItem.category = 'consumable';
+    } else if (newItem.type === 'Waffe' || newItem.type === 'Rüstung') {
+      newItem.category = 'equipment';
+    } else {
+      newItem.category = 'misc';
     }
-  },
-  gold: 0,
-  inventory: inventoryItems
-};
+    inventoryItems.push(newItem);
+    item.quantity -= 1;
+    res.json({ message: 'Item gekauft!', inventoryItems });
+  } else {
+    res.status(404).json({ message: 'Item nicht gefunden oder nicht mehr verfügbar!' });
+  }
+});
 
-// Difficulty multiplier
-let difficultyMultiplier = 1.0;
+// Route to sell a random potion from the inventory
+app.post('/market/sell-random-potion', (req, res) => {
+  const potions = inventoryItems.filter((i) => i.type === 'Trank');
+  if (potions.length > 0) {
+    const randomIndex = Math.floor(Math.random() * potions.length);
+    const potionId = potions[randomIndex].id;
+    inventoryItems = inventoryItems.filter((i) => i.id !== potionId);
+    res.json({ message: 'Zufälliger Trank verkauft!', inventoryItems });
+  } else {
+    res.status(404).json({ message: 'Keine Tränke im Inventar zum Verkaufen!' });
+  }
+});
 
-// Inventory item ID counter
-let inventoryItemId = inventoryItems.length + 1;
+// Route to sell an item from the inventoryItems
+app.post('/market/sell', (req, res) => {
+  const itemId = req.body.itemId;
+  const itemIndex = inventoryItems.findIndex((i) => i.id === itemId);
 
-// Item pools
-const itemPools = {
-  equipment: ['Iron Sword', 'Steel Shield', 'Golden Armor'],
-  consumable: ['Health Potion', 'Mega Health Potion', 'Revitalizing Brew'],
-  misc: ['Iron Ore', 'Wooden Plank', 'Bone', 'Leather Strip']
-};
+  if (itemIndex !== -1) {
+    inventoryItems.splice(itemIndex, 1);
+    res.json({ message: 'Item verkauft!', inventoryItems });
+  } else {
+    res.status(404).json({ message: 'Item nicht im Inventar gefunden!' });
+  }
+});
 
-// Monster list
-const monsters = [
-  'Goblin', 'Orc', 'Troll', 'Skeleton', 'Zombie', 'Vampire', 'Werewolf', 'Golem', 'Bandit', 'Dragon Whelp',
-  'Dark Knight', 'Imp', 'Harpy', 'Minotaur', 'Shadow Fiend', 'Serpent', 'Ghoul', 'Wraith', 'Lich', 'Giant Spider'
-];
+// Route to delete selected items
+app.post('/items/delete', (req, res) => {
+  const itemsToDelete = req.body.items;
+  if (itemsToDelete) {
+    inventoryItems = inventoryItems.filter((item) => !itemsToDelete.includes(item.id));
+  }
+  res.json({ items: inventoryItems });
+});
 
-// Trap descriptions
-const trapDescriptions = [
-  'You stepped on a hidden spike trap! Lost 1 HP.',
-  'A poison dart shoots out from the wall! Lost 2 HP.',
-  'The floor collapses beneath you! Lost 3 HP.',
-  'You accidentally trigger a swinging blade! Lost 4 HP.',
-  'A hidden flamethrower activates! Lost 5 HP.'
-];
+// Route to get all inventory items
+app.get('/items', (req, res) => {
+  res.json({ items: inventoryItems });
+});
 
-// Chest tracking to ensure each chest can only be opened once
-let chestOpened = false;
+// Route to sort items by name
+app.post('/items/sort', (req, res) => {
+  inventoryItems.sort((a, b) => a.name.localeCompare(b.name));
+  res.json({ items: inventoryItems });
+});
 
-// Possible events
-const events = [
-  { type: 'chest', description: 'You found a chest! Do you want to open it? (yes/no)' },
-  { type: 'monster', description: 'A monster appears!' },
-  { type: 'empty', description: 'The room is empty. Nothing happens.', hpChange: 0 },
-  { type: 'trap', description: 'trap' }
-];
+// Route to sort items by strength (if applicable)
+app.post('/items/sort-by-strength', (req, res) => {
+  inventoryItems.sort((a, b) => (b.strength || 0) - (a.strength || 0));
+  res.json({ items: inventoryItems });
+});
 
-// Handle game event
+// Route to handle event where items are randomly sold from the market
 app.get('/event', (req, res) => {
-  // Select a random event based on probabilities
-  const randomNum = Math.random() * 100;
-  let event;
-  if (randomNum < 10 && !chestOpened) {
-    event = events.find(e => e.type === 'chest');
-  } else if (randomNum < 80) {
-    event = events.find(e => e.type === 'monster');
-  } else if (randomNum < 95) {
-    event = events.find(e => e.type === 'empty');
-  } else {
-    event = events.find(e => e.type === 'trap');
-  }
-
-  if (event.type === 'monster') {
-    // Monster battle
-    const monsterName = monsters[Math.floor(Math.random() * monsters.length)];
-    let monsterHp = Math.floor(Math.random() * 8) + 8; // Monster HP between 8-15
-    const monsterDamage = Math.floor(Math.random() * 5) + 1; // Monster damage between 1-5
-
-    while (monsterHp > 0 && player.hp > 0) {
-      // Player attacks monster
-      monsterHp -= player.equipment.weapon.strength * difficultyMultiplier;
-
-      // Monster attacks player if still alive
-      if (monsterHp > 0) {
-        const effectiveDamage = Math.max(0, (monsterDamage * difficultyMultiplier) - player.equipment.armor.defense);
-        player.hp -= effectiveDamage;
-      }
-    }
-
-    if (player.hp <= 0) {
-      player.hp = 50; // Reset HP
-      player.roomCounter = 0; // Reset room counter
-      res.json({
-        message: `You were killed by the ${monsterName}. Your HP has been restored to 50 and you are back at the start.`,
-        player
-      });
-      return;
-    } else {
-      // Player defeated the monster
-      const goldLoot = Math.floor(Math.random() * 3) + 1 * difficultyMultiplier; // 1-3 gold, influenced by difficulty
-      player.gold += goldLoot;
-
-      // 30% chance to get an item
-      if (Math.random() < 0.3) {
-        const itemType = ['equipment', 'consumable', 'misc'][Math.floor(Math.random() * 3)];
-        const itemName = itemPools[itemType][Math.floor(Math.random() * itemPools[itemType].length)];
-        const itemWorth = Math.floor(Math.random() * 7) + 1 * difficultyMultiplier; // Worth between 1-7
-        const itemStrength = itemType === 'equipment' ? Math.floor(Math.random() * 4) + 2 * difficultyMultiplier : 0;
-        const itemDefense = itemType === 'equipment' ? Math.floor(Math.random() * 2) + 1 * difficultyMultiplier : 0;
-
-        const newItem = {
-          id: inventoryItemId++,
-          name: itemName,
-          strength: itemStrength,
-          defense: itemDefense,
-          type: itemType === 'equipment' ? (Math.random() < 0.5 ? 'weapon' : 'armor') : itemType,
-          category: itemType,
-          worth: itemWorth
-        };
-
-        inventoryItems.push(newItem);
-      }
-
-      res.json({
-        message: `You defeated the ${monsterName} and gained ${goldLoot} gold!`,
-        player
-      });
-      return;
-    }
-  } else if (event.type === 'chest') {
-    // Chest event
-    res.json({
-      event: event.description,
-      player
-    });
-  } else if (event.type === 'trap') {
-    // Trap event
-    const trapIndex = Math.floor(Math.random() * trapDescriptions.length);
-    const trapDescription = trapDescriptions[trapIndex];
-    const trapDamage = parseInt(trapDescription.match(/Lost (\d+) HP/)[1]);
-    player.hp -= trapDamage * difficultyMultiplier;
-
-    // Ensure HP does not drop below 0
-    if (player.hp <= 0) {
-      player.hp = 50; // Reset HP
-      player.roomCounter = 0; // Reset room counter
-      res.json({
-        message: `You died in a trap. ${trapDescription} Your HP has been restored to 50 and you are back at the start.`,
-        player
-      });
-      return;
-    }
-
-    // Increase room counter
-    player.roomCounter++;
-
-    // Respond with the trap event and player state
-    res.json({
-      event: trapDescription,
-      player
-    });
-    return;
-  } else if (event.hpChange !== undefined) {
-    // Update player HP for non-monster events
-    player.hp += event.hpChange * difficultyMultiplier;
-  }
-
-  // Ensure HP does not drop below 0
-  if (player.hp <= 0) {
-    player.hp = 50; // Reset HP
-    player.roomCounter = 0; // Reset room counter
-    res.json({
-      message: `You died in the ${event.type} event. Your HP has been restored to 50 and you are back at the start.`,
-      player
-    });
-    return;
-  }
-
-  // Increase room counter
-  player.roomCounter++;
-
-  // Respond with the event and player state
-  res.json({
-    event: event.description,
-    player
+  const randomItemsSold = marketItems.map(item => {
+    const quantitySold = Math.floor(Math.random() * (item.quantity + 1));
+    item.quantity -= quantitySold;
+    return { ...item, quantitySold };
   });
+  res.json({ message: 'Zufällige Items verkauft!', randomItemsSold });
 });
-
-// Handle chest opening
-app.post('/open-chest', (req, res) => {
-  const { decision } = req.body;
-  if (chestOpened) {
-    res.json({
-      message: 'This chest has already been opened.',
-      player
-    });
-    return;
-  }
-  if (decision && decision.toLowerCase() === 'yes') {
-    chestOpened = true;
-    // Determine if chest is a mimic
-    if (Math.random() < 0.1) {
-      // Mimic battle
-      const monsterName = 'Mimic';
-      let monsterHp = Math.floor(Math.random() * 8) + 8; // Monster HP between 8-15
-      const monsterDamage = Math.floor(Math.random() * 5) + 1; // Monster damage between 1-5
-
-      while (monsterHp > 0 && player.hp > 0) {
-        // Player attacks mimic
-        monsterHp -= player.equipment.weapon.strength * difficultyMultiplier;
-
-        // Mimic attacks player if still alive
-        if (monsterHp > 0) {
-          const effectiveDamage = Math.max(0, (monsterDamage * difficultyMultiplier) - player.equipment.armor.defense);
-          player.hp -= effectiveDamage;
-        }
-      }
-
-      if (player.hp <= 0) {
-        player.hp = 50; // Reset HP
-        player.roomCounter = 0; // Reset room counter
-        res.json({
-          message: `You were killed by the ${monsterName}. Your HP has been restored to 50 and you are back at the start.`,
-          player
-        });
-        return;
-      } else {
-        // Player defeated the mimic
-        const goldLoot = Math.floor(Math.random() * 3) + 1 * difficultyMultiplier; // 1-3 gold, influenced by difficulty
-        player.gold += goldLoot;
-        res.json({
-                   message: `You defeated the ${monsterName} and gained ${goldLoot} gold!`,
-          player
-        });
-        return;
-      }
-    } else {
-      // Normal chest loot
-      const goldLoot = Math.floor(Math.random() * 5) + 1 * difficultyMultiplier; // 1-5 gold, influenced by difficulty
-      player.gold += goldLoot;
-
-      // 30% chance to get an item
-      if (Math.random() < 0.3) {
-        const itemType = ['equipment', 'consumable', 'misc'][Math.floor(Math.random() * 3)];
-        const itemName = itemPools[itemType][Math.floor(Math.random() * itemPools[itemType].length)];
-        const itemWorth = Math.floor(Math.random() * 7) + 1 * difficultyMultiplier; // Worth between 1-7
-        const itemStrength = itemType === 'equipment' ? Math.floor(Math.random() * 4) + 2 * difficultyMultiplier : 0;
-        const itemDefense = itemType === 'equipment' ? Math.floor(Math.random() * 2) + 1 * difficultyMultiplier : 0;
-
-        const newItem = {
-          id: inventoryItemId++,
-          name: itemName,
-          strength: itemStrength,
-          defense: itemDefense,
-          type: itemType === 'equipment' ? (Math.random() < 0.5 ? 'weapon' : 'armor') : itemType,
-          category: itemType,
-          worth: itemWorth
-        };
-
-        inventoryItems.push(newItem);
-      }
-
-      res.json({
-        message: `You opened the chest and found ${goldLoot} gold!`,
-        player
-      });
-      return;
-    }
-  } else {
-    res.json({
-      message: 'You chose not to open the chest.',
-      player
-    });
-    return;
-  }
-});
-
-// Set difficulty level
-app.post('/difficulty', (req, res) => {
-  const { level } = req.body;
-  if (level && level > 0) {
-    difficultyMultiplier = 1 + (level * 0.2);
-    res.json({ message: `Difficulty level set to ${level}. Multiplier is now ${difficultyMultiplier}.` });
-  } else {
-    res.status(400).json({ message: 'Invalid difficulty level. Please provide a positive number.' });
-  }
-});
-
-
-
 
 // Route, um alle Items abzurufen
 app.get('/items', (req, res) => {
@@ -333,15 +147,8 @@ app.post('/items/delete', (req, res) => {
   res.json({ items: inventoryItems });
 });
 
-
-// Fehlerbehandlungsmiddleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something went wrong!');
-});
-
-// Start the server
+// Start server
+const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
-
