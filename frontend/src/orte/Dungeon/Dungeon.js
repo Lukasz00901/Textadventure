@@ -1,57 +1,98 @@
-// src/Dungeon.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import './Dungeon.css'; // Importiere die spezifischen Stile für Dungeon
 
-const Dungeon = () => {
-  const [raumZaehler, setRaumZaehler] = useState(0);
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
+
+function Dungeon() {
+  const [player, setPlayer] = useState(null);
+  const [message, setMessage] = useState('');
+  const [eventResponse, setEventResponse] = useState('');
   const [log, setLog] = useState([]);
-  const [spielerGesundheit, setSpielerGesundheit] = useState(50);
-  const [ereignis, setEreignis] = useState(null);
-  const [fehler, setFehler] = useState(null);
 
-  const handleEreignis = async () => {
+  const addToLog = (entry) => {
+    setLog((prevLog) => [...prevLog, entry]);
+  };
+
+  const handleGetEvent = async () => {
     try {
-      setFehler(null); // Fehler zurücksetzen
-      const schwierigkeit = 1; // Hier kann der Spieler eine Schwierigkeitsstufe einstellen
-      const response = await axios.get(`http://localhost:3000/ereignis?schwierigkeit=${schwierigkeit}`);
-      const ereignis = response.data;
-      setEreignis(ereignis);
-      setRaumZaehler(ereignis.raumZaehler);
-      setSpielerGesundheit(ereignis.spielerGesundheit);
-      setLog((prevLog) => [...prevLog, ...(ereignis.kampfLog || [ereignis.beschreibung])]);
+      const response = await axios.get(`${BACKEND_URL}/event`);
+      setPlayer(response.data.player);
+      setEventResponse(response.data.event);
+      setMessage(response.data.message || '');
+      addToLog(`Event triggered: ${response.data.event}`);
+      if (response.data.message) {
+        addToLog(response.data.message);
+      }
     } catch (error) {
-      console.error('Fehler beim Abrufen des Ereignisses:', error);
-      setFehler('Es gab ein Problem beim Laden des Ereignisses. Bitte versuche es später erneut.');
+      console.error('Error fetching event:', error);
+      addToLog('Error fetching event. Please make sure the backend server is running and accessible.');
+    }
+  };
+
+  const handleOpenChest = async (decision) => {
+    try {
+      const response = await axios.post(`${BACKEND_URL}/open-chest`, { decision });
+      setPlayer(response.data.player);
+      setMessage(response.data.message);
+      addToLog(`Chest decision: ${decision}`);
+      addToLog(response.data.message);
+    } catch (error) {
+      console.error('Error opening chest:', error);
+      addToLog('Error opening chest. Please make sure the backend server is running and accessible.');
+    }
+  };
+
+  const handleSetDifficulty = async (level) => {
+    try {
+      const response = await axios.post(`${BACKEND_URL}/difficulty`, { level });
+      setMessage(response.data.message);
+      addToLog(`Difficulty level set to: ${level}`);
+      addToLog(response.data.message);
+    } catch (error) {
+      console.error('Error setting difficulty:', error);
+      addToLog('Error setting difficulty. Please make sure the backend server is running and accessible.');
     }
   };
 
   return (
-    <div className="Dungeon">
-      <header className="Dungeon-header">
-        <h1>Text Adventure</h1>
-        <p>Spieler Gesundheit: {spielerGesundheit}</p>
-        <p>Raum Zähler: {raumZaehler}</p>
-        {spielerGesundheit === 0 && (
-          <p>Du wurdest besiegt! Deine Gesundheit wurde zurückgesetzt.</p>
-        )}
-        <button onClick={handleEreignis}>Nächstes Ereignis</button>
-        {fehler && (
-          <div className="fehler">
-            <p>{fehler}</p>
-          </div>
-        )}
-        <div className="log-container">
-          <h2>Log</h2>
-          <div className="log">
-            {log.map((eintrag, index) => (
-              <p key={index}>{eintrag}</p>
-            ))}
-          </div>
+    <div>
+      <h1>Dungeon Adventure</h1>
+      {player && (
+        <div>
+          <p>HP: {player.hp}</p>
+          <p>Room Counter: {player.roomCounter}</p>
+          <p>Gold: {player.gold}</p>
+          <p>Inventory: {player.inventory.map(item => (
+            <span key={item.id}>{item.name} (Worth: {item.worth}), </span>
+          ))}</p>
         </div>
-      </header>
+      )}
+      <p>{eventResponse}</p>
+      <p>{message}</p>
+      <button onClick={handleGetEvent}>Get Event</button>
+      {eventResponse && eventResponse.includes('chest') && (
+        <div>
+          <button onClick={() => handleOpenChest('yes')}>Open Chest</button>
+          <button onClick={() => handleOpenChest('no')}>Leave Chest</button>
+        </div>
+      )}
+      <div>
+        <input
+          type="number"
+          placeholder="Set Difficulty Level"
+          onChange={(e) => handleSetDifficulty(e.target.value)}
+        />
+      </div>
+      <div>
+        <h2>Log</h2>
+        <ul>
+          {log.map((entry, index) => (
+            <li key={index}>{entry}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
-};
+}
 
 export default Dungeon;

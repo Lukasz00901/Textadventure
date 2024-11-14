@@ -1,41 +1,78 @@
-/* src/Dungeon.css */
 .Dungeon {
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
-    text-align: center; /* Beibehaltung der Zentrierung */
-  }
-  
-  .Dungeon-header h1 {
-    margin-bottom: 20px;
-  }
-  
-  .log-container {
-    margin-top: 20px;
-    width: 60%;
-    max-height: 300px;
-    overflow-y: auto;
-    text-align: left;
-  }
-  
-  .log {
-    background-color: #333;
-    padding: 20px;
-    border-radius: 5px;
-  }
-  
-  .fehler {
-    color: red;
-    margin-top: 10px;
-  }
-  
-  .Dungeon p {
-    margin: 5px 0;
-    color: #a9a9a9;
-  }
-  
+  text-align: center;
+}
+
+.Dungeon-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  max-width: 600px;
+  margin-bottom: 20px;
+}
+
+.hp-bar {
+  position: relative;
+  width: 100%;
+  background: #444;
+  border: 1px solid #fff;
+  height: 20px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.hp-bar-inner {
+  height: 100%;
+  background: #e74c3c;
+  transition: width 0.3s ease;
+}
+
+.room-counter {
+  margin-left: 20px;
+  font-weight: bold;
+}
+
+button {
+  background-color: #61dafb;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #21a1f1;
+}
+
+.log {
+  max-width: 600px;
+  text-align: left;
+  margin-top: 20px;
+}
+
+.log ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.log li {
+  background: #333;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 5px;
+  color: #61dafb;
+}
