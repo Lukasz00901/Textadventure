@@ -12,6 +12,8 @@ app.use(bodyParser.json());
 let spielerGesundheit = 50;
 let raumZaehler = 0;
 
+//########################################################################
+                                //Dungeon
 // Event-Listen
 const schatzKategorien = {
   waffen: ['Schwert', 'Axt', 'Bogen'],
@@ -127,7 +129,7 @@ app.get('/ereignis', (req, res) => {
           break;
         }
 
-        // Gegner greift an
+        // Gegner greift an 
         spielerGesundheit -= Math.round(feindSchaden);
         spielerGesundheit = Math.max(spielerGesundheit, 0);
         kampfLog.push(`Der ${feind} greift dich an und fügt dir ${Math.round(feindSchaden)} Schaden zu. (Spieler Gesundheit: ${spielerGesundheit})`);
@@ -184,7 +186,12 @@ app.get('/ereignis', (req, res) => {
   res.json(ereignis);
 });
 
+
+//#################################################################################
+                              //Inventory
+
 // Beispielhafte Inventar-Items
+
 let inventoryItems = [
   { id: 1, name: 'Schwert', strength: 10, category: 'equipment', type: 'weapon' },
   { id: 2, name: 'Schild', strength: 8, category: 'equipment', type: 'armor' },
