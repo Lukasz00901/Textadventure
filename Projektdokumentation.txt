@@ -61,3 +61,18 @@ Diese Vorbereitungen schaffen die Grundlage, um in den kommenden Tagen die Funkt
 Insgesamt wurden heute erhebliche Fortschritte erzielt, die das Inventarsystem sowohl funktional als auch optisch verbessert haben. 
 Die Fehlerbehebung im Frontend sorgte für einen reibungslosen Entwicklungsablauf, 
 und die Anpassungen im Design trugen zu einer benutzerfreundlicheren und optisch ansprechenden Oberfläche bei.
+
+#################################################################################################################################################
+
+Tagesdokumentation vom 15.11.24
+
+Heute haben wir den Marktplatz erfolgreich erstellt und zum Laufen gebracht. Das Design wurde verfeinert und das Farbschema angepasst, 
+sodass der Markt nun optisch ansprechend und benutzerfreundlich ist. Nach der Implementierung erfolgte eine gründliche Fehlerprüfung, bei der wir kleinere Bugs, 
+wie Probleme mit der Anzeige von Waren und fehlerhafte Preisberechnungen, identifizieren und beheben konnten. Die Fehlerbehebung vom Markt hat sich ausgezahlt, 
+und diese läuft jetzt stabil und bereit für weitere Inhalte.
+
+Anschließend haben wir den Dungeon erneut überarbeitet. Hier gab es einige kritische Fehler, die zu Abstürzen und fehlerhaften Spawns führten. 
+Nach mehreren Tests und Anpassungen läuft der Dungeon nun einigermaßen, ein paar Bugs sind noch vorhanden. 
+
+Insgesamt verlief der Tag produktiv, da wir sowohl den Markt als auch den Dungeon optimieren konnten. Als nächster Schritt planen wir, 
+die Schmiede zu erstellen und den Dungeon weiter zu optimieren. 
