@@ -4,6 +4,14 @@
   text-align: center;
 }
 
+/*body {
+  /* background-color: #271816;
+   color: #c9b040;
+   font-family: Arial, sans-serif; /* Entfernt die spezifische Schriftart für den gesamten Body 
+   margin: 0;
+   font-size: 1.2rem; /* Schriftgröße etwas größer gemacht 
+}*/
+
 .Content {
   padding: 20px;
 }
@@ -36,7 +44,7 @@ p {
 
 .App {
   font-family: 'UnifrakturCook', cursive;
-  background-color: #271816;
+  /*background-color: #271816;*/
   color: #c9b040;
   
 }

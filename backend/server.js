@@ -11,23 +11,27 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Inventory array to store user's items
-let inventoryItems = [];
+let inventoryItems = [ 
+  { id: 1, name: 'Heiltrank', type: 'Trank', price: 15, strength: 15, category: 'consumables' }, 
+  { id: 2, name: 'Großer Heiltrank', type: 'Trank', price: 25, strength: 30, category: 'consumables' }, 
+
+];
 
 // Function to generate random quantity for items
 const generateRandomQuantity = () => Math.floor(Math.random() * 10) + 1;
 
 // Sample market items
 const marketItems = [
-  { id: 1, name: 'Heiltrank', type: 'Trank', price: 15, strength: 15, quantity: generateRandomQuantity() },
-  { id: 2, name: 'Großer Heiltrank', type: 'Trank', price: 25, strength: 30, quantity: generateRandomQuantity() },
-  { id: 3, name: 'Mega Heiltrank', type: 'Trank', price: 40, strength: 50, quantity: generateRandomQuantity() },
-  { id: 4, name: 'Brot', type: 'Lebensmittel', price: 5, strength: 3, quantity: generateRandomQuantity() },
-  { id: 5, name: 'Apfel', type: 'Trank', price: 2, strength: 3, quantity: generateRandomQuantity() },
-  { id: 6, name: 'Ei', type: 'Trank', price: 5, strength: 3, quantity: generateRandomQuantity() },
-  { id: 7, name: 'Käserad', type: 'Trank', price: 30, strength: 3, quantity: generateRandomQuantity() },
-  { id: 8, name: 'Harzer Roller', type: 'Trank', price: 5, strength: 3, quantity: generateRandomQuantity() },
-  { id: 9, name: 'Kürbiskuchen', type: 'Trank', price: 8, strength: 3, quantity: generateRandomQuantity() },
-  { id: 10, name: 'Nüsse', type: 'Trank', price: 3, strength: 3, quantity: generateRandomQuantity() }
+  { id: 1, name: 'Heiltrankㅤ', type: 'Trank', price: 15, strength: 15, quantity: generateRandomQuantity() },
+  { id: 2, name: 'Großer Heiltrankㅤ', type: 'Trank', price: 25, strength: 30, quantity: generateRandomQuantity() },
+  { id: 3, name: 'Mega Heiltrankㅤ', type: 'Trank', price: 40, strength: 50, quantity: generateRandomQuantity() },
+  { id: 4, name: 'Brotㅤ', type: 'Lebensmittel', price: 5, strength: 3, quantity: generateRandomQuantity() },
+  { id: 5, name: 'Apfelㅤ', type: 'Trank', price: 2, strength: 3, quantity: generateRandomQuantity() },
+  { id: 6, name: 'Eiㅤ', type: 'Trank', price: 5, strength: 3, quantity: generateRandomQuantity() },
+  { id: 7, name: 'Käseradㅤ', type: 'Trank', price: 30, strength: 3, quantity: generateRandomQuantity() },
+  { id: 8, name: 'Harzer Rollerㅤ', type: 'Trank', price: 5, strength: 3, quantity: generateRandomQuantity() },
+  { id: 9, name: 'Kürbiskuchenㅤ', type: 'Trank', price: 8, strength: 3, quantity: generateRandomQuantity() },
+  { id: 10, name: 'Nüsseㅤ', type: 'Trank', price: 3, strength: 3, quantity: generateRandomQuantity() }
 ];
 
 // Route to get all market items
@@ -83,31 +87,8 @@ app.post('/market/sell', (req, res) => {
   }
 });
 
-// Route to delete selected items
-app.post('/items/delete', (req, res) => {
-  const itemsToDelete = req.body.items;
-  if (itemsToDelete) {
-    inventoryItems = inventoryItems.filter((item) => !itemsToDelete.includes(item.id));
-  }
-  res.json({ items: inventoryItems });
-});
 
-// Route to get all inventory items
-app.get('/items', (req, res) => {
-  res.json({ items: inventoryItems });
-});
 
-// Route to sort items by name
-app.post('/items/sort', (req, res) => {
-  inventoryItems.sort((a, b) => a.name.localeCompare(b.name));
-  res.json({ items: inventoryItems });
-});
-
-// Route to sort items by strength (if applicable)
-app.post('/items/sort-by-strength', (req, res) => {
-  inventoryItems.sort((a, b) => (b.strength || 0) - (a.strength || 0));
-  res.json({ items: inventoryItems });
-});
 
 // Route to handle event where items are randomly sold from the market
 app.get('/event', (req, res) => {

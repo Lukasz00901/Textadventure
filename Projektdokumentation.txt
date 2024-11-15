@@ -61,3 +61,43 @@ Diese Vorbereitungen schaffen die Grundlage, um in den kommenden Tagen die Funkt
 Insgesamt wurden heute erhebliche Fortschritte erzielt, die das Inventarsystem sowohl funktional als auch optisch verbessert haben. 
 Die Fehlerbehebung im Frontend sorgte für einen reibungslosen Entwicklungsablauf, 
 und die Anpassungen im Design trugen zu einer benutzerfreundlicheren und optisch ansprechenden Oberfläche bei.
+
+#################################################################################################################################################
+
+Tagesdokumentation vom 14.11.24
+
+Heute haben wir den Marktplatz erfolgreich erstellt und zum Laufen gebracht. Das Design wurde verfeinert und das Farbschema angepasst, 
+sodass der Markt nun optisch ansprechend und benutzerfreundlich ist. Nach der Implementierung erfolgte eine gründliche Fehlerprüfung, bei der wir kleinere Bugs, 
+wie Probleme mit der Anzeige von Waren und fehlerhafte Preisberechnungen, identifizieren und beheben konnten. Die Fehlerbehebung vom Markt hat sich ausgezahlt, 
+und diese läuft jetzt stabil und bereit für weitere Inhalte.
+
+Anschließend haben wir den Dungeon erneut überarbeitet. Hier gab es einige kritische Fehler, die zu Abstürzen und fehlerhaften Spawns führten. 
+Nach mehreren Tests und Anpassungen läuft der Dungeon nun einigermaßen, ein paar Bugs sind noch vorhanden. 
+
+Insgesamt verlief der Tag produktiv, da wir sowohl den Markt als auch den Dungeon optimieren konnten. Als nächster Schritt planen wir, 
+die Schmiede zu erstellen und den Dungeon weiter zu optimieren. 
+
+#################################################################################################################################################
+
+Tagesdikumentation vom 15.11.24
+
+Heute gestaltete sich ein äußerst produktiver Tag voller Fortschritte und spannender Herausforderungen. Im Dungeon konnten wir unsere Arbeit kontinuierlich vorantreiben und bedeutende Meilensteine erreichen. 
+Die geheimnisvolle Atmosphäre des Dungeons inspirierte uns zu kreativen Lösungsansätzen, wodurch wir spürbare Fortschritte in der Entwicklung erzielen konnten.
+
+Am Markt stand ein ambitioniertes Vorhaben auf dem Programm: Der Versuch, für jeden einzelnen Ort passende Bilder einzufügen. 
+Trotz intensiver Bemühungen blieb dieser Versuch leider erfolglos. Dennoch war diese Herausforderung lehrreich und hat uns wertvolle Einblicke für zukünftige Projekte gegeben, 
+sodass wir gestärkt aus dieser Erfahrung hervorgehen.
+
+Parallel dazu wurden umfassende Vorbereitungen für die Schmiede, den Wald, die Erzhöhle und die Taverne getroffen. 
+Jedes dieser Elemente spielt eine zentrale Rolle in unserem Gesamtkonzept, und die sorgfältigen Vorbereitungen sorgen dafür, dass wir bestens gerüstet sind, 
+um die nächsten Schritte erfolgreich umzusetzen. Die detaillierte Planung und Organisation in diesen Bereichen legt eine solide Grundlage für kommende Entwicklungen.
+
+Im Backend-Bereich gelang es uns, die Ressourcen effizient zu verteilen und systematisch zu sortieren. 
+Diese strukturierte Herangehensweise hat die Übersichtlichkeit verbessert und sich positiv auf die gesamte Projektarbeit auswirkt.
+
+Ein weiterer Schwerpunkt des Tages lag auf der Fehlerkorrektur. Im Dungeon, auf dem Markt und im Inventar konnten wir zahlreiche Fehler identifizieren und beheben. 
+Diese Korrekturen haben die Stabilität und Benutzerfreundlichkeit unserer Plattform erheblich gesteigert und tragen maßgeblich dazu bei, dass unser Projekt reibungslos weiterläuft.
+
+Zusammenfassend war es ein erfolgreicher Tag, an dem wir sowohl Fortschritte erzielten als auch wertvolle Erfahrungen sammelten. 
+Mit dem erreichten Fortschritt und den neu gewonnenen Erkenntnissen blicken wir zuversichtlich in die kommenden Tage und freuen uns darauf, 
+unsere Ziele weiterhin zielstrebig zu verfolgen.

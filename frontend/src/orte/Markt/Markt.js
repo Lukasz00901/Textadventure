@@ -39,7 +39,7 @@ function Markt() {
   // Sell item from inventory
   const sellItem = async (itemId) => {
     try {
-      const response = await axios.post('http://localhost:3000/market/sell', { itemId });
+      await axios.post('http://localhost:3000/market/sell', { itemId });
       setInventoryItems((prevInventory) =>
         prevInventory.filter((item) => item.id !== itemId)
       );
@@ -51,7 +51,7 @@ function Markt() {
   };
 
   return (
-    <div className="App">
+    <div className="Markt">
       <h1>Markt</h1>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       <div className="market">
@@ -67,6 +67,7 @@ function Markt() {
           ))}
         </ul>
       </div>
+
       
     </div>
   );

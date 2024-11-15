@@ -1,0 +1,46 @@
+/* src/Wald.css */
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+
+body {
+    /*background-color: #271816;*/
+    color: #c9b040;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.error-message {
+    color: #ff4c4c;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+}
+
+button {
+    padding: 10px;
+    background-color: #271816;
+    color: #c9b040;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    font-family: 'UnifrakturCook', cursive;
+    font-weight: 700;
+    font-size: 30px;
+}
+
+button:hover {
+    background-color: #d4af37;
+    color: #000;
+}
+
+button:disabled {
+    background-color: #555;
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+
+header {
+    position: static;
+}

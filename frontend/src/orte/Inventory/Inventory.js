@@ -117,6 +117,7 @@ const Inventory = () => {
   return (
     <div className="Inventory">
       <h1>Inventarverwaltung</h1>
+      
       {loading && <p>Items werden geladen...</p>}
       <div className="tab-buttons">
         <button onClick={() => setActiveTab('equipment')} className={activeTab === 'equipment' ? 'active' : ''}>
@@ -133,7 +134,7 @@ const Inventory = () => {
         {getFilteredItems().map(item => (
           <li key={item.id}>
             <input type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => handleSelectItem(item.id)} />
-            {item.name} {item.category === 'equipment' && `(Stärke: ${item.strength})`}
+            {item.name} {item.category === 'equipment' && ` (Stärke: ${item.strength})`}
             {item.category === 'consumable' && `(Heilung: ${item.strength})`}
           </li>
         ))}
