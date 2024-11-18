@@ -1,15 +1,16 @@
 
 @import url('https://cdn.discordapp.com/attachments/1277534759240601655/1306955924950487131/Markt.webp?ex=67388d0e&is=67373b8e&hm=93a98c874984c9a4e114f60c6d647ac38b024e924e848513cfeaca9c48e83d0f&');
 
-body {
-    background-image: url('https://cdn.discordapp.com/attachments/1277534759240601655/1306924920973955152/inv.jpg?ex=6738702e&is=67371eae&hm=0a4d6d96a17d66d97abffb79c506745cb1ae4f6e55d92412a192c78572210762&');
+Body {
+    /*background-image: url();*/
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
     height: 100vh;
     margin: 0;
 }
-  
+
+
 
 .Markt {
   font-family: Arial, sans-serif;
@@ -58,12 +59,12 @@ body {
 .Markt ul {
   list-style: none;
   padding: 0;
-  background-color: #271816;
+  background-color: #27181600;
 
 }
 
 .Markt ul li {
-  background-color: #311e1c;
+  background-color: #311e1c57;
   padding: 10px;
   border: 1px solid #c9b040;
   border-radius: 5px;

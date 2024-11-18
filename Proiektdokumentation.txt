@@ -79,7 +79,7 @@ die Schmiede zu erstellen und den Dungeon weiter zu optimieren.
 
 #################################################################################################################################################
 
-Tagesdikumentation vom 15.11.24
+Tagesdokumentation vom 15.11.24
 
 Heute gestaltete sich ein äußerst produktiver Tag voller Fortschritte und spannender Herausforderungen. Im Dungeon konnten wir unsere Arbeit kontinuierlich vorantreiben und bedeutende Meilensteine erreichen. 
 Die geheimnisvolle Atmosphäre des Dungeons inspirierte uns zu kreativen Lösungsansätzen, wodurch wir spürbare Fortschritte in der Entwicklung erzielen konnten.
