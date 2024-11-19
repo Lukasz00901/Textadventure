@@ -1,90 +1,60 @@
-
-@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
-
-body {
-    /*background-image: url('');*/
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    height: 100vh;
-    margin: 0;
-}
-  
-
-.Inventory {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  
-}
-
-.Inventory h1 {
-  font-family: 'UnifrakturCook', cursive;
-  font-size: 2rem;
-  color: #c9b040;
-  text-shadow: 2px 2px 4px #000;
-  margin-bottom: 20px;
-}
-
-.Inventory .tab-buttons {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.Inventory .tab-buttons button {
-  margin-right: 10px;
-  padding: 10px;
-  background-color: #271816;             
-  color: #c9b040;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: all 0.3s ease;
-  font-family: 'UnifrakturCook', cursive, serif; 
-  font-weight: 700; 
-  font-size: 20px;
-}
-
-.Inventory .tab-buttons button:hover {
-  background-color: #d4af37;
-  color: #000000;
-}
-
-.Inventory .tab-buttons button.active {
-  background-color: #7a2020;
-  border: 2px solid #c9b040;
-}
-
 .Inventory ul {
   list-style: none;
-  padding: 0; 
-  background-color: #ffffff00;
-
+  padding: 0;
+  width: 700px;
+  margin: 0 auto;
+  background-color: transparent;
 }
 
 .Inventory ul li {
+  width: 100%;
   background-color: #311e1c57;
   padding: 20px;
   border: 1px solid #c9b040;
   border-radius: 5px;
-  font-size: 1rem;
   color: #c9b040;
   display: flex;
   align-items: center;
-  font-family: 'UnifrakturCook', cursive, serif; 
-  font-weight: 700; 
+  box-sizing: border-box;
+  font-family: 'UnifrakturCook', cursive, serif;
+  font-weight: 700;
   font-size: 20px;
+  gap: 20px;
 }
-
 
 .Inventory ul li input {
   margin-right: 10px;
 }
 
+.inventory-item-text {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+
+/* Individuelle Klassen für die Textelemente */
+.inventory-item-name {
+  flex: 2;
+  text-align: left;
+}
+
+.inventory-item-description {
+  flex: 3;
+  text-align: center;
+}
+
+.inventory-item-price {
+  flex: 1;
+  text-align: right;
+}
+
 .Inventory .action-buttons {
   margin-top: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 5px;
 }
 
 .Inventory .action-buttons button {
@@ -93,22 +63,43 @@ body {
   color: #c9b040;
   border: none;
   cursor: pointer;
-  font-size: 1rem;
   border-radius: 5px;
-  transition: all 0.3s ease;
-  font-family: 'UnifrakturCook', cursive, serif; 
-  font-weight: 700; 
+  font-family: 'UnifrakturCook', cursive, serif;
+  font-weight: 700;
   font-size: 20px;
 }
-
 
 .Inventory .action-buttons button:hover {
   background-color: #d4af37;
   color: #3e2723;
 }
 
-/* Bestätigungsdialog*/
-.Inventory .confirm-dialog {
+.Inventory .action-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.Inventory .action-buttons button {
+  padding: 10px;
+  background-color: #271816;
+  color: #c9b040;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  font-family: 'UnifrakturCook', cursive, serif;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.Inventory .action-buttons button:hover {
+  background-color: #d4af37;
+  color: #3e2723;
+}
+
+.confirm-dialog {
   position: fixed;
   top: 0;
   left: 0;
@@ -117,42 +108,36 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 
-.Inventory .confirm-dialog-content {
+.confirm-dialog-content {
   background-color: #271816;
   color: #c9b040;
   padding: 20px;
-  border-radius: 5px;
-  border: 3px solid #c9b040;
+  border-radius: 10px;
   text-align: center;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-  font-family: 'UnifrakturCook', cursive, serif; 
-  font-weight: 700; 
-  font-size: 20px;
 }
 
-.Inventory .confirm-dialog-content h3 {
+.confirm-dialog-content h3 {
   margin-bottom: 20px;
-
 }
 
-.Inventory .confirm-dialog-content button {
+.confirm-dialog-content button {
   margin: 0 10px;
   padding: 10px;
   background-color: #7a2020;
   color: #c9b040;
   border: none;
   cursor: pointer;
-  font-family: 'UnifrakturCook', cursive, serif; 
-  font-weight: 700; 
-  font-size: 20px;
   border-radius: 5px;
-  border: 2px solid #c9b040;
 }
 
-.Inventory .confirm-dialog-content button:hover {
+.confirm-dialog-content button:hover {
   background-color: #d4af37;
-  color: #000000;
+  color: #000;
 }
+
+
