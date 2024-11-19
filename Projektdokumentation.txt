@@ -76,3 +76,7 @@ Nach mehreren Tests und Anpassungen läuft der Dungeon nun einigermaßen, ein pa
 
 Insgesamt verlief der Tag produktiv, da wir sowohl den Markt als auch den Dungeon optimieren konnten. Als nächster Schritt planen wir, 
 die Schmiede zu erstellen und den Dungeon weiter zu optimieren. 
+
+#################################################################################################################################################
+
+Tagesdokumentation vom 15.11.24
