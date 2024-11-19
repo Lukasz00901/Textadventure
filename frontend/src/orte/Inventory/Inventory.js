@@ -132,6 +132,7 @@ const Inventory = () => {
   return (
     <div className="Inventory">
       <h1>Inventarverwaltung</h1>
+      
       {loading && <p>Items werden geladen...</p>}
       <div className="tab-buttons">
         <button

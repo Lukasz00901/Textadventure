@@ -1,0 +1,136 @@
+Tagesdokumentation vom 12.11.24
+
+Zu Beginn des Tages haben wir den geplanten Ablauf und die nächsten Schritte unseres Projekts durchgesprochen. 
+Ziele und Deadlines wurden abgesteckt, offene Fragen geklärt, und Zuständigkeiten verteilt.
+Dungeon-Programmierung und Test
+
+Anschließend haben wir an der Programmierung des neuen Dungeons gearbeitet. 
+Dies beinhaltete das Implementieren der Mechaniken und Features, die die Spielerfahrung verbessern sollen.
+Nach der Entwicklung folgte eine intensive Testphase, um Bugs aufzudecken und zu beheben. 
+Wir haben dabei auf ein reibungsloses Spielerlebnis geachtet und verschiedene Szenarien durchgespielt, um die Stabilität zu gewährleisten.
+Einfügen von lustigen Einzeilern
+
+Zusätzlich haben wir heute einige humorvolle Einzeiler verfasst, die dem Spiel eine persönliche Note verleihen sollen. 
+Diese Einzeiler wurden erstmal in einem seperaten Dokument gespeichert. 
+Morgen werden sie in den Code integriert und an passenden Stellen im Dungeon sowie den anderen Orten platziert, 
+sobald sie erstellt wurden. Dabei haben wir auf Variabilität und Spieleransprache geachtet, um das Spielerlebnis unterhaltsam zu gestalten.
+
+Ergebnisse und nächste Schritte:
+Der Dungeon läuft soweit  stabil, einige Einzeiler wurden integriert, aber noch nicht getestet. 
+Morgen werden wir uns auf das Inventar konzentrieren.
+
+Feedback und Anmerkungen:
+Das Einfügen humorvoller Elemente bringt frischen Wind und könnte besonders bei den Spielern gut ankommen.
+Für zukünftige Aufgaben planen wir, die Tests noch weiter auszubauen, um Fehler schneller zu identifizieren.
+
+#################################################################################################################################################
+
+Tagesdokumentation vom 13.11.24
+
+Die geplante Weiterentwicklung des Dungeons musste verschoben werden, da während der Implementierung zu viele technische Probleme aufgetreten sind, 
+die eine reibungslose Fortführung verhindert haben. Stattdessen haben wir beschlossen, unseren Fokus auf die Entwicklung des Inventarsystems zu legen, 
+und neue Funktionen sowie ein ansprechendes Design zu integrieren.
+
+Heute stand die Entwicklung des Inventarsystems sowie die Fehlerbehebung im Frontend im Fokus. 
+Der Tag begann mit der Analyse und Behebung eines Problems, bei dem der Befehl react-scripts beim Starten des React-Servers nicht gefunden wurde. 
+Dieses Problem wurde durch die Neuinstallation der Abhängigkeiten (npm install) sowie durch das manuelle Hinzufügen von react-scripts gelöst. 
+Nach erfolgreicher Installation konnte der Server fehlerfrei gestartet werden.
+
+Im Anschluss wurde das Inventarsystem weiterentwickelt. Hierbei wurden drei Hauptkategorien für die Items definiert: 
+Ausrüstung, Verbrauchsgegenstände und sonstige Items. Das Inventar wurde dynamisch gestaltet, 
+sodass die Items vom Backend über eine API abgerufen und entsprechend der ausgewählten Kategorie angezeigt werden. 
+Zwei Sortierfunktionen wurden implementiert: eine alphabetische Sortierung (A-Z) sowie eine Sortierung nach Stärke der Ausrüstungsgegenstände. 
+Zusätzlich wurde die Löschfunktion optimiert, indem ein benutzerdefinierter Bestätigungsdialog hinzugefügt wurde, 
+der die Auswahl zwischen Ja und Nein ermöglicht. Dies ersetzt den Standard-Dialog von window.confirm() und bietet eine bessere Benutzererfahrung.
+
+Im Designprozess wurden weitere Anpassungen vorgenommen, um das Inventar optisch ansprechender zu gestalten. 
+Ein dunkelbraunes Farbschema wurde für Buttons und Hintergrundelemente gewählt, was zu einem klaren und kontrastreichen Erscheinungsbild führt. 
+Um eine rustikale, abenteuerliche Atmosphäre zu erzeugen, wurde der Hintergrund des Inventars in einer braunen Optik gestaltet. 
+Hierbei kam eine Kombination aus einer braunen Grundfarbe, einem radialen CSS-Gradienten und zusätzlichen Box-Schatten zum Einsatz, 
+um Tiefe und Struktur zu simulieren.
+
+Abschließend wurde die Benutzerfreundlichkeit durch die Anzeige von Attributen der Items verbessert. 
+Die Stärkewerte der Ausrüstungsgegenstände sowie die Heilungswerte der Verbrauchsgegenstände (wie Tränke) werden nun direkt im Inventar hinter dem Namen des jeweiligen Items angezeigt. 
+So können Benutzer auf einen Blick die relevanten Informationen erkennen, beispielsweise „Schwert (Stärke: 10)“ oder „Großer Heiltrank (Heilung: 30)“.
+
+Die Implementierung der weiteren Orte wurde heute vorbereitet. 
+Hierzu wurden die notwendigen Strukturen im Frontend angelegt und die API-Routen im Backend definiert, 
+um eine reibungslose Integration von Orten wie der Schmiede, der Taverne und der Erzhöhle zu ermöglichen. 
+Diese Vorbereitungen schaffen die Grundlage, um in den kommenden Tagen die Funktionalitäten der neuen Orte schrittweise zu implementieren.
+
+Insgesamt wurden heute erhebliche Fortschritte erzielt, die das Inventarsystem sowohl funktional als auch optisch verbessert haben. 
+Die Fehlerbehebung im Frontend sorgte für einen reibungslosen Entwicklungsablauf, 
+und die Anpassungen im Design trugen zu einer benutzerfreundlicheren und optisch ansprechenden Oberfläche bei.
+
+#################################################################################################################################################
+
+Tagesdokumentation vom 14.11.24
+
+Heute haben wir den Marktplatz erfolgreich erstellt und zum Laufen gebracht. Das Design wurde verfeinert und das Farbschema angepasst, 
+sodass der Markt nun optisch ansprechend und benutzerfreundlich ist. Nach der Implementierung erfolgte eine gründliche Fehlerprüfung, bei der wir kleinere Bugs, 
+wie Probleme mit der Anzeige von Waren und fehlerhafte Preisberechnungen, identifizieren und beheben konnten. Die Fehlerbehebung vom Markt hat sich ausgezahlt, 
+und diese läuft jetzt stabil und bereit für weitere Inhalte.
+
+Anschließend haben wir den Dungeon erneut überarbeitet. Hier gab es einige kritische Fehler, die zu Abstürzen und fehlerhaften Spawns führten. 
+Nach mehreren Tests und Anpassungen läuft der Dungeon nun einigermaßen, ein paar Bugs sind noch vorhanden. 
+
+Insgesamt verlief der Tag produktiv, da wir sowohl den Markt als auch den Dungeon optimieren konnten. Als nächster Schritt planen wir, 
+die Schmiede zu erstellen und den Dungeon weiter zu optimieren. 
+
+#################################################################################################################################################
+
+Tagesdokumentation vom 15.11.24
+
+Heute gestaltete sich ein äußerst produktiver Tag voller Fortschritte und spannender Herausforderungen. Im Dungeon konnten wir unsere Arbeit kontinuierlich vorantreiben und bedeutende Meilensteine erreichen. 
+Die geheimnisvolle Atmosphäre des Dungeons inspirierte uns zu kreativen Lösungsansätzen, wodurch wir spürbare Fortschritte in der Entwicklung erzielen konnten.
+
+Am Markt stand ein ambitioniertes Vorhaben auf dem Programm: Der Versuch, für jeden einzelnen Ort passende Bilder einzufügen. 
+Trotz intensiver Bemühungen blieb dieser Versuch leider erfolglos. Dennoch war diese Herausforderung lehrreich und hat uns wertvolle Einblicke für zukünftige Projekte gegeben, 
+sodass wir gestärkt aus dieser Erfahrung hervorgehen.
+
+Parallel dazu wurden umfassende Vorbereitungen für die Schmiede, den Wald, die Erzhöhle und die Taverne getroffen. 
+Jedes dieser Elemente spielt eine zentrale Rolle in unserem Gesamtkonzept, und die sorgfältigen Vorbereitungen sorgen dafür, dass wir bestens gerüstet sind, 
+um die nächsten Schritte erfolgreich umzusetzen. Die detaillierte Planung und Organisation in diesen Bereichen legt eine solide Grundlage für kommende Entwicklungen.
+
+Im Backend-Bereich gelang es uns, die Ressourcen effizient zu verteilen und systematisch zu sortieren. 
+Diese strukturierte Herangehensweise hat die Übersichtlichkeit verbessert und sich positiv auf die gesamte Projektarbeit auswirkt.
+
+Ein weiterer Schwerpunkt des Tages lag auf der Fehlerkorrektur. Im Dungeon, auf dem Markt und im Inventar konnten wir zahlreiche Fehler identifizieren und beheben. 
+Diese Korrekturen haben die Stabilität und Benutzerfreundlichkeit unserer Plattform erheblich gesteigert und tragen maßgeblich dazu bei, dass unser Projekt reibungslos weiterläuft.
+
+Zusammenfassend war es ein erfolgreicher Tag, an dem wir sowohl Fortschritte erzielten als auch wertvolle Erfahrungen sammelten. 
+Mit dem erreichten Fortschritt und den neu gewonnenen Erkenntnissen blicken wir zuversichtlich in die kommenden Tage und freuen uns darauf, 
+
+#################################################################################################################################################
+Tagesdokumentation – 18. November 2024
+
+1. Dungeon-Entwicklung
+
+Der heutige Arbeitstag stand ganz im Zeichen der weiteren Verfeinerung unseres Dungeons. Das Team hat intensiv daran gearbeitet, die verschiedenen Ebenen und Mechaniken zu optimieren. Der Dungeon läuft mittlerweile stabil und bietet den Spielern bereits jetzt ein spannendes und herausforderndes Erlebnis. Trotz dieser Fortschritte gibt es noch Feinheiten, die wir verbessern möchten, um das Ambiente und die Spielmechanik perfekt abzustimmen. Insbesondere die Balance zwischen Schwierigkeit und Belohnung wird weiterhin genauestens überprüft, um ein fesselndes Abenteuer zu garantieren.
+
+2. Frontend-CSS-Anpassungen
+
+Markt-Frontend:
+
+Heute wurden umfangreiche CSS-Anpassungen am Frontend des Marktplatzes vorgenommen. Durch die neuen Stiländerungen erstrahlt der Marktplatz nun in einem moderneren und ansprechenderen Design. Die verbesserten Layouts und Farbschemata sorgen nicht nur für eine ästhetische Aufwertung, sondern auch für eine intuitivere Navigation. Spieler können nun noch einfacher durch die angebotenen Waren stöbern und Transaktionen durchführen, was die Benutzererfahrung maßgeblich verbessert.
+
+Inventar-Frontend:
+
+Auch das Inventar-Frontend erhielt eine gründliche Überarbeitung der CSS. Die neuen Anpassungen haben die Benutzeroberfläche deutlich übersichtlicher und benutzerfreundlicher gestaltet. Icons und Elemente sind nun klarer positioniert, wodurch die Spieler ihre Gegenstände schneller finden und verwalten können. Diese Optimierungen tragen dazu bei, dass das Inventarsystem nicht nur funktionaler, sondern auch optisch ansprechender wirkt.
+
+3. Fehlerbehebung im Inventar
+
+Trotz intensiver Bemühungen blieb die große Fehlerbehebung im Inventarsystem heute leider erfolglos. Das Problem, das die Stabilität und Funktionalität des Inventars beeinträchtigt, erwies sich als komplexer als zunächst angenommen. Das Team hat verschiedene Lösungsansätze getestet und umfangreiche Debugging-Maßnahmen durchgeführt, jedoch ohne den gewünschten Erfolg. Unbeirrt setzen wir unsere Analysen fort und planen, morgen mit frischem Blick und eventuell neuen Strategien weiter an der Behebung dieses kritischen Fehlers zu arbeiten. Die Stabilität des Inventars ist für das gesamte Spielerlebnis von zentraler Bedeutung, weshalb wir höchste Priorität auf die Lösung dieses Problems legen.
+
+4. Texterstellung für Orte
+
+Ein besonders kreativer Höhepunkt des Tages war die gemeinsame Entwicklung von Beschreibungen für die verschiedenen Orte innerhalb unseres Spiels. Das Team hat sich intensiv zusammengesetzt, um lebendige und detaillierte Texte zu verfassen, die die Welt unseres Spiels noch immersiver gestalten. Jeder Ort erhält nun eine eigene, einzigartige Atmosphäre, die durch sorgfältig ausgewählte Worte und anschauliche Beschreibungen zum Leben erweckt wird. Diese Texte tragen maßgeblich dazu bei, die Spieler tiefer in die Spielwelt eintauchen zu lassen und ihre Fantasie zu beflügeln.
+
+Zusammenfassung
+
+Der heutige Tag war geprägt von bedeutenden Fortschritten und kreativen Erfolgen. Die Dungeon-Entwicklung schreitet vielversprechend voran, und die umfassenden CSS-Anpassungen im Frontend von Markt und Inventar haben das visuelle und funktionale Erscheinungsbild erheblich verbessert. Trotz der Rückschläge bei der Fehlerbehebung im Inventar bleibt das Team motiviert und entschlossen, die Herausforderung zu meistern. Besonders erfreulich ist die erfolgreiche Erstellung lebendiger Texte für die Spielorte, die das Spielerlebnis weiter bereichern. Insgesamt war es ein produktiver Tag, der das Fundament für kommende Entwicklungen und Verbesserungen legt.
+
+Ausblick
+
+Morgen werden wir uns erneut der Optimierung des Dungeons widmen und die fortlaufenden Probleme im Inventarsystem angehen. Zudem planen wir, die neu erstellten Ortsbeschreibungen in das Spiel zu integrieren und deren Wirkung im Spiel zu testen. Das Engagement und die Kreativität des Teams lassen uns zuversichtlich in die kommenden Herausforderungen blicken und versprechen weiterhin spannende Fortschritte in unserem Projekt.
+unsere Ziele weiterhin zielstrebig zu verfolgen.
