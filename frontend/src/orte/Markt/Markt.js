@@ -25,6 +25,10 @@ function Markt() {
   const buyItem = async (itemId) => {
     try {
       const response = await axios.post('http://localhost:3000/market/buy', { itemId });
+      const updatedItems = marketItems.map((item) =>
+        item.id === itemId ? { ...item, quantity: item.quantity - 1 } : item
+      );
+      setMarketItems(updatedItems);
       setInventoryItems((prevInventory) => [
         ...prevInventory,
         response.data.inventoryItems.find((item) => item.id === itemId),
@@ -62,13 +66,20 @@ function Markt() {
               <div>{item.name}</div>
               <div>{item.type}</div>
               <div>{item.price} Gold</div>
-              <button onClick={() => buyItem(item.id)}>Kaufen</button>
+              <div>Verfügbar: {item.quantity}</div>
+              <button
+                onClick={() => buyItem(item.id)}
+                disabled={item.quantity <= 0}
+              >
+                {item.quantity > 0 ? 'Kaufen' : 'Ausverkauft'}
+              </button>
             </li>
           ))}
         </ul>
       </div>
-
-      
+      <div className="inventory">
+        
+        </div>
     </div>
   );
 }

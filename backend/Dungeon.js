@@ -199,37 +199,7 @@ router.post('/fight', (req, res) => {
   }
 });
 
-// Truhe öffnen
-router.post('/chest', (req, res) => {
-  const { choice } = req.body;
 
-  if (!currentEvent || currentEvent.type !== 'chest') {
-    return res.status(400).json({ error: 'No chest to interact with.' });
-  }
-
-  if (!choice || choice === 'Bitte auswählen') {
-    return res.status(400).json({ error: 'Please select a valid option for the chest.' });
-  }
-
-  if (choice === 'yes') {
-    const isMimic = getRandomInt(1, 100) <= 10;
-
-    if (isMimic) {
-      const mimic = { name: 'Mimic', hp: getRandomInt(8, 15), damage: getRandomInt(1, 5) };
-      currentEvent = { type: 'monster', monster: mimic };
-      res.json({ event: 'It was a Mimic!', mimic });
-    } else {
-      const loot = generateLoot();
-      inventoryItems.push(loot);
-      res.json({ event: 'You found loot!', loot, player });
-    }
-  } else if (choice === 'no') {
-    currentEvent = null;
-    res.json({ event: 'You ignored the chest.' });
-  } else {
-    res.status(400).json({ error: 'Invalid choice.' });
-  }
-});
 
 // Loot generieren
 const generateLoot = () => {

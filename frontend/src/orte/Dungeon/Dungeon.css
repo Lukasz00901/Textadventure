@@ -1,55 +1,69 @@
 .dungeon-container {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background-color: #1e1e2f;
-  color: #fff;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  align-items: center;
 }
 
 .dungeon-header {
   text-align: center;
+  margin-bottom: 20px;
 }
 
 .dungeon-content {
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 80%;
   gap: 20px;
-  justify-content: space-around;
 }
 
-.player-status, .event-section, .inventory {
-  background: #2a2a40;
-  border-radius: 8px;
-  padding: 15px;
-  flex: 1;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+/* Linker Bereich */
+.left-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 20%;
+}
+
+/* Rechter Bereich */
+.right-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 20%;
+}
+
+/* Mittlerer Bereich */
+.log-section {
+  width: 60%;
+  text-align: center;
+}
+
+.log-container {
+  height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.log-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.log-container li {
+  margin-bottom: 5px;
 }
 
 button {
-  background: #4caf50;
+  padding: 10px;
+  background-color: #ff4747;
   color: white;
   border: none;
-  border-radius: 5px;
-  padding: 10px;
   cursor: pointer;
-  margin-top: 10px;
 }
 
 button:hover {
-  background: #45a049;
-}
-
-.loading {
-  color: #ffcc00;
-}
-
-.log-section {
-  background: #2a2a40;
-  border-radius: 8px;
-  padding: 15px;
-  max-height: 200px;
-  overflow-y: auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  background-color: #e63e3e;
 }

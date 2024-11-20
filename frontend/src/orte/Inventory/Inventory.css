@@ -1,143 +1,62 @@
-.Inventory ul {
-  list-style: none;
-  padding: 0;
-  width: 700px;
-  margin: 0 auto;
-  background-color: transparent;
-}
-
-.Inventory ul li {
-  width: 100%;
-  background-color: #311e1c57;
-  padding: 20px;
-  border: 1px solid #c9b040;
-  border-radius: 5px;
-  color: #c9b040;
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-  font-family: 'UnifrakturCook', cursive, serif;
-  font-weight: 700;
-  font-size: 20px;
-  gap: 20px;
-}
-
-.Inventory ul li input {
-  margin-right: 10px;
-}
-
-.inventory-item-text {
-  display: flex;
-  flex: 1;
-  justify-content: space-between;
-  align-items: center;
-  gap: 30px;
-}
-
-/* Individuelle Klassen für die Textelemente */
-.inventory-item-name {
-  flex: 2;
-  text-align: left;
-}
-
-.inventory-item-description {
-  flex: 3;
+.inventory-container {
   text-align: center;
-}
-
-.inventory-item-price {
-  flex: 1;
-  text-align: right;
-}
-
-.Inventory .action-buttons {
   margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 5px;
 }
 
-.Inventory .action-buttons button {
-  padding: 10px;
-  background-color: #271816;
-  color: #c9b040;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  font-family: 'UnifrakturCook', cursive, serif;
-  font-weight: 700;
-  font-size: 20px;
-}
-
-.Inventory .action-buttons button:hover {
-  background-color: #d4af37;
-  color: #3e2723;
-}
-
-.Inventory .action-buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.Inventory .action-buttons button {
-  padding: 10px;
-  background-color: #271816;
-  color: #c9b040;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: all 0.3s ease;
-  font-family: 'UnifrakturCook', cursive, serif;
-  font-weight: 700;
-  font-size: 20px;
-}
-
-.Inventory .action-buttons button:hover {
-  background-color: #d4af37;
-  color: #3e2723;
-}
-
-.confirm-dialog {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-}
-
-.confirm-dialog-content {
-  background-color: #271816;
-  color: #c9b040;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-}
-
-.confirm-dialog-content h3 {
+.button-group {
   margin-bottom: 20px;
 }
 
-.confirm-dialog-content button {
-  margin: 0 10px;
-  padding: 10px;
-  background-color: #7a2020;
-  color: #c9b040;
-  border: none;
+.button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
   cursor: pointer;
   border-radius: 5px;
+  border: 1px solid #d4af37;
 }
 
-.confirm-dialog-content button:hover {
-  background-color: #d4af37;
-  color: #000;
+.error {
+  color: red;
 }
 
+.inventory-table {
+  margin: 0 auto;
+  border-collapse: separate; /* Erlaubt Abrundungen */
+  border-spacing: 0; /* Entfernt Abstände zwischen Zellen */
+  width: 80%;
+  border-radius: 10px; /* Abrundung der gesamten Tabelle */
+  overflow: hidden; /* Sorgt dafür, dass Zellen-Inhalte die Rundung respektieren */
+  background-color: #78439b44; /* Optional: Hintergrundfarbe für bessere Optik */
+}
 
+.table-header {
+  border: 4px solid #d4af37;
+  padding: 10px;
+  font-weight: bold;
+  text-align: left;
+  background-color: #f9f9f900; /* Optional: Hintergrundfarbe für bessere Optik */
+}
+
+.table-cell {
+  border: 2px solid #d4af37;
+  padding: 10px;
+  text-align: left;
+}
+
+/* Abrundungen für erste und letzte Zeilen */
+.inventory-table tr:first-child th:first-child {
+  border-top-left-radius: 10px;
+}
+
+.inventory-table tr:first-child th:last-child {
+  border-top-right-radius: 10px;
+}
+
+.inventory-table tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+}
+
+.inventory-table tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
+}

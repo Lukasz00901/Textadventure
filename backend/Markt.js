@@ -4,8 +4,16 @@ const { inventoryItems } = require('./Inventar_Inhalt');
 
 // Markt-Items
 const marketItems = [
-  { id: 1, name: 'Health Potion', type: 'consumable', price: 15, quantity: 10 },
-  { id: 2, name: 'Iron Sword', type: 'equipment', price: 100, quantity: 5 },
+  { id: 1, name: 'Heiltrank', type: 'Trank', price: 15, strength: 15, category: 'consumable', quantity: 10 },
+  { id: 2, name: 'Großer Heiltrank', type: 'Trank', price: 25, strength: 30, category: 'consumable', quantity:  10 },
+  { id: 3, name: 'Mega Heiltrank', type: 'Trank', price: 40, strength: 50, category: 'consumable', quantity: 10 },
+  { id: 4, name: 'Brot', type: 'Lebensmittel', price: 5, strength: 5, category: 'consumable', quantity: 10 },
+  { id: 5, name: 'Apfel', type: 'Trank', price: 2, strength: 3, category: 'consumable', quantity: 10 },
+  { id: 6, name: 'Ei', type: 'Trank', price: 3, strength: 3, category: 'consumable', quantity: 10 },
+  { id: 7, name: 'Ziegenkäserad', type: 'Trank', price: 10, strength: 15, category: 'consumable', quantity: 10 },
+  { id: 8, name: 'Harzer Roller', type: 'Trank', price: 3, strength: 3, category: 'consumable', quantity: 10 },
+  { id: 9, name: 'Kürbiskuchen', type: 'Trank', price: 5, strength: 6, category: 'consumable', quantity: 10 },
+  { id: 10, name: 'Nüsse', type: 'Trank', price: 3, strength: 3, category: 'consumable', quantity: 10 }
 ];
 
 // Route: Alle Markt-Items abrufen

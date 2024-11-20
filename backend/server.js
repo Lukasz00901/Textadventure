@@ -9,10 +9,14 @@ app.use(bodyParser.json());
 const inventoryRoutes = require('./Inventory');
 const dungeonRoutes = require('./Dungeon');
 const marketRoutes = require('./Markt');
+const waldRoutes = require('./Wald'); // Stelle sicher, dass die Datei Wald.js existiert
+const mineRoutes = require('./Mine'); // Stelle sicher, dass die Datei Mine.js existiert
 
 app.use('/inventory', inventoryRoutes);
 app.use('/dungeon', dungeonRoutes);
 app.use('/market', marketRoutes);
+app.use('/wald', waldRoutes); // Routen für den Wald
+app.use('/mine', mineRoutes); // Routen für die Mine
 
 app.use((err, req, res, next) => {
   console.error('Error:', err.message);

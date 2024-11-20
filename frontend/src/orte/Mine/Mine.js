@@ -1,75 +1,66 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import './Mine.css';
+import React, { useState } from 'react';
 
-function Mine() {
-  const [mineItems, setMineItems] = useState([]);
-  const [inventoryItems, setInventoryItems] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
+const Mine = () => {
+  const [hasPickaxe, setHasPickaxe] = useState(false);
 
-  // Fetch mine items on component mount
-  useEffect(() => {
-    const fetchMineItems = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/mine/items');
-        setMineItems(response.data);
-      } catch (error) {
-        console.error('Error fetching mine items:', error);
-        setErrorMessage('Fehler beim Laden der Mine-Items.');
+  const mineOre = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/mine/mine', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      if (data.addedItems.length > 0) {
+        // Zeige nur die tatsächlich gesammelten Items an
+        alert(
+          `Erz erfolgreich geschürft: ${data.addedItems
+            .map((item) => `${item.quantity}x ${item.name}`)
+            .join(', ')}`
+        );
+      } else {
+        alert('Keine Erze geschürft!');
       }
-    };
-    fetchMineItems();
-  }, []);
-
-  // Collect item from the mine
-  const collectItem = async (itemId) => {
-    try {
-      const response = await axios.post('http://localhost:3000/mine/collect', { itemId });
-      setInventoryItems((prevInventory) => [
-        ...prevInventory,
-        response.data.inventoryItems.find((item) => item.id === itemId),
-      ]);
-      setErrorMessage('');
     } catch (error) {
-      console.error('Error collecting item:', error);
-      setErrorMessage('Fehler beim Sammeln des Items.');
-    }
-  };
-
-  // Drop item from inventory
-  const dropItem = async (itemId) => {
-    try {
-      const response = await axios.post('http://localhost:3000/mine/drop', { itemId });
-      setInventoryItems((prevInventory) =>
-        prevInventory.filter((item) => item.id !== itemId)
-      );
-      setErrorMessage('');
-    } catch (error) {
-      console.error('Error dropping item:', error);
-      setErrorMessage('Fehler beim Ablegen des Items.');
+      console.error('Fehler beim Schürfen:', error);
+      alert('Fehler beim Schürfen!');
     }
   };
 
   return (
-    <div className="App">
-      <h1>Mine der Dunklen Tiefen</h1>
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
-      <div className="mine">
-        <h2>Verfügbare Items</h2>
-        <ul>
-          {mineItems.map((item) => (
-            <li key={item.id}>
-              <div>{item.name}</div>
-              <div>{item.type}</div>
-              <div>{item.value} Gold</div>
-              <button onClick={() => collectItem(item.id)}>Sammeln</button>
-            </li>
-          ))}
-        </ul>
-      </div>
-      
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+      {!hasPickaxe ? (
+        <>
+          <p>Ich brauche eine Hacke, um Erz zu schürfen. Hey, da liegt ja eine Hacke!</p>
+          <button
+            onClick={() => setHasPickaxe(true)}
+            style={{
+              padding: '10px 20px',
+              fontSize: '16px',
+              cursor: 'pointer',
+            }}
+          >
+            Hacke nehmen
+          </button>
+        </>
+      ) : (
+        <>
+          <p>Jetzt kann ich Erze schürfen.</p>
+          <button
+            onClick={mineOre}
+            style={{
+              padding: '10px 20px',
+              fontSize: '16px',
+              cursor: 'pointer',
+            }}
+          >
+            Erz Schürfen
+          </button>
+        </>
+      )}
     </div>
   );
-}
+};
 
 export default Mine;
