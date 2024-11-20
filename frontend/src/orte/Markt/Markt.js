@@ -56,10 +56,10 @@ function Markt() {
 
   return (
     <div className="Markt">
-      <h1>Markt</h1>
+      <h1>Marktplatz</h1>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       <div className="market">
-        <h2>Verfügbare Items</h2>
+        
         <ul>
           {marketItems.map((item) => (
             <li key={item.id}>

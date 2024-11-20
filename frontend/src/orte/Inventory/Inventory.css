@@ -21,17 +21,17 @@
 }
 
 .inventory-table {
-  margin: 0 auto;
+  margin: 0 auto; /* Zentriert die Tabelle horizontal */
   border-collapse: separate; /* Erlaubt Abrundungen */
   border-spacing: 0; /* Entfernt Abstände zwischen Zellen */
-  width: 80%;
-  border-radius: 10px; /* Abrundung der gesamten Tabelle */
-  overflow: hidden; /* Sorgt dafür, dass Zellen-Inhalte die Rundung respektieren */
-  background-color: #78439b44; /* Optional: Hintergrundfarbe für bessere Optik */
+  width: 80%; /* Optionale Breite */
+  border-radius: 5px; /* Abrundung der Ecken */
+  background-color: #160e0ca6; /* Optional: Hintergrundfarbe */
+  border: 3px solid #d4af37; /* Rahmen für die gesamte Tabelle */
 }
 
 .table-header {
-  border: 4px solid #d4af37;
+  border: 2px solid #d4af37;
   padding: 10px;
   font-weight: bold;
   text-align: left;
@@ -39,24 +39,10 @@
 }
 
 .table-cell {
-  border: 2px solid #d4af37;
+  border: 1px solid #d4af37; /* Einheitliche Rahmenstärke */
   padding: 10px;
   text-align: left;
 }
 
-/* Abrundungen für erste und letzte Zeilen */
-.inventory-table tr:first-child th:first-child {
-  border-top-left-radius: 10px;
-}
 
-.inventory-table tr:first-child th:last-child {
-  border-top-right-radius: 10px;
-}
 
-.inventory-table tr:last-child td:first-child {
-  border-bottom-left-radius: 10px;
-}
-
-.inventory-table tr:last-child td:last-child {
-  border-bottom-right-radius: 10px;
-}

@@ -4,16 +4,18 @@ const { inventoryItems } = require('./Inventar_Inhalt');
 
 // Markt-Items
 const marketItems = [
-  { id: 1, name: 'Heiltrank', type: 'Trank', price: 15, strength: 15, category: 'consumable', quantity: 10 },
-  { id: 2, name: 'Großer Heiltrank', type: 'Trank', price: 25, strength: 30, category: 'consumable', quantity:  10 },
-  { id: 3, name: 'Mega Heiltrank', type: 'Trank', price: 40, strength: 50, category: 'consumable', quantity: 10 },
-  { id: 4, name: 'Brot', type: 'Lebensmittel', price: 5, strength: 5, category: 'consumable', quantity: 10 },
-  { id: 5, name: 'Apfel', type: 'Trank', price: 2, strength: 3, category: 'consumable', quantity: 10 },
-  { id: 6, name: 'Ei', type: 'Trank', price: 3, strength: 3, category: 'consumable', quantity: 10 },
-  { id: 7, name: 'Ziegenkäserad', type: 'Trank', price: 10, strength: 15, category: 'consumable', quantity: 10 },
-  { id: 8, name: 'Harzer Roller', type: 'Trank', price: 3, strength: 3, category: 'consumable', quantity: 10 },
-  { id: 9, name: 'Kürbiskuchen', type: 'Trank', price: 5, strength: 6, category: 'consumable', quantity: 10 },
-  { id: 10, name: 'Nüsse', type: 'Trank', price: 3, strength: 3, category: 'consumable', quantity: 10 }
+  { id: 1, name: 'Kleiner Heiltrank', type: 'Trank', price: 15, strength: 15, category: 'consumable', quantity: 10 },
+  { id: 2, name: 'Mittlerer Heiltrank', type: 'Trank', price: 25, strength: 40, category: 'consumable', quantity:  10 },
+  { id: 3, name: 'Großer Heiltrank', type: 'Trank', price: 40, strength: 80, category: 'consumable', quantity: 10 },
+  { id: 4, name: 'Mega Heiltrank', type: 'Trank', price: 60, strength: 150, category: 'consumable', quantity: 10 },
+  { id: 5, name: 'Mana-Trank', type: 'Trank', price: 75, strength: 190, category: 'consumable', quantity: 10 },
+  { id: 6, name: 'Brot', type: 'Lebensmittel', price: 5, strength: 5, category: 'consumable', quantity: 10 },
+  { id: 7, name: 'Apfel', type: 'Trank', price: 2, strength: 3, category: 'consumable', quantity: 10 },
+  { id: 8, name: 'Ei', type: 'Trank', price: 3, strength: 3, category: 'consumable', quantity: 10 },
+  { id: 9, name: 'Ziegenkäserad', type: 'Trank', price: 10, strength: 15, category: 'consumable', quantity: 10 },
+  { id: 10, name: 'Harzer Roller', type: 'Trank', price: 3, strength: 3, category: 'consumable', quantity: 10 },
+  { id: 11, name: 'Kürbiskuchen', type: 'Trank', price: 5, strength: 6, category: 'consumable', quantity: 10 },
+  { id: 12, name: 'Nüsse', type: 'Trank', price: 3, strength: 3, category: 'consumable', quantity: 10 }
 ];
 
 // Route: Alle Markt-Items abrufen

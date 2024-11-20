@@ -67,3 +67,11 @@ button {
 button:hover {
   background-color: #e63e3e;
 }
+
+.log-section {
+  width: 60%;
+  text-align: center;
+}
+
+
+

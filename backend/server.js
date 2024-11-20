@@ -11,12 +11,17 @@ const dungeonRoutes = require('./Dungeon');
 const marketRoutes = require('./Markt');
 const waldRoutes = require('./Wald'); // Stelle sicher, dass die Datei Wald.js existiert
 const mineRoutes = require('./Mine'); // Stelle sicher, dass die Datei Mine.js existiert
+const tavernRoutes = require('./Taverne');
+const smithyRoutes = require('./Schmiede');
+
 
 app.use('/inventory', inventoryRoutes);
 app.use('/dungeon', dungeonRoutes);
 app.use('/market', marketRoutes);
 app.use('/wald', waldRoutes); // Routen für den Wald
 app.use('/mine', mineRoutes); // Routen für die Mine
+app.use('/tavern', tavernRoutes); // Routen für die Mine
+app.use('/smithy', smithyRoutes);
 
 app.use((err, req, res, next) => {
   console.error('Error:', err.message);

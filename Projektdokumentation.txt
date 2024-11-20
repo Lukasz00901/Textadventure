@@ -164,3 +164,24 @@ Fazit:
 Der Tag war geprägt von Rückschritten und kleinen Erfolgen. Die Arbeit am Wald blieb ohne Ergebnis, 
 der Dungeon brachte Teilerfolge, und das Inventar war zumindest ein Lichtblick. 
 Trotzdem macht uns der Zeitverlust zu schaffen, und die nächsten Schritte werden entscheidend sein.
+
+
+#################################################################################################################################################
+
+
+Tagesdokumentation 20.11.24
+
+Heute wurden bedeutende Fortschritte in mehreren Bereichen erzielt. Die Mine wurde vollständig gelöscht und neu geschrieben, 
+was zu einer verbesserten Performance und einer optimierten Spielerfahrung geführt hat. Ebenso wurde der Waldbereich gelöscht und neu gestaltet. 
+
+Im Bereich des Inventars wurden optische Anpassungen vorgenommen. Das neue Design bietet nun eine klarere und benutzerfreundlichere Oberfläche, 
+die den Spielern eine bessere Übersicht und einfachere Handhabung ermöglicht. Der Markt erhielt inhaltliche Anpassungen, wodurch das Angebot erweitert wurde.
+
+Besonders hervorzuheben ist die erfolgreiche Erstellung der Schmiede. Obwohl sie bereits funktional ist, bedarf sie noch eines gewissen Feinschliffs, 
+um vollständig den Anforderungen gerecht zu werden und ein optimales Nutzungserlebnis zu bieten.
+
+Für morgen geplant:
+
+Dungeon: Eine umfassende Überarbeitung steht an, um die Herausforderungen und das Layout zu verbessern und den Spielern ein spannenderes Erlebnis zu bieten.
+Schmiede: Die Arbeiten werden fortgesetzt, wobei zusätzlich die Einführung von Quests geplant ist, um die Interaktion und den Mehrwert der Schmiede weiter zu steigern.
+Taverne: Auch hier sollen die Entwicklungen fortgesetzt und neue Quests eingeführt werden, um die Taverne als zentralen Treffpunkt für die Spieler weiter auszubauen.
