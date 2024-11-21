@@ -1,285 +1,217 @@
-import React, { useState, useEffect } from 'react';
+// frontend/src/components/Dungeon.js
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './Dungeon.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000';
-
-function Dungeon() {
-  const [player, setPlayer] = useState({
-    hp: 0,
-    maxHp: 0,
-    gold: 0,
-    roomCounter: 0,
-  });
-  const [equipment, setEquipment] = useState({ weapon: null, armor: null });
+const Dungeon = () => {
+  const [difficulty, setDifficulty] = useState(1);
+  const [currentWeapon, setCurrentWeapon] = useState(null);
   const [inventory, setInventory] = useState([]);
-  const [selectedWeapon, setSelectedWeapon] = useState(null);
-  const [eventResponse, setEventResponse] = useState('');
-  const [message, setMessage] = useState('');
+  const [playerHP, setPlayerHP] = useState(30);
+  const [playerMaxHP, setPlayerMaxHP] = useState(50);
+  const [playerMoney, setPlayerMoney] = useState(125);
+  const [roomsCompleted, setRoomsCompleted] = useState(0);
+  const [event, setEvent] = useState(null);
+  const [roomName, setRoomName] = useState('');
   const [log, setLog] = useState([]);
-  const [difficulty, setDifficulty] = useState('');
-  const [isEventActive, setIsEventActive] = useState(false);
+  const [selectedWeapon, setSelectedWeapon] = useState('');
+  const [selectedPotion, setSelectedPotion] = useState('');
 
-  const addToLog = (entry) => {
-    setLog((prevLog) => [...prevLog, entry]);
-  };
+  const logEndRef = useRef(null);
 
   useEffect(() => {
-    const fetchPlayer = async () => {
-      try {
-        const response = await axios.get(`${BACKEND_URL}/dungeon/player`);
-        setPlayer(response.data.player || {
-          hp: 0,
-          maxHp: 0,
-          gold: 0,
-          roomCounter: 0,
-        });
-        setEquipment(response.data.equipment || { weapon: null, armor: null });
-        setInventory(response.data.inventoryItems || []);
-        setSelectedWeapon(response.data.equipment?.weapon?.id || null);
-      } catch (error) {
-        console.error('Fehler beim Laden des Spielerstatus:', error);
-      }
-    };
-
-    fetchPlayer();
-    const interval = setInterval(fetchPlayer, 5000);
-
-    return () => clearInterval(interval);
+    // Initial Daten laden
+    fetchDifficulty();
+    fetchWeapon();
+    fetchInventory();
+    fetchPlayerStats();
   }, []);
 
-  const changeDifficulty = async () => {
-    const level = parseInt(difficulty, 10);
-    if (isNaN(level) || level < 1) {
-      setMessage('Bitte gib einen gültigen Schwierigkeitsgrad ein (Zahl >= 1).');
-      return;
-    }
-    try {
-      const response = await axios.post(`${BACKEND_URL}/dungeon/difficulty`, { level });
-      setPlayer(response.data.player || player);
-      setMessage(response.data.message);
-      addToLog(`Schwierigkeit geändert: ${response.data.message}`);
-    } catch (error) {
-      console.error('Fehler beim Ändern der Schwierigkeit:', error);
-      addToLog('Fehler beim Ändern der Schwierigkeit.');
+  useEffect(() => {
+    scrollToBottom();
+  }, [log]);
+
+  const scrollToBottom = () => {
+    if (logEndRef.current) {
+      logEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
-  const triggerEvent = async () => {
+  const fetchDifficulty = async () => {
     try {
-      const response = await axios.post(`${BACKEND_URL}/dungeon/event`);
-      setPlayer(response.data.player || player);
-      setEventResponse(response.data.event);
-      setMessage(response.data.message || '');
-      setIsEventActive(true);
+      const res = await axios.get('http://localhost:3000/api/dungeon/difficulty');
+      setDifficulty(res.data.difficulty);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-      if (response.data.event.includes('Mimic')) {
-        addToLog('Es war eine Mimic! Kämpfe, um zu überleben!');
-      } else if (response.data.event.includes('leerer Raum') || response.data.event.includes('The room is empty')) {
-        addToLog('Der Raum ist leer. Es passiert nichts.');
-      } else if (response.data.event.includes('Falle') || 
-                 response.data.event.includes('A poison dart hits you') || 
-                 response.data.event.includes('The ceiling collapses partially!') || 
-                 response.data.event.includes('You fell into a spike pit!') || 
-                 response.data.event.includes('An arrow trap shoots you') ||
-                 response.data.event.includes('You triggered a flame trap!')) {
-        addToLog(`Eine Falle wurde ausgelöst: ${response.data.event}`);
-      } else if (response.data.event.includes('You found a chest!')) {
-        addToLog('Du hast eine Truhe gefunden!');
+  const fetchWeapon = async () => {
+    try {
+      const res = await axios.get('http://localhost:3000/api/dungeon/weapon');
+      setCurrentWeapon(res.data.currentWeapon);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchInventory = async () => {
+    try {
+      const res = await axios.get('http://localhost:3000/api/dungeon/inventory');
+      setInventory(res.data.inventoryItems);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchPlayerStats = async () => {
+    try {
+      const res = await axios.get('http://localhost:3000/api/dungeon/player-stats');
+      setPlayerHP(res.data.PlayerHP);
+      setPlayerMaxHP(res.data.PlayerMaxHP);
+      setPlayerMoney(res.data.playerMoney);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSetDifficulty = async () => {
+    try {
+      const newDifficulty = parseInt(difficulty);
+      const res = await axios.post('http://localhost:3000/api/dungeon/difficulty', { difficulty: newDifficulty });
+      setLog(prevLog => [...prevLog, res.data.message]);
+      fetchDifficulty();
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setLog(prevLog => [...prevLog, error.response.data.message]);
       } else {
-        addToLog(`Ereignis: ${response.data.event}`);
+        console.error(error);
       }
-    } catch (error) {
-      console.error('Fehler beim Auslösen des Dungeon-Events:', error.response?.data || error.message);
-      addToLog(`Fehler: ${error.response?.data?.error || 'Unbekannter Fehler'}`);
-      setMessage(error.response?.data?.error || 'Fehler beim Auslösen des Dungeon-Events.');
     }
   };
 
-  const resolveEvent = () => {
-    setIsEventActive(false);
-    setEventResponse('');
-    setMessage('');
-  };
-
-  const equipItem = async () => {
+  const handleEquipWeapon = async () => {
     if (!selectedWeapon) {
-      addToLog('Keine Waffe ausgewählt.');
-      setMessage('Bitte wähle eine Waffe aus.');
+      setLog(prevLog => [...prevLog, 'Keine Waffe ausgewählt.']);
       return;
     }
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/dungeon/equip`, { itemId: selectedWeapon });
-      setEquipment(response.data.equipment || { weapon: null, armor: null });
-      setMessage(response.data.message);
-      addToLog(`Ausrüstung geändert: ${response.data.message}`);
+      const res = await axios.post('http://localhost:3000/api/dungeon/weapon', { weaponName: selectedWeapon });
+      setCurrentWeapon(res.data.currentWeapon);
+      setLog(prevLog => [...prevLog, res.data.message]);
     } catch (error) {
-      console.error('Fehler beim Ausrüsten:', error.response?.data || error.message);
-      setMessage('Fehler beim Ausrüsten.');
-      addToLog('Fehler beim Ausrüsten.');
-    }
-  };
-
-  const fightMonster = async () => {
-    try {
-      const response = await axios.post(`${BACKEND_URL}/dungeon/fight`);
-      setPlayer(response.data.player || player);
-
-      if (response.data.player.hp <= 0) {
-        addToLog('Du hast verloren! Das Monster war zu stark.');
-        setMessage('Du wurdest besiegt. Das Abenteuer endet hier.');
-        resolveEvent();
-        return;
-      }
-
-      if (response.data.loot) {
-        setInventory((prev) => [...prev, response.data.loot]);
-        const loot = response.data.loot;
-        addToLog(
-          `Kampf gewonnen! Erhalten: ${loot.name} (Kategorie: ${loot.category}, Stärke: ${loot.strength || 'N/A'}, Verteidigung: ${loot.defense || 'N/A'}, Wert: ${loot.worth})`
-        );
+      if (error.response && error.response.data && error.response.data.message) {
+        setLog(prevLog => [...prevLog, error.response.data.message]);
       } else {
-        addToLog('Kampf gewonnen, aber kein Loot erhalten.');
+        console.error(error);
       }
-
-      setMessage(response.data.event);
-      resolveEvent();
-    } catch (error) {
-      console.error('Fehler beim Kämpfen:', error.response?.data || error.message);
-      addToLog(`Fehler beim Kämpfen: ${error.response?.data?.error || 'Unbekannter Fehler'}`);
     }
   };
 
-  const restartGame = () => {
-    setPlayer({ hp: 50, maxHp: 50, gold: 0, roomCounter: 0 });
-    setEquipment({ weapon: null, armor: null });
-    setEventResponse('');
-    setIsEventActive(false);
-    addToLog('Das Spiel wurde neu gestartet.');
-  };
+  const handleDrinkPotion = async () => {
+    if (!selectedPotion) {
+      setLog(prevLog => [...prevLog, 'Kein Trank ausgewählt.']);
+      return;
+    }
 
-  const openChest = async (choice) => {
     try {
-      const response = await axios.post(`${BACKEND_URL}/dungeon/chest`, { choice });
-      setPlayer(response.data.player || player);
-
-      if (response.data.player.hp <= 0) {
-        addToLog('Du hast die Truhe geöffnet... aber es war eine Mimic! Du wurdest besiegt.');
-        setMessage('Die Mimic hat dich besiegt. Das Abenteuer endet hier.');
-        resolveEvent();
-        return;
-      }
-
-      if (response.data.loot) {
-        setInventory((prev) => [...prev, response.data.loot]);
-        const loot = response.data.loot;
-        addToLog(
-          `Truhe geöffnet! Erhalten: ${loot.name} (Kategorie: ${loot.category}, Stärke: ${loot.strength || 'N/A'}, Verteidigung: ${loot.defense || 'N/A'}, Wert: ${loot.worth})`
-        );
-      } else if (choice === 'yes') {
-        addToLog('Truhe geöffnet, aber kein Loot enthalten.');
-      } else {
-        addToLog('Truhe ignoriert.');
-      }
-
-      setMessage(response.data.event);
-      resolveEvent();
+      const res = await axios.post('http://localhost:3000/api/dungeon/drink-potion', { potionName: selectedPotion });
+      setLog(prevLog => [...prevLog, res.data.message]);
+      fetchPlayerStats();
+      fetchInventory();
     } catch (error) {
-      console.error('Fehler beim Interagieren mit der Truhe:', error);
-      addToLog('Fehler beim Interagieren mit der Truhe.');
+      if (error.response && error.response.data && error.response.data.message) {
+        setLog(prevLog => [...prevLog, error.response.data.message]);
+      } else {
+        console.error(error);
+      }
     }
   };
+
+  const handleNextRoom = async () => {
+    try {
+      const res = await axios.get('http://localhost:3000/api/dungeon/event');
+      setEvent(res.data.event);
+      setRoomName(res.data.roomName);
+      setLog(prevLog => [...prevLog, `Du betrittst die ${res.data.roomName}.`]);
+
+      // Trigger Post Event basierend auf dem Event
+      const eventResponse = await axios.post('http://localhost:3000/api/dungeon/event', { event: res.data.event, roomName: res.data.roomName });
+      setLog(prevLog => [...prevLog, eventResponse.data.message]);
+
+      // Aktualisiere Spielerstatus nach Event
+      fetchPlayerStats();
+      fetchInventory();
+      fetchWeapon();
+      fetchDifficulty();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Filtere Tränke aus dem Inventar
+  const potions = inventory.filter(item => item.type === 'Trank' && item.quantity > 0);
 
   return (
     <div className="dungeon-container">
-      <header className="dungeon-header">
-        <h1>Dungeon-Abenteuer</h1>
-      </header>
-
-      <div className="dungeon-content">
-        <div className="player-status">
-          <h2>Spielerstatus</h2>
-          <div>
-            <p>HP: {player.hp}/{player.maxHp}</p>
-            <p>Gold: {player.gold}</p>
-            <p>Erkundete Räume: {player.roomCounter}</p>
-          </div>
-        </div>
-
-        <div className="event-section">
-          <h2>Ereignisse</h2>
-          <p>{eventResponse || 'Kein Ereignis aktiv.'}</p>
-          {!isEventActive && <button onClick={triggerEvent}>Ereignis auslösen</button>}
-
-          {isEventActive && eventResponse.includes('Monster') && (
-            <button onClick={fightMonster} className="action-button">Kämpfen</button>
-          )}
-          {isEventActive && eventResponse.includes('You found a chest!') && (
-            <>
-              <button onClick={() => openChest('yes')} className="action-button">Ja</button>
-              <button onClick={() => openChest('no')} className="action-button">Nein</button>
-            </>
-          )}
-          {isEventActive && eventResponse.includes('You lost the fight and died!') && (
-            <>
-              <p>Du hast den Kampf verloren und bist gestorben! Deine Reise beginnt von vorne.</p>
-              <button onClick={restartGame} className="action-button">Neustart</button>
-            </>
-          )}
-          {isEventActive &&
-            (eventResponse.includes('leerer Raum') ||
-              eventResponse.includes('The room is empty') ||
-              eventResponse.includes('Falle') ||
-              eventResponse.includes('A poison dart hits you') ||
-              eventResponse.includes('The ceiling collapses partially!') ||
-              eventResponse.includes('You fell into a spike pit!') ||
-              eventResponse.includes('An arrow trap shoots you') ||
-              eventResponse.includes('Duy')) && (
-              <button onClick={resolveEvent} className="action-button">Weiter</button>
-          )}
-        </div>
-
-        <div className="difficulty-section">
-          <h2>Schwierigkeitsgrad</h2>
-          <input
-            type="number"
-            placeholder="Schwierigkeit eingeben"
-            value={difficulty}
-            onChange={(e) => setDifficulty(e.target.value)}
-          />
-          <button onClick={changeDifficulty}>Ändern</button>
-        </div>
-
-        <div className="inventory">
-          <h2>Inventar</h2>
-          <select
-            value={selectedWeapon || ''}
-            onChange={(e) => setSelectedWeapon(Number(e.target.value))}
-          >
-            <option value="">-- Waffe auswählen --</option>
-            {inventory
-              .filter((item) => item.type === 'weapon')
-              .map((weapon) => (
-                <option key={weapon.id} value={weapon.id}>
-                  {weapon.name} (Stärke: {weapon.strength}, Wert: {weapon.worth})
-                </option>
-              ))}
-          </select>
-          <button onClick={equipItem}>Ausrüsten</button>
-        </div>
+      <h1>Dungeon Spiel</h1>
+      <div className="player-stats">
+        <p>HP: {playerHP} / {playerMaxHP}</p>
+        <p>Geld: {playerMoney}</p>
+        <p>Schaden: {currentWeapon ? currentWeapon.strength : 'Keine Waffe'}</p>
+        <p>Waffe: {currentWeapon ? currentWeapon.name : 'Keine ausgerüstet'}</p>
       </div>
 
-      <div className="log-section">
-        <h2>Protokoll</h2>
-        <ul>
+      <div className="controls">
+        <div className="difficulty-setter">
+          <input
+            type="number"
+            value={difficulty}
+            onChange={(e) => setDifficulty(Number(e.target.value))}
+            min="1"
+          />
+          <button onClick={handleSetDifficulty}>Schwierigkeit festlegen</button>
+        </div>
+
+        <div className="weapon-selector">
+          <select value={selectedWeapon} onChange={(e) => setSelectedWeapon(e.target.value)}>
+            <option value="">Waffe auswählen</option>
+            {inventory.filter(w => w.type === 'weapon').map((w, index) => (
+              <option key={index} value={w.name}>
+                {w.name} (Stärke: {w.strength})
+              </option>
+            ))}
+          </select>
+          <button onClick={handleEquipWeapon}>Waffe ausrüsten</button>
+        </div>
+
+        <div className="potion-selector">
+          <select value={selectedPotion} onChange={(e) => setSelectedPotion(e.target.value)}>
+            <option value="">Trank auswählen</option>
+            {potions.map((potion, index) => (
+              <option key={index} value={potion.name}>
+                {potion.name} (Heilwert: {potion.strength}) - {potion.quantity} verfügbar
+              </option>
+            ))}
+          </select>
+          <button onClick={handleDrinkPotion}>Trank trinken</button>
+        </div>
+
+        <button onClick={handleNextRoom}>Nächster Raum</button>
+      </div>
+
+      <div className="log">
+        <h2>Dungeon-Log</h2>
+        <div className="log-content">
           {log.map((entry, index) => (
-            <li key={index}>{entry}</li>
+            <p key={index}>{entry}</p>
           ))}
-        </ul>
+          <div ref={logEndRef} />
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default Dungeon;

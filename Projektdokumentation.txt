@@ -185,3 +185,31 @@ Für morgen geplant:
 Dungeon: Eine umfassende Überarbeitung steht an, um die Herausforderungen und das Layout zu verbessern und den Spielern ein spannenderes Erlebnis zu bieten.
 Schmiede: Die Arbeiten werden fortgesetzt, wobei zusätzlich die Einführung von Quests geplant ist, um die Interaktion und den Mehrwert der Schmiede weiter zu steigern.
 Taverne: Auch hier sollen die Entwicklungen fortgesetzt und neue Quests eingeführt werden, um die Taverne als zentralen Treffpunkt für die Spieler weiter auszubauen.
+
+#################################################################################################################################################
+
+Tagesdokumentation: 21.11.24
+
+Heute wurde die Quest für die Taverne erfolgreich hinzugefügt und ist nun voll funktionsfähig. Spieler können nun neue Aufgaben in der Taverne annehmen und abschließen, 
+was das Spielerlebnis bereichert und zusätzliche Interaktionsmöglichkeiten bietet.
+
+Des Weiteren wurde eine Schlafoption für die Taverne implementiert. Diese Funktion ermöglicht es den Spielern, sich auszuruhen und ihre Gesundheit wiederherzustellen. 
+Allerdings wurde festgestellt, dass die HP (Health Points) vom Dungeon derzeit nicht berücksichtigt werden, was in zukünftigen Updates behoben werden muss.
+
+Die Quest für den Schmied wurde ebenfalls hinzugefügt und funktioniert reibungslos. Spieler können nun Aufgaben beim Schmied annehmen und abgeben.
+
+Zusätzlich wurde der Dungeon neu bearbeitet. Die Überarbeitungen wurden erfolgreich umgesetzt und der Dungeon funktioniert bisher einwandfrei. 
+Dies verbessert die Herausforderungen und die Spieltiefe für die Nutzer erheblich.
+
+Plan für morgen:
+
+Für den morgigen Tag ist geplant, das CSS (Cascading Style Sheets) für die gesamte Webseite zu überarbeiten. 
+Dies soll das visuelle Erscheinungsbild verbessern und eine einheitliche Gestaltung sicherstellen.
+
+Ein weiteres wichtiges Ziel ist die Implementierung eines Crafting-Systems für den Schmied. Dieses System wird es den Spielern ermöglichen, 
+eigene Ausrüstungsgegenstände herzustellen und somit ihre individuellen Spielstrategien zu erweitern. und Es sollen Belohnungen eingeführt werden.
+
+Die Weiterbearbeitung des Dungeons steht ebenfalls auf der Tagesordnung. Geplant ist, weitere Anpassungen vorzunehmen, um die Herausforderung und den Spielspaß zu erhöhen.
+
+Abschließend soll die HP-Anzeige in der Taverne optimiert werden. Dies beinhaltet die Berücksichtigung der HP vom Dungeon, 
+um eine genauere und verlässlichere Gesundheitsanzeige für die Spieler zu gewährleisten.

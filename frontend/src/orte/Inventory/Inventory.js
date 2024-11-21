@@ -29,7 +29,7 @@ const Inventory = () => {
 
   return (
     <div className="inventory-container">
-      <h1>Inventar</h1>
+      <h1>Inventar 📜</h1>
       <div className="button-group">
         <button onClick={() => fetchItems('all/items')} className="button">Alle Items</button>
         <button onClick={() => fetchItems('equipment/items')} className="button">Equipment</button>

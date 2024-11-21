@@ -30,7 +30,7 @@ const Mine = () => {
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>Schürferspaß-Deluxe</h1> {/* Name der Mine eingefügt */}
+      <h1>Schürferspaß-Deluxe ⛏️</h1> {/* Name der Mine eingefügt */}
       {!hasPickaxe ? (
         <>
           <p>Ich brauche eine Hacke, um Erz zu schürfen. Hey, da liegt ja eine Hacke!</p>

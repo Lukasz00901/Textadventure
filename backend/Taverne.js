@@ -1,18 +1,49 @@
 const express = require('express');
 const router = express.Router();
 const { inventoryItems } = require('./Inventar_Inhalt');
+let playerMoney = [12500]; // Geld des Spielers
+let PlayerHP = [50]; // Aktuelle HP des Spielers
+let PlayerMaxHP = [50]; // Maximale HP des Spielers
+const sleepCost = 5; // Kosten fürs Schlafen
+let activeQuest = null; // Aktive Quest global definieren
 
 // Taverne-Items
 const tavernItems = [
-  { id: 1, name: 'Bier', type: 'Trank', price: 15, strength: 15, category: 'consumable', quantity: 10 },
-  { id: 2, name: 'Wein', type: 'Trank', price: 25, strength: 30, category: 'consumable', quantity: 10 },
-  { id: 3, name: 'Met', type: 'Trank', price: 40, strength: 50, category: 'consumable', quantity: 10 },
-  { id: 4, name: 'Kräuterlikör', type: 'Trank', price: 5, strength: 5, category: 'consumable', quantity: 10 },
-  { id: 5, name: 'Wasser (Unsauber!)', type: 'Trank', price: 2, strength: 3, category: 'consumable', quantity: 10 },
-  { id: 6, name: 'Eintopf', type: 'Lebensmittel', price: 3, strength: 3, category: 'consumable', quantity: 10 },
-  { id: 7, name: 'Fleisch', type: 'Lebensmittel', price: 10, strength: 15, category: 'consumable', quantity: 10 },
-  { id: 8, name: 'Fisch', type: 'Lebensmittel', price: 3, strength: 3, category: 'consumable', quantity: 10 },
+  { name: 'Bierkrug', type: 'Getränk', price: 5, worth: 3, quantity: 20 },
+  { name: 'Weinflasche', type: 'Getränk', price: 12, worth: 7, quantity: 10 },
+  { name: 'Braten', type: 'Speise', price: 20, worth: 15, quantity: 8 },
+  { name: 'Eintopf', type: 'Speise', price: 10, worth: 6, quantity: 15 },
+  { name: 'Honigwein', type: 'Getränk', price: 18, worth: 12, quantity: 12 },
+  { name: 'Käseplatte', type: 'Speise', price: 25, worth: 18, quantity: 5 },
 ];
+
+// Route: Spielerstatus abrufen
+router.get('/player-status', (req, res) => {
+  res.json({
+    money: playerMoney[0],
+    hp: PlayerHP[0],
+    maxHp: PlayerMaxHP[0],
+    sleepCost, // Kosten fürs Schlafen hinzufügen
+  });
+});
+
+// Button: Schlafen
+router.post('/sleep', (req, res) => {
+  if (playerMoney[0] >= sleepCost) {
+    playerMoney[0] -= sleepCost; // Abziehen der Schlafkosten
+    PlayerHP[0] = PlayerMaxHP[0]; // Spieler erholt sich vollständig
+    res.json({
+      message: 'Du hast geschlafen und bist wieder fit!',
+      playerStatus: {
+        money: playerMoney[0],
+        hp: PlayerHP[0],
+        maxHp: PlayerMaxHP[0],
+      },
+    });
+  } else {
+    res.status(400).json({ message: 'Nicht genug Geld, um zu schlafen.' });
+  }
+});
 
 // Route: Alle Taverne-Items abrufen
 router.get('/items', (req, res) => {
@@ -21,30 +52,41 @@ router.get('/items', (req, res) => {
 
 // Route: Item kaufen
 router.post('/buy', (req, res) => {
-  const { itemId } = req.body;
-  const tavernItem = tavernItems.find(item => item.id === itemId);
+  const { itemName } = req.body;
 
-  if (tavernItem && tavernItem.quantity > 0) {
-    const newItem = { ...tavernItem };
-    inventoryItems.push(newItem); // Item ins Inventar hinzufügen
-    tavernItem.quantity -= 1; // Taverne-Bestand reduzieren
-    res.json({ inventoryItems });
-  } else {
-    res.status(400).json({ message: 'Item nicht verfügbar.' });
+  const tavernItem = tavernItems.find(item => item.name === itemName);
+  if (!tavernItem) {
+    return res.status(404).json({ message: 'Item nicht gefunden.' });
   }
-});
 
-// Route: Item verkaufen
-router.post('/sell', (req, res) => {
-  const { itemId } = req.body;
-  const itemIndex = inventoryItems.findIndex(item => item.id === itemId);
-
-  if (itemIndex !== -1) {
-    inventoryItems.splice(itemIndex, 1); // Item aus dem Inventar entfernen
-    res.json({ inventoryItems });
-  } else {
-    res.status(404).json({ message: 'Item nicht im Inventar gefunden.' });
+  if (tavernItem.quantity <= 0) {
+    return res.status(400).json({ message: 'Item ist ausverkauft.' });
   }
+
+  if (playerMoney[0] < tavernItem.price) {
+    return res.status(400).json({ message: 'Nicht genug Geld, um das Item zu kaufen.' });
+  }
+
+  playerMoney[0] -= tavernItem.price;
+  tavernItem.quantity -= 1;
+
+  const existingItem = inventoryItems.find(item => item.name === itemName);
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    inventoryItems.push({ name: tavernItem.name, quantity: 1 });
+  }
+
+  res.json({
+    message: `${tavernItem.name} wurde gekauft.`,
+    playerStatus: {
+      money: playerMoney[0],
+      hp: PlayerHP[0],
+      maxHp: PlayerMaxHP[0],
+    },
+    tavernItems,
+    inventoryItems,
+  });
 });
 
 module.exports = router;

@@ -26,7 +26,7 @@ const Wald = () => {
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>Tannenspitzental</h1> {/* Name des Waldes eingefügt */}
+      <h1>Tannenspitzental 🌲</h1> {/* Name des Waldes eingefügt */}
       {!hasAxe ? (
         <>
           <p>Ich brauche eine Axt, um Holz zu sammeln. Hey, da liegt ja eine Axt!</p>

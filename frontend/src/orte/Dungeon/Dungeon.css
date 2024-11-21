@@ -1,77 +1,67 @@
+/* frontend/src/components/Dungeon.css */
 .dungeon-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 80%;
+  margin: 0 auto;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  background-color: #2e2e2e;
+  color: #f0f0f0;
+  padding: 20px;
+  border-radius: 10px;
 }
 
-.dungeon-header {
-  text-align: center;
+.player-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  background-color: #3e3e3e;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.controls {
   margin-bottom: 20px;
 }
 
-.dungeon-content {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 80%;
-  gap: 20px;
+.difficulty-setter, .weapon-selector, .potion-selector {
+  margin: 10px 0;
 }
 
-/* Linker Bereich */
-.left-section {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 20%;
-}
-
-/* Rechter Bereich */
-.right-section {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 20%;
-}
-
-/* Mittlerer Bereich */
-.log-section {
-  width: 60%;
-  text-align: center;
-}
-
-.log-container {
-  height: 300px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  padding: 10px;
-  background-color: #f9f9f9;
-}
-
-.log-container ul {
-  list-style: none;
-  padding: 0;
-}
-
-.log-container li {
-  margin-bottom: 5px;
+input[type="number"], select {
+  padding: 5px;
+  width: 200px;
+  border-radius: 5px;
+  border: none;
+  margin-right: 10px;
 }
 
 button {
-  padding: 10px;
-  background-color: #ff4747;
-  color: white;
-  border: none;
+  padding: 10px 20px;
+  margin-left: 10px;
   cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: white;
+  transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #e63e3e;
+  background-color: #45a049;
 }
 
-.log-section {
-  width: 60%;
-  text-align: center;
+.log {
+  margin-top: 20px;
 }
 
+.log-content {
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: #1e1e1e;
+  padding: 10px;
+  border-radius: 5px;
+}
 
-
+.log-content p {
+  margin: 5px 0;
+}

@@ -1,48 +1,79 @@
+/* Schriftart von Google Fonts importieren */
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook&display=swap');
+
 .inventory-container {
   text-align: center;
   margin-top: 20px;
+  font-family: 'UnifrakturCook', cursive, serif;
+  color: #f4e3c1; /* Cremeweiße Textfarbe */
 }
 
 .button-group {
   margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 .button {
   padding: 10px 20px;
-  margin: 5px;
   font-size: 16px;
   cursor: pointer;
   border-radius: 5px;
-  border: 1px solid #d4af37;
+  border: 1px solid #a77f33; /* Bronzerahmen */
+  background-color: #160e0c; /* Schokoladenbrauner Hintergrund */
+  color: #f4e3c1; /* Cremeweiße Schrift */
+  font-family: 'UnifrakturCook', cursive, serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #a77f33; /* Bronze Hover-Effekt */
+  color: #3a2d2d; /* Brauner Text auf Bronze */
 }
 
 .error {
   color: red;
+  font-weight: bold;
+  margin-top: 10px;
+  font-family: 'UnifrakturCook', cursive, serif;
 }
 
 .inventory-table {
-  margin: 0 auto; /* Zentriert die Tabelle horizontal */
-  border-collapse: separate; /* Erlaubt Abrundungen */
-  border-spacing: 0; /* Entfernt Abstände zwischen Zellen */
-  width: 80%; /* Optionale Breite */
-  border-radius: 5px; /* Abrundung der Ecken */
-  background-color: #160e0ca6; /* Optional: Hintergrundfarbe */
-  border: 3px solid #d4af37; /* Rahmen für die gesamte Tabelle */
+  margin: 0 auto;
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 80%;
+  border-radius: 5px;
+  background-color: #3a2d2d00; /* Schokoladenbrauner Hintergrund */
+  border: 3px solid #a77f33; /* Bronze Rahmen */
+  color: #f4e3c1;
+  font-family: 'UnifrakturCook', cursive, serif;
 }
 
 .table-header {
-  border: 2px solid #d4af37;
+  border: 2px solid #a77f33; /* Bronze Rahmen */
   padding: 10px;
   font-weight: bold;
   text-align: left;
-  background-color: #f9f9f900; /* Optional: Hintergrundfarbe für bessere Optik */
+  background-color: #f5deb359; /* Dunklerer Braunton für Header */
+  color: #0A0A0A; /* Cremeweiße Schrift */
+  font-family: 'UnifrakturCook', cursive, serif;
 }
 
 .table-cell {
-  border: 1px solid #d4af37; /* Einheitliche Rahmenstärke */
+  border: 1px solid #a77f33; /* Bronze Rahmen */
   padding: 10px;
   text-align: left;
+  background-color: #f5deb359; /* Schokoladenbrauner Hintergrund */
+  font-family: 'UnifrakturCook', cursive, serif;
+  color: #0A0A0A; /* Cremeweiße Schrift */
 }
 
+tr:hover {
+  background-color: #f5deb38f; /* Dezenter Braunton für Hover-Effekt */
+}
 
-
+.table-cell:hover {
+  background-color: transparent;
+}

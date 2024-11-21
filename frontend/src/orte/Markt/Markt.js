@@ -22,16 +22,16 @@ function Markt() {
   }, []);
 
   // Buy item from the market
-  const buyItem = async (itemId) => {
+  const buyItem = async (itemName) => {
     try {
-      const response = await axios.post('http://localhost:3000/market/buy', { itemId });
+      const response = await axios.post('http://localhost:3000/market/buy', { itemName });
       const updatedItems = marketItems.map((item) =>
-        item.id === itemId ? { ...item, quantity: item.quantity - 1 } : item
+        item.name === itemName ? { ...item, quantity: item.quantity - 1 } : item
       );
       setMarketItems(updatedItems);
       setInventoryItems((prevInventory) => [
         ...prevInventory,
-        response.data.inventoryItems.find((item) => item.id === itemId),
+        response.data.inventoryItems.find((item) => item.name === itemName),
       ]);
       setErrorMessage('');
     } catch (error) {
@@ -41,11 +41,11 @@ function Markt() {
   };
 
   // Sell item from inventory
-  const sellItem = async (itemId) => {
+  const sellItem = async (itemName) => {
     try {
-      await axios.post('http://localhost:3000/market/sell', { itemId });
+      await axios.post('http://localhost:3000/market/sell', { itemName });
       setInventoryItems((prevInventory) =>
-        prevInventory.filter((item) => item.id !== itemId)
+        prevInventory.filter((item) => item.name !== itemName)
       );
       setErrorMessage('');
     } catch (error) {
@@ -56,19 +56,18 @@ function Markt() {
 
   return (
     <div className="Markt">
-      <h1>Marktplatz</h1>
+      <h1>Marktplatz 💰</h1>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       <div className="market">
-        
         <ul>
           {marketItems.map((item) => (
-            <li key={item.id}>
+            <li key={item.name}>
               <div>{item.name}</div>
               <div>{item.type}</div>
               <div>{item.price} Gold</div>
               <div>Verfügbar: {item.quantity}</div>
               <button
-                onClick={() => buyItem(item.id)}
+                onClick={() => buyItem(item.name)}
                 disabled={item.quantity <= 0}
               >
                 {item.quantity > 0 ? 'Kaufen' : 'Ausverkauft'}
@@ -77,9 +76,7 @@ function Markt() {
           ))}
         </ul>
       </div>
-      <div className="inventory">
-        
-        </div>
+      
     </div>
   );
 }
