@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './Dungeon.css';
 
-
 const Dungeon = () => {
   const [difficulty, setDifficulty] = useState(1);
   const [currentWeapon, setCurrentWeapon] = useState(null);
@@ -11,7 +10,7 @@ const Dungeon = () => {
   const [playerHP, setPlayerHP] = useState(30);
   const [playerMaxHP, setPlayerMaxHP] = useState(50);
   const [playerMoney, setPlayerMoney] = useState(125);
-  const [roomsCompleted, setRoomsCompleted] = useState(0);
+  const [roomsCompleted, setRoomsCompleted] = useState(0); // Raumzähler hinzugefügt
   const [event, setEvent] = useState(null);
   const [roomName, setRoomName] = useState('');
   const [log, setLog] = useState([]);
@@ -71,6 +70,7 @@ const Dungeon = () => {
       setPlayerHP(res.data.PlayerHP);
       setPlayerMaxHP(res.data.PlayerMaxHP);
       setPlayerMoney(res.data.playerMoney);
+      setRoomsCompleted(res.data.roomsCompleted); // Raumzähler aktualisieren
     } catch (error) {
       console.error(error);
     }
@@ -162,6 +162,7 @@ const Dungeon = () => {
         <p>Geld: {playerMoney}</p>
         <p>Schaden: {currentWeapon ? currentWeapon.strength : 'Keine Waffe'}</p>
         <p>Waffe: {currentWeapon ? currentWeapon.name : 'Keine ausgerüstet'}</p>
+        <p>Räume abgeschlossen: {roomsCompleted}</p> {/* Raumzähler angezeigt */}
       </div>
 
       <div className="controls">
@@ -208,7 +209,7 @@ const Dungeon = () => {
           {log.map((entry, index) => (
             <p key={index}>{entry}</p>
           ))}
-          <div ref={logEndRef} />
+          <div ref={logEndRef} /> {/* Referenz für automatisches Scrollen */}
         </div>
       </div>
     </div>

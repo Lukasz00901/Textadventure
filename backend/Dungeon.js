@@ -15,7 +15,7 @@ router.use(cors({
 // Game State (in-memory, für Produktion sollte eine Datenbank verwendet werden)
 let gameState = {
   difficulty: 1,
-  roomsCompleted: 0,
+  roomsCompleted: 0, // Raumzähler hinzugefügt
   currentWeapon: null,
   playerHP: PlayerHP[0],
   playerMaxHP: PlayerMaxHP[0],
@@ -117,7 +117,8 @@ router.get('/player-stats', (req, res) => {
   res.json({
     PlayerHP: gameState.playerHP,
     PlayerMaxHP: gameState.playerMaxHP,
-    playerMoney: gameState.playerMoney
+    playerMoney: gameState.playerMoney,
+    roomsCompleted: gameState.roomsCompleted // Raumzähler hinzugefügt
   });
 });
 
@@ -184,7 +185,7 @@ const handleFight = (res) => {
     // Spieler gewinnt
     const moneyEarned = getRandomInt(1, 8) * gameState.difficulty;
     gameState.playerMoney += moneyEarned;
-    gameState.roomsCompleted += 1;
+    gameState.roomsCompleted += 1; // Raumzähler erhöht
     gameState.playerHP = playerCurrentHP;
     PlayerHP[0] = gameState.playerHP;
     playerMoney[0] = gameState.playerMoney;
@@ -193,7 +194,7 @@ const handleFight = (res) => {
     // Spieler verliert
     const moneyLost = Math.floor(gameState.playerMoney * (getRandomInt(10, 50) / 100));
     gameState.playerMoney -= moneyLost;
-    gameState.roomsCompleted = 0;
+    gameState.roomsCompleted = 0; // Raumzähler zurückgesetzt
     gameState.playerHP = gameState.playerMaxHP;
     PlayerHP[0] = gameState.playerHP;
     playerMoney[0] = gameState.playerMoney;
@@ -220,7 +221,7 @@ const handleChest = (res) => {
       });
     }
   }
-  gameState.roomsCompleted += 1;
+  gameState.roomsCompleted += 1; // Raumzähler erhöht
   res.json({ message: `Du hast eine Truhe gefunden! Du erhältst: ${loot.name}`, loot });
 };
 
@@ -237,7 +238,7 @@ const handleTrap = (res) => {
     // Spieler stirbt
     const moneyLost = Math.floor(gameState.playerMoney * (getRandomInt(10, 50) / 100));
     gameState.playerMoney -= moneyLost;
-    gameState.roomsCompleted = 0;
+    gameState.roomsCompleted = 0; // Raumzähler zurückgesetzt
     gameState.playerHP = gameState.playerMaxHP;
     PlayerHP[0] = gameState.playerHP;
     playerMoney[0] = gameState.playerMoney;
@@ -247,7 +248,7 @@ const handleTrap = (res) => {
 
 // Leerer Raum Handler
 const handleEmptyRoom = (res) => {
-  gameState.roomsCompleted += 1;
+  gameState.roomsCompleted += 1; // Raumzähler erhöht
   res.json({ message: 'Der Raum ist leer. Nichts passiert.' });
 };
 
