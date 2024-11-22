@@ -51,7 +51,7 @@ p {
 }
 
 .market-page {
-  background-image: url('https://cdn.discordapp.com/attachments/1277534759240601655/1306955924950487131/Markt.webp?ex=673bd8ce&is=673a874e&hm=bfc91ce3c2b4f6757374b95c91e41a6dac9d70b38d7879975ec571bd31d35460&');
+  background-image: url('../public/backround/Markt.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
@@ -61,7 +61,7 @@ p {
 }
 
 .inventory-page {
-  background-image: url('https://cdn.discordapp.com/attachments/1277534759240601655/1306924920973955152/inv.jpg?ex=6738702e&is=67371eae&hm=0a4d6d96a17d66d97abffb79c506745cb1ae4f6e55d92412a192c78572210762&');
+  background-image: url('../public/backround/inventar.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
@@ -70,21 +70,21 @@ p {
 }
 
 .mine-page {
-  background-image: url('https://cdn.discordapp.com/attachments/1277534759240601655/1306955925378174996/Erzhohle.webp?ex=673bd8ce&is=673a874e&hm=141eea06376a3858caf0bfc221265657fe66f5851681b6704a55eee40060793d&');
+  background-image: url('../public/backround/Erzhöhle.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
 }
 
 .wald-page {
-  background-image: url('https://cdn.discordapp.com/attachments/1277534759240601655/1306959269534629909/Wald.webp?ex=673bdbeb&is=673a8a6b&hm=b496537c334916a5ecf66da2f80ad96d99348aa6686eceffdd80448beec1a5db&');
+  background-image: url('../public/backround/Wald.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
 }
 
 .schmiede-page {
-  background-image: url('https://cdn.discordapp.com/attachments/1277534759240601655/1306961031331057695/Schmied_innen.webp?ex=673bdd90&is=673a8c10&hm=ff577b6d7340047f8f41663a5db02b9cb5220f333e14bcff33cef7825da8d9ad&');
+  background-image: url('../public/backround/Schmiede.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
@@ -93,7 +93,7 @@ p {
 }
 
 .taverne-page {
-  background-image: url('https://cdn.discordapp.com/attachments/1277534759240601655/1306958186305028106/Taverne.webp?ex=673bdae9&is=673a8969&hm=af212939823ba15d583800f65ac43e3c7c43f31538a53136bf730ca0097c6774&');
+  background-image: url('../public/backround/Taverne.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
@@ -102,7 +102,7 @@ p {
 }
 
 .dungeon-page {
-  background-image: url('https://cdn.discordapp.com/attachments/1277534759240601655/1306961815636414576/Dungeon_Eingang.webp?ex=673bde4b&is=673a8ccb&hm=1f62bcdbb63a8917e3d50d6b54b09c2ed9711094ceb047c433173e38848d837a&');
+  background-image: url('../public/backround/Dungeon.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;

@@ -1,7 +1,8 @@
 // backend/Dungeon.js
+
 const express = require('express');
 const router = express.Router();
-const { inventoryItems, PlayerHP, PlayerMaxHP, playerMoney } = require('./Inventar_Inhalt');
+const { inventoryItems, PlayerHP, PlayerMaxHP, playerMoney, playerEP, MaxDifficulty } = require('./Inventar_Inhalt');
 
 // Middleware zum Parsen von JSON
 router.use(express.json());
@@ -15,16 +16,27 @@ router.use(cors({
 // Game State (in-memory, für Produktion sollte eine Datenbank verwendet werden)
 let gameState = {
   difficulty: 1,
-  roomsCompleted: 0, // Raumzähler hinzugefügt
+  roomsCompleted: 0, // Raumzähler
   currentWeapon: null,
   playerHP: PlayerHP[0],
   playerMaxHP: PlayerMaxHP[0],
   playerMoney: playerMoney[0],
+  playerEP: playerEP[0], // EP hinzufügen
 };
 
 // Listen für Loot
 const potions = inventoryItems.filter(item => item.type === 'Trank');
 
+// Definiere die unlockDifficulty für jede Trankart
+const potionUnlockDifficulty = {
+  'Kleiner Heiltrank': 1,  // Verfügbar ab Schwierigkeitsgrad 1
+  'Normaler Heiltrank': 3,  // Verfügbar ab Schwierigkeitsgrad 3
+  'Großer Heiltrank': 5,    // Verfügbar ab Schwierigkeitsgrad 5
+  'Mega Heiltrank': 7,      // Verfügbar ab Schwierigkeitsgrad 7
+  'Mana-Trank': 9           // Verfügbar ab Schwierigkeitsgrad 9
+};
+
+// Event- und Gegnerlisten
 const weaponNames = [
   'Rückenbrecher (Zweihänder)', 'Hauptspalte (Zweihänder)', 'Sturmspalter (Zweihänder)',
   'Rippenreißer (Zweihänder)', 'Donnerklinge (Zweihänder)', 'Sonnenwächter (Zweihänder)',
@@ -72,16 +84,41 @@ router.get('/difficulty', (req, res) => {
 // POST Difficulty
 router.post('/difficulty', (req, res) => {
   const { difficulty } = req.body;
+  
+  // Validierung: difficulty muss eine ganze Zahl zwischen 1 und MaxDifficulty[0] +1 sein
   if (!difficulty || typeof difficulty !== 'number' || difficulty < 1) {
-    return res.status(400).json({ message: 'Ungültiger Schwierigkeitsgrad.' });
+    return res.status(400).json({ message: 'Ungültiger Schwierigkeitsgrad. Muss eine ganze Zahl ab 1 sein.' });
   }
 
-  if (difficulty === gameState.difficulty + 1 && gameState.roomsCompleted >= 20) {
+  if (difficulty > MaxDifficulty[0] + 1) {
+    return res.status(400).json({ message: `Schwierigkeitsgrad kann nur auf ${MaxDifficulty[0] + 1} erhöht werden.` });
+  }
+
+  if (difficulty > gameState.difficulty) {
+    // Erhöhen der Schwierigkeitsstufe
+    if (difficulty === gameState.difficulty + 1 && gameState.roomsCompleted >= 20) {
+      gameState.difficulty = difficulty;
+      gameState.roomsCompleted = 0;
+
+      // Update MaxDifficulty, falls notwendig
+      if (difficulty > MaxDifficulty[0]) {
+        MaxDifficulty[0] = difficulty;
+      }
+
+      // Update Player EP im Spielzustand
+      gameState.playerEP = playerEP[0];
+
+      res.json({ message: `Schwierigkeitsgrad auf ${difficulty} gesetzt.` });
+    } else {
+      res.status(400).json({ message: 'Nicht genug Räume abgeschlossen oder ungültiger Schwierigkeitsgrad.' });
+    }
+  } else if (difficulty < gameState.difficulty) {
+    // Verringern der Schwierigkeitsstufe
     gameState.difficulty = difficulty;
-    gameState.roomsCompleted = 0;
-    res.json({ message: `Schwierigkeitsgrad auf ${difficulty} gesetzt.` });
+    res.json({ message: `Schwierigkeitsgrad auf ${difficulty} verringert.` });
   } else {
-    res.status(400).json({ message: 'Nicht genug Räume abgeschlossen oder ungültiger Schwierigkeitsgrad.' });
+    // Schwierigkeit bleibt gleich
+    res.json({ message: `Schwierigkeitsgrad bleibt bei ${difficulty}.` });
   }
 });
 
@@ -118,7 +155,9 @@ router.get('/player-stats', (req, res) => {
     PlayerHP: gameState.playerHP,
     PlayerMaxHP: gameState.playerMaxHP,
     playerMoney: gameState.playerMoney,
-    roomsCompleted: gameState.roomsCompleted // Raumzähler hinzugefügt
+    playerEP: gameState.playerEP, // EP hinzufügen
+    roomsCompleted: gameState.roomsCompleted,
+    MaxDifficulty: MaxDifficulty[0] // MaxDifficulty hinzufügen
   });
 });
 
@@ -169,27 +208,35 @@ const handleFight = (res) => {
   const enemyDamage = getRandomInt(2, 5) * gameState.difficulty;
 
   let playerCurrentHP = gameState.playerHP;
-  let enemyCurrentHPCurrent = enemyHP;
+  let enemyCurrentHP = enemyHP;
 
   // Kampf Schleife
-  while (playerCurrentHP > 0 && enemyCurrentHPCurrent > 0) {
+  while (playerCurrentHP > 0 && enemyCurrentHP > 0) {
     // Spieler greift zuerst an
-    enemyCurrentHPCurrent -= gameState.currentWeapon.strength;
-    if (enemyCurrentHPCurrent <= 0) break;
+    enemyCurrentHP -= gameState.currentWeapon.strength;
+    if (enemyCurrentHP <= 0) break;
 
     // Gegner greift an
-    playerCurrentHP -= enemyDamage;
+    let damageReceived = enemyDamage;
+    gameState.playerHP -= damageReceived;
+    playerCurrentHP = gameState.playerHP;
   }
 
   if (playerCurrentHP > 0) {
     // Spieler gewinnt
     const moneyEarned = getRandomInt(1, 8) * gameState.difficulty;
+    const epEarned = getRandomInt(2, 5) * gameState.difficulty; // EP skalieren mit difficulty
     gameState.playerMoney += moneyEarned;
+    gameState.playerEP += epEarned; // EP hinzufügen
+    playerMoney[0] = gameState.playerMoney;
+    playerEP[0] = gameState.playerEP;
     gameState.roomsCompleted += 1; // Raumzähler erhöht
     gameState.playerHP = playerCurrentHP;
     PlayerHP[0] = gameState.playerHP;
-    playerMoney[0] = gameState.playerMoney;
-    res.json({ message: `Du hast gegen ${enemyName} gekämpft und gewonnen! Du erhältst ${moneyEarned} Geld.` });
+
+    res.json({ 
+      message: `Du hast gegen ${enemyName} gekämpft und gewonnen! Du erhältst ${moneyEarned} Woth und ${epEarned} EP.` 
+    });
   } else {
     // Spieler verliert
     const moneyLost = Math.floor(gameState.playerMoney * (getRandomInt(10, 50) / 100));
@@ -198,27 +245,33 @@ const handleFight = (res) => {
     gameState.playerHP = gameState.playerMaxHP;
     PlayerHP[0] = gameState.playerHP;
     playerMoney[0] = gameState.playerMoney;
-    res.json({ message: `Du wurdest von ${enemyName} besiegt! Du verlierst ${moneyLost} Geld und deine HP werden zurückgesetzt.` });
+    res.json({ 
+      message: `Du wurdest von ${enemyName} besiegt! Du verlierst ${moneyLost} Woth und deine HP werden zurückgesetzt.` 
+    });
   }
 };
 
 // Truhe Handler
 const handleChest = (res) => {
   const loot = generateLoot();
+  console.log(`Loot generiert: ${JSON.stringify(loot)}`); // Debugging-Log
+
   // Füge das Loot zum Inventar hinzu, falls es eine Waffe, Trank oder Material ist
   if (loot.type === 'weapon' || loot.type === 'Trank' || loot.type === 'Material') {
     const existingItem = inventoryItems.find(item => item.name === loot.name && item.type === loot.type);
     if (existingItem) {
       existingItem.quantity += 1;
+      console.log(`Existierender Gegenstand aktualisiert: ${existingItem.name}, neue Menge: ${existingItem.quantity}`); // Debugging-Log
     } else {
       inventoryItems.push({
         name: loot.name,
         type: loot.type,
-        price: loot.price || 0,
+        worth: loot.worth || 0, // worth statt price
         strength: loot.strength || 0,
         category: loot.category,
         quantity: 1
       });
+      console.log(`Neuer Gegenstand hinzugefügt: ${loot.name}`); // Debugging-Log
     }
   }
   gameState.roomsCompleted += 1; // Raumzähler erhöht
@@ -228,11 +281,14 @@ const handleChest = (res) => {
 // Falle Handler
 const handleTrap = (res) => {
   const trapText = trapTexts[getRandomInt(0, trapTexts.length - 1)];
-  const damage = getRandomInt(1, 3) * gameState.difficulty;
+  let damage = getRandomInt(1, 3) * gameState.difficulty;
+
   gameState.playerHP -= damage;
+  PlayerHP[0] = gameState.playerHP;
+
+  console.log(`Falle ausgelöst: ${trapText}, Schaden: ${damage}`); // Debugging-Log
 
   if (gameState.playerHP > 0) {
-    PlayerHP[0] = gameState.playerHP;
     res.json({ message: `${trapText} Du erleidest ${damage} Schaden.` });
   } else {
     // Spieler stirbt
@@ -242,7 +298,7 @@ const handleTrap = (res) => {
     gameState.playerHP = gameState.playerMaxHP;
     PlayerHP[0] = gameState.playerHP;
     playerMoney[0] = gameState.playerMoney;
-    res.json({ message: `Du hast eine tödliche Falle ausgelöst! Du verlierst ${moneyLost} Geld und deine HP werden zurückgesetzt.` });
+    res.json({ message: `Du hast eine tödliche Falle ausgelöst! Du verlierst ${moneyLost} Woth und deine HP werden zurückgesetzt.` });
   }
 };
 
@@ -259,42 +315,50 @@ const generateLoot = () => {
 
   // Wähle eine zufällige Lootkategorie
   const selectedCategory = lootCategories[getRandomInt(0, lootCategories.length - 1)];
+  console.log(`Loot Kategorie ausgewählt: ${selectedCategory}`); // Debugging-Log
 
   let loot;
 
   switch (selectedCategory) {
     case 'Trank':
+      // Filtere Tränke basierend auf der aktuellen Schwierigkeitsstufe
       const availablePotions = potions.filter(potion => {
-        // Hier kannst du die Schwierigkeit berücksichtigen, falls nötig
-        // Zum Beispiel: bestimmte Tränke erst ab bestimmten Schwierigkeitsgraden verfügbar sind
-        // Da in inventoryItems die Tränke bereits definiert sind, hier einfach zufällig auswählen
-        return true;
+        const unlock = potionUnlockDifficulty[potion.name];
+        return unlock === gameState.difficulty && potion.quantity > 0;
       });
+      console.log(`Verfügbare Tränke für Schwierigkeitsgrad ${gameState.difficulty}: ${availablePotions.map(p => p.name).join(', ')}`); // Debugging-Log
+      if (availablePotions.length === 0) {
+        // Wenn keine Tränke verfügbar sind, generiere kein Loot
+        console.log('Keine Tränke verfügbar.');
+        return { name: 'Nichts', type: 'none' };
+      }
       loot = availablePotions[getRandomInt(0, availablePotions.length - 1)];
       break;
     case 'weapon':
       // Erstelle eine zufällige Waffe
       const weaponName = weaponNames[getRandomInt(0, weaponNames.length - 1)];
       const weaponStrength = getRandomInt(2, 4) * gameState.difficulty;
-      const weaponWorth = getRandomInt(2, 5) * gameState.difficulty;
+      const weaponWorth = Math.floor((getRandomInt(2, 5) * gameState.difficulty) / 2); // Halbiere den Wert und runde ab
       loot = {
         name: weaponName,
         type: 'weapon',
         category: 'equipment',
         strength: weaponStrength,
-        price: weaponWorth
+        worth: weaponWorth
       };
+      console.log(`Waffe generiert: ${JSON.stringify(loot)}`); // Debugging-Log
       break;
     case 'Material':
       const materialName = materialNames[getRandomInt(0, materialNames.length - 1)];
-      const materialWorth = getRandomInt(2, 5) * gameState.difficulty;
+      const materialWorth = Math.floor((getRandomInt(2, 5) * gameState.difficulty) / 2); // Halbiere den Wert und runde ab
       loot = {
         name: materialName,
         type: 'Material',
         strength: 0,
         category: 'misc',
-        price: materialWorth
+        worth: materialWorth
       };
+      console.log(`Material generiert: ${JSON.stringify(loot)}`); // Debugging-Log
       break;
     default:
       loot = { name: 'Nichts', type: 'none' };
@@ -326,6 +390,7 @@ router.post('/drink-potion', (req, res) => {
 
   // Trank konsumieren
   potion.quantity -= 1;
+  console.log(`Trank konsumiert: ${potion.name}, verbleibende Menge: ${potion.quantity}`); // Debugging-Log
 
   // Erhöhe die HP des Spielers, aber nicht über PlayerMaxHP
   const healedAmount = potion.strength;

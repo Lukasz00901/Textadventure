@@ -1,4 +1,5 @@
 // frontend/src/components/Dungeon.js
+
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './Dungeon.css';
@@ -10,7 +11,9 @@ const Dungeon = () => {
   const [playerHP, setPlayerHP] = useState(30);
   const [playerMaxHP, setPlayerMaxHP] = useState(50);
   const [playerMoney, setPlayerMoney] = useState(125);
-  const [roomsCompleted, setRoomsCompleted] = useState(0); // Raumzähler hinzugefügt
+  const [playerEP, setPlayerEP] = useState(0); // EP hinzufügen
+  const [roomsCompleted, setRoomsCompleted] = useState(0); // Raumzähler
+  const [maxDifficulty, setMaxDifficulty] = useState(7); // MaxDifficulty aktualisiert
   const [event, setEvent] = useState(null);
   const [roomName, setRoomName] = useState('');
   const [log, setLog] = useState([]);
@@ -18,6 +21,18 @@ const Dungeon = () => {
   const [selectedPotion, setSelectedPotion] = useState('');
 
   const logEndRef = useRef(null);
+
+  // Hilfsfunktion zur Ermittlung der unlockDifficulty basierend auf dem Tranknamen
+  const getUnlockDifficulty = (potionName) => {
+    const unlocks = {
+      'Kleiner Heiltrank': 1,
+      'Normaler Heiltrank': 3,
+      'Großer Heiltrank': 5,
+      'Mega Heiltrank': 7,
+      'Mana-Trank': 9
+    };
+    return unlocks[potionName] || 1;
+  };
 
   useEffect(() => {
     // Initial Daten laden
@@ -41,6 +56,7 @@ const Dungeon = () => {
     try {
       const res = await axios.get('http://localhost:3000/api/dungeon/difficulty');
       setDifficulty(res.data.difficulty);
+      console.log(`Aktueller Schwierigkeitsgrad: ${res.data.difficulty}`); // Debugging-Log
     } catch (error) {
       console.error(error);
     }
@@ -50,6 +66,7 @@ const Dungeon = () => {
     try {
       const res = await axios.get('http://localhost:3000/api/dungeon/weapon');
       setCurrentWeapon(res.data.currentWeapon);
+      console.log(`Aktuelle Waffe: ${JSON.stringify(res.data.currentWeapon)}`); // Debugging-Log
     } catch (error) {
       console.error(error);
     }
@@ -59,6 +76,7 @@ const Dungeon = () => {
     try {
       const res = await axios.get('http://localhost:3000/api/dungeon/inventory');
       setInventory(res.data.inventoryItems);
+      console.log(`Inventar geladen: ${JSON.stringify(res.data.inventoryItems)}`); // Debugging-Log
     } catch (error) {
       console.error(error);
     }
@@ -70,7 +88,10 @@ const Dungeon = () => {
       setPlayerHP(res.data.PlayerHP);
       setPlayerMaxHP(res.data.PlayerMaxHP);
       setPlayerMoney(res.data.playerMoney);
+      setPlayerEP(res.data.playerEP); // EP aktualisieren
       setRoomsCompleted(res.data.roomsCompleted); // Raumzähler aktualisieren
+      setMaxDifficulty(res.data.MaxDifficulty); // MaxDifficulty aktualisieren
+      console.log(`Spielerstatus geladen: HP ${res.data.PlayerHP}/${res.data.PlayerMaxHP}, Woth: ${res.data.playerMoney}, EP: ${res.data.playerEP}, Räume abgeschlossen: ${res.data.roomsCompleted}, MaxDifficulty: ${res.data.MaxDifficulty}`); // Debugging-Log
     } catch (error) {
       console.error(error);
     }
@@ -78,13 +99,21 @@ const Dungeon = () => {
 
   const handleSetDifficulty = async () => {
     try {
-      const newDifficulty = parseInt(difficulty);
+      const newDifficulty = parseInt(difficulty, 10);
+      if (isNaN(newDifficulty)) {
+        setLog(prevLog => [...prevLog, 'Ungültige Schwierigkeitsstufe.']);
+        return;
+      }
+
       const res = await axios.post('http://localhost:3000/api/dungeon/difficulty', { difficulty: newDifficulty });
       setLog(prevLog => [...prevLog, res.data.message]);
+      console.log(res.data.message); // Debugging-Log
       fetchDifficulty();
+      fetchPlayerStats(); // Aktualisiere auch MaxDifficulty und EP
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
         setLog(prevLog => [...prevLog, error.response.data.message]);
+        console.log(error.response.data.message); // Debugging-Log
       } else {
         console.error(error);
       }
@@ -101,9 +130,11 @@ const Dungeon = () => {
       const res = await axios.post('http://localhost:3000/api/dungeon/weapon', { weaponName: selectedWeapon });
       setCurrentWeapon(res.data.currentWeapon);
       setLog(prevLog => [...prevLog, res.data.message]);
+      console.log(res.data.message); // Debugging-Log
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
         setLog(prevLog => [...prevLog, error.response.data.message]);
+        console.log(error.response.data.message); // Debugging-Log
       } else {
         console.error(error);
       }
@@ -119,11 +150,13 @@ const Dungeon = () => {
     try {
       const res = await axios.post('http://localhost:3000/api/dungeon/drink-potion', { potionName: selectedPotion });
       setLog(prevLog => [...prevLog, res.data.message]);
+      console.log(res.data.message); // Debugging-Log
       fetchPlayerStats();
       fetchInventory();
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
         setLog(prevLog => [...prevLog, error.response.data.message]);
+        console.log(error.response.data.message); // Debugging-Log
       } else {
         console.error(error);
       }
@@ -136,10 +169,12 @@ const Dungeon = () => {
       setEvent(res.data.event);
       setRoomName(res.data.roomName);
       setLog(prevLog => [...prevLog, `Du betrittst die ${res.data.roomName}.`]);
+      console.log(`Ereignis ausgewählt: ${res.data.event} in Raum: ${res.data.roomName}`); // Debugging-Log
 
       // Trigger Post Event basierend auf dem Event
       const eventResponse = await axios.post('http://localhost:3000/api/dungeon/event', { event: res.data.event, roomName: res.data.roomName });
       setLog(prevLog => [...prevLog, eventResponse.data.message]);
+      console.log(eventResponse.data.message); // Debugging-Log
 
       // Aktualisiere Spielerstatus nach Event
       fetchPlayerStats();
@@ -151,18 +186,25 @@ const Dungeon = () => {
     }
   };
 
-  // Filtere Tränke aus dem Inventar
-  const potions = inventory.filter(item => item.type === 'Trank' && item.quantity > 0);
+  // Filtere Tränke aus dem Inventar, die verfügbar sind basierend auf der aktuellen Schwierigkeitsstufe
+  const availablePotions = inventory.filter(item => 
+    item.type === 'Trank' && 
+    item.quantity > 0 && 
+    getUnlockDifficulty(item.name) <= difficulty
+  );
+  console.log(`Verfügbare Tränke für Schwierigkeitsgrad ${difficulty}: ${availablePotions.map(p => p.name).join(', ')}`); // Debugging-Log
 
   return (
     <div className="dungeon-container">
       <h1>Dungeon Spiel</h1>
       <div className="player-stats">
         <p>HP: {playerHP} / {playerMaxHP}</p>
-        <p>Geld: {playerMoney}</p>
+        <p>Woth: {playerMoney}</p>
+        <p>EP: {playerEP}</p> {/* EP anzeigen */}
         <p>Schaden: {currentWeapon ? currentWeapon.strength : 'Keine Waffe'}</p>
         <p>Waffe: {currentWeapon ? currentWeapon.name : 'Keine ausgerüstet'}</p>
         <p>Räume abgeschlossen: {roomsCompleted}</p> {/* Raumzähler angezeigt */}
+        <p>Maximal abgeschlossener Schwierigkeitsgrad: {maxDifficulty}</p> {/* MaxDifficulty angezeigt */}
       </div>
 
       <div className="controls">
@@ -172,6 +214,7 @@ const Dungeon = () => {
             value={difficulty}
             onChange={(e) => setDifficulty(Number(e.target.value))}
             min="1"
+            max={maxDifficulty}
           />
           <button onClick={handleSetDifficulty}>Schwierigkeit festlegen</button>
         </div>
@@ -181,7 +224,7 @@ const Dungeon = () => {
             <option value="">Waffe auswählen</option>
             {inventory.filter(w => w.type === 'weapon').map((w, index) => (
               <option key={index} value={w.name}>
-                {w.name} (Stärke: {w.strength})
+                {w.name} (Stärke: {w.strength}) - Woth: {w.worth}
               </option>
             ))}
           </select>
@@ -191,9 +234,9 @@ const Dungeon = () => {
         <div className="potion-selector">
           <select value={selectedPotion} onChange={(e) => setSelectedPotion(e.target.value)}>
             <option value="">Trank auswählen</option>
-            {potions.map((potion, index) => (
+            {availablePotions.map((potion, index) => (
               <option key={index} value={potion.name}>
-                {potion.name} (Heilwert: {potion.strength}) - {potion.quantity} verfügbar
+                {potion.name} (Heilwert: {potion.strength}) - {potion.quantity} verfügbar - Woth: {potion.worth}
               </option>
             ))}
           </select>
