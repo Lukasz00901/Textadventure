@@ -30,7 +30,7 @@ const Inventory = () => {
         throw new Error('Netzwerkantwort war nicht ok');
       }
       const data = await response.json();
-      setItems(translateItemKeys(data.items));
+      setItems(data.items);
     } catch (err) {
       console.error('Fehler beim Abrufen der Daten:', err);
       setError('Fehler beim Abrufen der Daten.');
@@ -108,7 +108,7 @@ const Inventory = () => {
     }
   }, [notification]);
 
-  // Initialer Abruf aller Items
+  // Initiale Abrufung aller Items
   useEffect(() => {
     fetchItems('all/items');
   }, []);
@@ -126,9 +126,9 @@ const Inventory = () => {
       
       <div className="button-group">
         <button onClick={() => fetchItems('all/items')} className="button">Alle Items</button>
-        <button onClick={() => fetchItems('equipment/items')} className="button">Ausrüstungen</button>
-        <button onClick={() => fetchItems('consumable/items')} className="button">Tränke & Lebensmittel</button>
-        <button onClick={() => fetchItems('misc/items')} className="button">Materialien</button>
+        <button onClick={() => fetchItems('equipment/items')} className="button">Equipment</button>
+        <button onClick={() => fetchItems('consumable/items')} className="button">Consumables</button>
+        <button onClick={() => fetchItems('misc/items')} className="button">Misc</button>
       </div>
       <div className="button-group">
         <button onClick={() => fetchItems('items/sort/strength')} className="button">Nach Stärke sortieren</button>
@@ -148,6 +148,7 @@ const Inventory = () => {
               <th className="table-header">Kategorie</th>
               <th className="table-header">Wert</th>
               <th className="table-header">Menge</th>
+              <th className="table-header">Aktionen</th> {/* Neue Spalte für Aktionen */}
             </tr>
           </thead>
           <tbody>
