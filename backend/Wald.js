@@ -9,16 +9,20 @@ const findItemIndex = (name) => {
   return inventoryItems.findIndex((item) => item.name === name);
 };
 
-// Route für das Sammeln von Holz und Rinde
+// Route für das Sammeln von Ressourcen
 router.post('/gather', (req, res) => {
   const items = [
     { name: "Fichtenholz", type: "Material", category: "misc" },
     { name: "Rinde", type: "Material", category: "misc" },
+    { name: "Stöcke", type: "Material", category: "misc" },
+    { name: "Zapfen", type: "Material", category: "misc" },
   ];
 
-  // Generiere 1–5 Fichtenholz
+  // Generiere zufällige Mengen für die Ressourcen
   const woodCount = Math.floor(Math.random() * 5) + 1; // 1 bis 5
   const barkCount = Math.floor(Math.random() * 3) + 1; // 1 bis 3
+  const stickCount = Math.floor(Math.random() * 4) + 1; // 1 bis 4
+  const coneCount = Math.floor(Math.random() * 2) + 1; // 1 bis 2
 
   // Fichtenholz hinzufügen oder Menge erhöhen
   const woodIndex = findItemIndex("Fichtenholz");
@@ -36,11 +40,29 @@ router.post('/gather', (req, res) => {
     inventoryItems.push({ ...items[1], quantity: barkCount }); // Neues Item hinzufügen
   }
 
+  // Stöcke hinzufügen oder Menge erhöhen
+  const stickIndex = findItemIndex("Stöcke");
+  if (stickIndex !== -1) {
+    inventoryItems[stickIndex].quantity += stickCount; // Erhöhe die Menge
+  } else {
+    inventoryItems.push({ ...items[2], quantity: stickCount }); // Neues Item hinzufügen
+  }
+
+  // Zapfen hinzufügen oder Menge erhöhen
+  const coneIndex = findItemIndex("Zapfen");
+  if (coneIndex !== -1) {
+    inventoryItems[coneIndex].quantity += coneCount; // Erhöhe die Menge
+  } else {
+    inventoryItems.push({ ...items[3], quantity: coneCount }); // Neues Item hinzufügen
+  }
+
   res.status(201).json({
     message: 'Ressourcen erfolgreich gesammelt!',
     addedItems: [
       { name: "Fichtenholz", quantity: woodCount },
       { name: "Rinde", quantity: barkCount },
+      { name: "Stöcke", quantity: stickCount },
+      { name: "Zapfen", quantity: coneCount },
     ],
     currentInventory: inventoryItems,
   });

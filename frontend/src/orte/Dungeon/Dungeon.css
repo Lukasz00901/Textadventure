@@ -1,4 +1,3 @@
-/* frontend/src/components/Dungeon.css */
 @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
 
 .dungeon-container {
@@ -74,16 +73,34 @@
   background-color: #271816; /* Hintergrundfarbe angepasst */
   color: #c9b040; /* Textfarbe angepasst */
   font-family: 'UnifrakturCook', cursive, serif; /* Schriftart übernommen */
+  max-height: 300px; /* Begrenze die maximale Höhe */
+  overflow-y: auto; /* Nur vertikales Scrollen erlauben */
+  overflow-x: hidden; /* Horizontales Scrollen deaktivieren */
+  border: 2px solid #c9b040; /* Rahmenfarbe passend zum Thema */
+  padding: 10px;
+  box-sizing: border-box; /* Box-Sizing anpassen */
+  border-radius: 5px;
+  
+
 }
 
 .log-content {
-  max-height: 300px;
-  overflow-y: auto;
-  background-color: #4d3531; /* Hintergrundfarbe angepasst */
-  padding: 10px;
-  border-radius: 5px;
+  padding: 0;
+  margin: 0;
+  list-style: none; /* Entfernt Standardlistenformatierung */
+}
+
+.log-content ul {
+  padding: 0;
+  margin: 0;
+  list-style: none; /* Listenpunkte entfernen */
+}
+
+.log-content li {
+  margin: 5px 0;
   color: #c9b040; /* Textfarbe angepasst */
   font-family: 'UnifrakturCook', cursive, serif; /* Schriftart übernommen */
+  word-wrap: break-word; /* Zeilenumbrüche bei langen Wörtern erzwingen */
 }
 
 .log-content p {
@@ -91,3 +108,11 @@
   color: #c9b040; /* Textfarbe der Log-Einträge */
   font-family: 'UnifrakturCook', cursive, serif; /* Schriftart übernommen */
 }
+
+.resource-separator {
+  border: none;
+  border-top: 2px solid #FFD700; /*Strich zwischen den Materialien*/
+  margin: 20px 0;
+  width: 100%;
+}
+

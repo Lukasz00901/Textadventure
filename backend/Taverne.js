@@ -1,3 +1,4 @@
+// Backend Taverne.js
 const express = require('express');
 const router = express.Router();
 const { inventoryItems } = require('./Inventar_Inhalt');
@@ -6,6 +7,33 @@ let PlayerHP = [50]; // Aktuelle HP des Spielers
 let PlayerMaxHP = [50]; // Maximale HP des Spielers
 const sleepCost = 5; // Kosten fürs Schlafen
 let activeQuest = null; // Aktive Quest global definieren
+
+// Beispielhafte Quests
+const quests = [
+  {
+    name: 'Goblin-Räuber ausschalten',
+    requirements: [
+      { name: 'Goblin', quantity: 10 },
+      { name: 'Schwert', quantity: 1 },
+    ],
+    completed: false,
+  },
+  {
+    name: 'Heilkräuter sammeln',
+    requirements: [
+      { name: 'Heilkräuter', quantity: 5 },
+    ],
+    completed: false,
+  },
+  {
+    name: 'Ritter unterstützen',
+    requirements: [
+      { name: 'Rüstung', quantity: 1 },
+      { name: 'Schwert', quantity: 1 },
+    ],
+    completed: false,
+  },
+];
 
 // Taverne-Items
 const tavernItems = [
@@ -87,6 +115,36 @@ router.post('/buy', (req, res) => {
     tavernItems,
     inventoryItems,
   });
+});
+
+// Neue Route: Quest annehmen
+router.post('/accept-quest', (req, res) => {
+  if (activeQuest && !activeQuest.completed) {
+    return res.status(400).json({ message: 'Du hast bereits eine aktive Quest.' });
+  }
+
+  // Wähle eine zufällige Quest aus der Questliste
+  const availableQuests = quests.filter(q => !q.completed);
+  if (availableQuests.length === 0) {
+    return res.status(400).json({ message: 'Keine verfügbaren Quests.' });
+  }
+
+  const randomIndex = Math.floor(Math.random() * availableQuests.length);
+  activeQuest = { ...availableQuests[randomIndex] };
+
+  res.json({
+    message: 'Neue Quest angenommen.',
+    quest: activeQuest,
+  });
+});
+
+// Route: Aktive Quest abrufen
+router.get('/quest', (req, res) => {
+  if (activeQuest) {
+    res.json(activeQuest);
+  } else {
+    res.json(null);
+  }
 });
 
 module.exports = router;

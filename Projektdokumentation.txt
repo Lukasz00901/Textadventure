@@ -213,3 +213,33 @@ Die Weiterbearbeitung des Dungeons steht ebenfalls auf der Tagesordnung. Geplant
 
 Abschließend soll die HP-Anzeige in der Taverne optimiert werden. Dies beinhaltet die Berücksichtigung der HP vom Dungeon, 
 um eine genauere und verlässlichere Gesundheitsanzeige für die Spieler zu gewährleisten.
+
+#################################################################################################################################################
+
+Tagesbericht – 22.11.2024
+
+Heute war ein ereignisreicher Tag voller Fortschritte und Herausforderungen in unserem Projekt. Ein bedeutender Meilenstein wurde erreicht, 
+als wir erfolgreich neue Bilder als Hintergründe eingebracht haben. 
+Diese visuellen Verbesserungen verleihen unserer Anwendung eine ansprechende und immersive Atmosphäre, die sicherlich bei den Nutzern gut ankommen wird.
+
+Im Bereich der Dungeons haben wir umfassende optische Veränderungen vorgenommen. Die überarbeitete Gestaltung sorgt nicht nur für ein verbessertes visuelles Erlebnis, 
+sondern wir haben auch mehrere Bugs behoben, die zuvor die Spielerfahrung beeinträchtigt haben. Besonders erfreulich ist die optimierte Lootverteilung, die nun fairer und abwechslungsreicher gestaltet ist. 
+Zudem haben wir das CSS weiter verfeinert, um eine konsistente und ästhetisch ansprechende Darstellung sicherzustellen.
+
+Auch im Wald- und Mine-Bereich gab es wichtige Updates. Beide Zonen wurden mit einem neuen, scrollbaren Log ausgestattet, der es den Spielern ermöglicht, 
+ihre Aktivitäten und Fortschritte übersichtlich nachzuverfolgen. Diese Funktionalität verbessert die Benutzerfreundlichkeit erheblich und trägt dazu bei, 
+dass die Spieler stets den Überblick über ihre Abenteuer behalten.
+
+Trotz der vielen Erfolge gab es heute auch einige Herausforderungen. Besonders die Taverne stellt derzeit ein großes Problem dar. Die geplante Implementierung eines Questlogs bereitet uns Schwierigkeiten, 
+da es uns nicht gelingt, den Abstand zwischen der Itemliste und dem Questlog zufriedenstellend zu verringern. Dies beeinträchtigt das Gesamtbild und die Benutzererfahrung in diesem Bereich erheblich. 
+Wir sind uns der Dringlichkeit dieses Problems bewusst und arbeiten intensiv daran, eine geeignete Lösung zu finden.
+
+Aus zeitlichen Gründen mussten wir heute leider auf die Fertigstellung des Craftingsystems verzichten. Dies ist bedauerlich, 
+da dieses Feature einen wichtigen Bestandteil unseres Projekts darstellt und die Spielerfahrung erheblich bereichern würde. Dennoch sind wir zuversichtlich, 
+dass wir dieses System in den kommenden Tagen erfolgreich integrieren können.
+
+Für den kommenden Montag haben wir uns folgende Ziele gesetzt:
+
+Texte für die verschiedenen Orte implementieren: Um die Welt noch lebendiger und immersiver zu gestalten, werden wir detaillierte Beschreibungen und Hintergrundgeschichten für alle wichtigen Orte hinzufügen.
+Einführung des Craftingsystems: Trotz der heutigen Verzögerungen werden wir uns darauf konzentrieren, das Craftingsystem vollständig zu integrieren und sicherzustellen, dass es reibungslos funktioniert.
+Einbau der Belohnungen: Um die Motivation der Spieler zu steigern, planen wir, attraktive Belohnungen in verschiedenen Bereichen des Spiels zu implementieren.

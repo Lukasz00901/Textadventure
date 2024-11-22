@@ -2,12 +2,31 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Schmiede.css';
 
+function CustomModal({ message, onClose }) {
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <h1>Erfolg!</h1>
+        <p>{message}</p>
+        <button onClick={onClose}>OK</button>
+      </div>
+    </div>
+  );
+}
+
 function Schmiede() {
   const [smithyItems, setSmithyItems] = useState([]);
   const [inventoryItems, setInventoryItems] = useState([]);
   const [quest, setQuest] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [questErrorMessage, setQuestErrorMessage] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // Übersetzungsobjekt
+  const translations = {
+    weapon: 'Waffe',
+  };
 
   // Fetch smithy items and active quest on component mount
   useEffect(() => {
@@ -47,6 +66,8 @@ function Schmiede() {
         ...prevInventory,
         response.data.inventoryItems.find((item) => item.name === itemName),
       ]);
+      setModalMessage(`Item "${itemName}" erfolgreich gekauft!`);
+      setIsModalVisible(true);
       setErrorMessage('');
     } catch (error) {
       console.error('Error buying item:', error);
@@ -61,6 +82,8 @@ function Schmiede() {
       setInventoryItems((prevInventory) =>
         prevInventory.filter((item) => item.name !== itemName)
       );
+      setModalMessage(`Item "${itemName}" erfolgreich verkauft!`);
+      setIsModalVisible(true);
       setErrorMessage('');
     } catch (error) {
       console.error('Error selling item:', error);
@@ -74,8 +97,9 @@ function Schmiede() {
       const response = await axios.post('http://localhost:3000/smithy/complete-quest');
       setQuest({ ...quest, completed: true });
       setInventoryItems(response.data.inventoryItems);
+      setModalMessage('Quest abgeschlossen!');
+      setIsModalVisible(true);
       setQuestErrorMessage('');
-      alert('Quest abgeschlossen!');
     } catch (error) {
       console.error('Error completing quest:', error);
       if (error.response && error.response.data) {
@@ -91,24 +115,29 @@ function Schmiede() {
     try {
       const response = await axios.post('http://localhost:3000/smithy/quest/new');
       setQuest(response.data);
+      setModalMessage('Neue Quest generiert!');
+      setIsModalVisible(true);
       setQuestErrorMessage('');
-      alert('Neue Quest generiert!');
     } catch (error) {
       console.error('Error generating new quest:', error);
       setQuestErrorMessage('Fehler beim Generieren einer neuen Quest.');
     }
   };
 
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
+
   return (
     <div className="Schmiede">
-      <h1> Zisch & Klatsch Metallwerke GmbH ⚒️</h1>
+      <h1>Zisch & Klatsch Metallwerke GmbH ⚒️</h1>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       <div className="smithy">
         <ul>
           {smithyItems.map((item) => (
             <li key={item.name}>
               <div>{item.name}</div>
-              <div>{item.type}</div>
+              <div>{translations[item.type] || item.type}</div>
               <div>{item.price} Gold</div>
               <div>Verfügbar: {item.quantity}</div>
               <button
@@ -152,6 +181,8 @@ function Schmiede() {
         )}
         <button onClick={generateNewQuest}>Neue Quest generieren</button>
       </div>
+
+      {isModalVisible && <CustomModal message={modalMessage} onClose={closeModal} />}
     </div>
   );
 }

@@ -6,6 +6,32 @@ const Inventory = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Übersetzungsobjekt
+  const translations = {
+    name: 'Name',
+    type: 'Typ',
+    strength: 'Stärke',
+    category: 'Kategorie',
+    worth: 'Wert',
+    quantity: 'Menge',
+    weapon: 'Waffe',
+    equipment: 'Ausrüstung',
+    consumable: 'Heilung',
+    misc: 'Gegenstände',
+    gold: 'Gold',
+    buy: 'Kaufen',
+    sell: 'Verkaufen',
+  };
+
+  // Funktion, um Backend-Daten vor der Anzeige zu übersetzen (falls nötig)
+  const translateItemKeys = (items) => {
+    return items.map((item) => ({
+      ...item,
+      type: translations[item.type] || item.type,
+      category: translations[item.category] || item.category,
+    }));
+  };
+
   // Funktion zum Abrufen von Items
   const fetchItems = async (endpoint) => {
     setLoading(true);
@@ -13,7 +39,7 @@ const Inventory = () => {
     try {
       const response = await fetch(`http://localhost:3000/inventory/${endpoint}`);
       const data = await response.json();
-      setItems(data.items);
+      setItems(translateItemKeys(data.items));
     } catch (err) {
       console.error('Fehler beim Abrufen der Daten:', err);
       setError('Fehler beim Abrufen der Daten.');
@@ -22,7 +48,7 @@ const Inventory = () => {
     }
   };
 
-  // Initiale Abrufung aller Items
+  // Initialer Abruf aller Items
   useEffect(() => {
     fetchItems('all/items');
   }, []);
@@ -32,9 +58,9 @@ const Inventory = () => {
       <h1>Inventar 📜</h1>
       <div className="button-group">
         <button onClick={() => fetchItems('all/items')} className="button">Alle Items</button>
-        <button onClick={() => fetchItems('equipment/items')} className="button">Equipment</button>
-        <button onClick={() => fetchItems('consumable/items')} className="button">Consumables</button>
-        <button onClick={() => fetchItems('misc/items')} className="button">Misc</button>
+        <button onClick={() => fetchItems('equipment/items')} className="button">Ausrüstungen</button>
+        <button onClick={() => fetchItems('consumable/items')} className="button">Tränke & Lebensmittel</button>
+        <button onClick={() => fetchItems('misc/items')} className="button">Materialien</button>
       </div>
       <div className="button-group">
         <button onClick={() => fetchItems('items/sort/strength')} className="button">Nach Stärke sortieren</button>
@@ -48,12 +74,9 @@ const Inventory = () => {
         <table className="inventory-table">
           <thead>
             <tr>
-              <th className="table-header">Name</th>
-              <th className="table-header">Typ</th>
-              <th className="table-header">Stärke</th>
-              <th className="table-header">Kategorie</th>
-              <th className="table-header">Wert</th>
-              <th className="table-header">Menge</th>
+              {['name', 'type', 'strength', 'category', 'worth', 'quantity'].map((key) => (
+                <th key={key} className="table-header">{translations[key]}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
