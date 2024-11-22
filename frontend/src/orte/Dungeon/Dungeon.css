@@ -1,67 +1,93 @@
 /* frontend/src/components/Dungeon.css */
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+
 .dungeon-container {
   width: 80%;
   margin: 0 auto;
   text-align: center;
-  font-family: Arial, sans-serif;
-  background-color: #2e2e2e;
-  color: #f0f0f0;
+  font-family: 'UnifrakturCook', cursive, serif; /* Schriftart übernommen */
+  background-color: #311e1c57; /* Hintergrundfarbe angepasst */
+  color: #c9b040; /* Textfarbe angepasst */
   padding: 20px;
   border-radius: 10px;
+  border: 1px solid #c9b040; /* Rahmen hinzugefügt */
 }
 
 .player-stats {
   display: flex;
   justify-content: space-around;
   margin-bottom: 20px;
-  background-color: #3e3e3e;
+  background-color: #271816; /* Hintergrundfarbe angepasst */
+  color: #c9b040; /* Textfarbe angepasst */
   padding: 10px;
   border-radius: 5px;
+  font-family: 'UnifrakturCook', cursive, serif; /* Schriftart übernommen */
 }
 
 .controls {
   margin-bottom: 20px;
+  font-family: 'UnifrakturCook', cursive, serif; /* Schriftart übernommen */
+  color: #c9b040; /* Textfarbe angepasst */
 }
 
-.difficulty-setter, .weapon-selector, .potion-selector {
+.difficulty-setter,
+.weapon-selector,
+.potion-selector {
   margin: 10px 0;
+  font-family: 'UnifrakturCook', cursive, serif; /* Schriftart übernommen */
+  color: #c9b040; /* Textfarbe angepasst */
 }
 
-input[type="number"], select {
+.dungeon-container input[type="number"], 
+.dungeon-container select {
   padding: 5px;
   width: 200px;
   border-radius: 5px;
-  border: none;
+  border: 1px solid #c9b040; /* Rahmenfarbe angepasst */
+  background-color: #271816; /* Hintergrundfarbe angepasst */
+  color: #c9b040; /* Textfarbe angepasst */
   margin-right: 10px;
+  font-family: 'UnifrakturCook', cursive, serif; /* Schriftart übernommen */
 }
 
-button {
+.dungeon-container button {
   padding: 10px 20px;
   margin-left: 10px;
   cursor: pointer;
   border: none;
   border-radius: 5px;
-  background-color: #4caf50;
-  color: white;
-  transition: background-color 0.3s;
+  background-color: #271816; /* Hintergrundfarbe angepasst */
+  color: #c9b040; /* Textfarbe angepasst */
+  font-family: 'UnifrakturCook', cursive, serif; /* Schriftart übernommen */
+  font-weight: 700;
+  font-size: 20px;
+  transition: all 0.3s ease;
 }
 
-button:hover {
-  background-color: #45a049;
+.dungeon-container button:hover {
+  background-color: #d4af37; /* Hover-Farbe angepasst */
+  color: #3e2723; /* Textfarbe beim Hover angepasst */
 }
 
 .log {
   margin-top: 20px;
+  background-color: #271816; /* Hintergrundfarbe angepasst */
+  color: #c9b040; /* Textfarbe angepasst */
+  font-family: 'UnifrakturCook', cursive, serif; /* Schriftart übernommen */
 }
 
 .log-content {
   max-height: 300px;
   overflow-y: auto;
-  background-color: #1e1e1e;
+  background-color: #4d3531; /* Hintergrundfarbe angepasst */
   padding: 10px;
   border-radius: 5px;
+  color: #c9b040; /* Textfarbe angepasst */
+  font-family: 'UnifrakturCook', cursive, serif; /* Schriftart übernommen */
 }
 
 .log-content p {
   margin: 5px 0;
+  color: #c9b040; /* Textfarbe der Log-Einträge */
+  font-family: 'UnifrakturCook', cursive, serif; /* Schriftart übernommen */
 }
