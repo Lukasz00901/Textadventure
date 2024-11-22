@@ -52,7 +52,7 @@
 }
 
 .table-header {
-  border: 2px solid #a77e33; /* Bronze Rahmen */
+  border: 2px solid #a77f33; /* Bronze Rahmen */
   padding: 10px;
   font-weight: bold;
   text-align: left;
@@ -71,7 +71,7 @@
 }
 
 tr:hover {
-  background-color: #f5deb3; /* Dezenter Braunton für Hover-Effekt */
+  background-color: #f5deb38f; /* Dezenter Braunton für Hover-Effekt */
 }
 
 .table-cell:hover {
