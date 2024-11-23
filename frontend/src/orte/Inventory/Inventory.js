@@ -12,12 +12,71 @@ const Inventory = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [deleteQuantity, setDeleteQuantity] = useState(1);
   
+  // Übersetzungsobjekt
+  const translations = {
+    // Übersetzungen für 'type'
+    weapon: 'Waffe',
+    equipment: 'Ausrüstung',
+    consumable: 'Heilung',
+    misc: 'Gegenstände',
+    // Weitere Typen hinzufügen, falls nötig
+
+    // Übersetzungen für andere Begriffe
+    name: 'Name',
+    typeLabel: 'Typ', // Um Kollision mit 'type' zu vermeiden
+    strength: 'Stärke',
+    category: 'Kategorie',
+    worth: 'Wert',
+    quantity: 'Menge',
+    gold: 'Gold',
+    buy: 'Kaufen',
+    sell: 'Verkaufen',
+    // Weitere Begriffe hinzufügen, falls nötig
+  };
+  
+  // Funktion, um Backend-Daten vor der Anzeige zu übersetzen
+  const translateItemKeys = (items) => {
+    return items.map((item) => ({
+      ...item,
+      type: translations[item.type] || item.type,
+      category: translations[item.category] || item.category,
+    }));
+  };
+  
   // State für Benachrichtigungen
   const [notification, setNotification] = useState({ message: '', type: '' }); // type: 'success' oder 'error'
 
   // Liste von zufälligen Erfolgsmeldungen
   const successMessages = [
-"Weg damit! Dieser Gegenstand wollte sowieso nicht bleiben.", "Tschüssi, Item! Möge es in den virtuellen Himmel fliegen.", "Das Item wurde in die ewigen Datenjagdgründe geschickt.", "Und zack, weg ist es! Du wirst es wahrscheinlich eh nicht vermissen.", "Auf Wiedersehen, alter Freund! Oder eher... nie wiedersehen.", "Ein Klick für dich, ein Neuanfang für das Item im Daten-Nirwana.", "Wo das Item hingeht? Auf einen unendlichen Urlaub in die binäre Karibik.", "Das Item hat gerade gekündigt. Es will seine Träume verfolgen.", "Bye-bye! Das Item ist jetzt frei, um auf Weltreise zu gehen.", "Item gelöscht! Jetzt hat dein Inventar etwas mehr Luft zum Atmen.", "Und weg damit! Wer braucht schon ein [Item-Name]?!", "Löschtaste gedrückt, Problem gelöst. Tschüss, Item.", "Das Item wollte eh schon immer ein NFT werden. Lass es frei.", "Ups, Item gelöscht! Möge es in Frieden ruhen... oder einfach verschwinden.", "Bye-bye, Gegenstand! Genieße deinen Aufenthalt im virtuellen Nirvana.", "Du hast das Item gelöscht... aber das Item löscht auch dich! (Nur Spaß.)", "Dieses Item ist jetzt digitaler Fischfutter. Blub, blub.", "Weg damit! Wer braucht schon ein Inventar voller unnötiger Sachen.", "Item weggezaubert! Abrakadabra, hokus pokus, nicht mehr da.", "Das Item hat die Entscheidung getroffen, ein besseres Leben zu führen... als Nichts.", "Das Item wurde gerade in die digitale Müllhalde geworfen. Es ist jetzt glücklich dort.", "Zack, weg damit! Dieses Item wollte eh Karriere als Datenmüll machen.", "Du hast gerade ein Item gelöscht. Es weint jetzt in der Ecke... irgendwo im Speicher.", "Achtung, Achtung! Das Item ist jetzt offiziell arbeitslos. Herzlichen Glückwunsch.", "Item entfernt! Es lebt jetzt als Geist im Internet weiter.", "Tschüss, Item! Es hat gesagt, es geht einkaufen und kommt nie wieder zurück.", "Das Item hat sich freiwillig gemeldet, um gelöscht zu werden. Es war bereit.", "Du hast das Item gelöscht. Es schließt sich jetzt den anderen verlorenen Daten an.", "Item entfernt! Es ist jetzt ein Mitglied im Club der verlorenen Dateien."
+    "Weg damit! Dieser Gegenstand wollte sowieso nicht bleiben.",
+    "Tschüssi, Item! Möge es in den virtuellen Himmel fliegen.",
+    "Das Item wurde in die ewigen Datenjagdgründe geschickt.",
+    "Und zack, weg ist es! Du wirst es wahrscheinlich eh nicht vermissen.",
+    "Auf Wiedersehen, alter Freund! Oder eher... nie wiedersehen.",
+    "Ein Klick für dich, ein Neuanfang für das Item im Daten-Nirwana.",
+    "Wo das Item hingeht? Auf einen unendlichen Urlaub in die binäre Karibik.",
+    "Das Item hat gerade gekündigt. Es will seine Träume verfolgen.",
+    "Bye-bye! Das Item ist jetzt frei, um auf Weltreise zu gehen.",
+    "Item gelöscht! Jetzt hat dein Inventar etwas mehr Luft zum Atmen.",
+    "Und weg damit! Wer braucht schon ein [Item-Name]?!",
+    "Löschtaste gedrückt, Problem gelöst. Tschüss, Item.",
+    "Das Item wollte eh schon immer ein NFT werden. Lass es frei.",
+    "Ups, Item gelöscht! Möge es in Frieden ruhen... oder einfach verschwinden.",
+    "Bye-bye, Gegenstand! Genieße deinen Aufenthalt im virtuellen Nirvana.",
+    "Du hast das Item gelöscht... aber das Item löscht auch dich! (Nur Spaß.)",
+    "Dieses Item ist jetzt digitaler Fischfutter. Blub, blub.",
+    "Weg damit! Wer braucht schon ein Inventar voller unnötiger Sachen.",
+    "Item weggezaubert! Abrakadabra, hokus pokus, nicht mehr da.",
+    "Das Item hat die Entscheidung getroffen, ein besseres Leben zu führen... als Nichts.",
+    "Das Item wurde gerade in die digitale Müllhalde geworfen. Es ist jetzt glücklich dort.",
+    "Zack, weg damit! Dieses Item wollte eh Karriere als Datenmüll machen.",
+    "Du hast gerade ein Item gelöscht. Es weint jetzt in der Ecke... irgendwo im Speicher.",
+    "Achtung, Achtung! Das Item ist jetzt offiziell arbeitslos. Herzlichen Glückwunsch.",
+    "Item entfernt! Es lebt jetzt als Geist im Internet weiter.",
+    "Tschüss, Item! Es hat gesagt, es geht einkaufen und kommt nie wieder zurück.",
+    "Das Item hat sich freiwillig gemeldet, um gelöscht zu werden. Es war bereit.",
+    "Du hast das Item gelöscht. Es schließt sich jetzt den anderen verlorenen Daten an.",
+    "Item entfernt! Es ist jetzt ein Mitglied im Club der verlorenen Dateien."
   ];
 
   // Funktion zum Abrufen von Items
@@ -30,7 +89,8 @@ const Inventory = () => {
         throw new Error('Netzwerkantwort war nicht ok');
       }
       const data = await response.json();
-      setItems(data.items);
+      const translatedItems = translateItemKeys(data.items); // Übersetzen der Items
+      setItems(translatedItems);
     } catch (err) {
       console.error('Fehler beim Abrufen der Daten:', err);
       setError('Fehler beim Abrufen der Daten.');
@@ -95,8 +155,6 @@ const Inventory = () => {
     }
   };
 
-  
-
   // Automatisches Ausblenden der Benachrichtigung nach 4 Sekunden
   useEffect(() => {
     if (notification.message) {
@@ -126,9 +184,9 @@ const Inventory = () => {
       
       <div className="button-group">
         <button onClick={() => fetchItems('all/items')} className="button">Alle Items</button>
-        <button onClick={() => fetchItems('equipment/items')} className="button">Equipment</button>
-        <button onClick={() => fetchItems('consumable/items')} className="button">Consumables</button>
-        <button onClick={() => fetchItems('misc/items')} className="button">Misc</button>
+        <button onClick={() => fetchItems('equipment/items')} className="button">Ausrüstung</button>
+        <button onClick={() => fetchItems('consumable/items')} className="button">Heilungen</button>
+        <button onClick={() => fetchItems('misc/items')} className="button">Gegenstände</button>
       </div>
       <div className="button-group">
         <button onClick={() => fetchItems('items/sort/strength')} className="button">Nach Stärke sortieren</button>
@@ -142,12 +200,12 @@ const Inventory = () => {
         <table className="inventory-table">
           <thead>
             <tr>
-              <th className="table-header">Name</th>
-              <th className="table-header">Typ</th>
-              <th className="table-header">Stärke</th>
-              <th className="table-header">Kategorie</th>
-              <th className="table-header">Wert</th>
-              <th className="table-header">Menge</th>
+              <th className="table-header">{translations.name}</th>
+              <th className="table-header">{translations.typeLabel}</th>
+              <th className="table-header">{translations.strength}</th>
+              <th className="table-header">{translations.category}</th>
+              <th className="table-header">{translations.worth}</th>
+              <th className="table-header">{translations.quantity}</th>
               <th className="table-header">Aktionen</th> {/* Neue Spalte für Aktionen */}
             </tr>
           </thead>
