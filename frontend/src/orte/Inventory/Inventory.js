@@ -191,7 +191,7 @@ const Inventory = () => {
                       max={item.quantity} 
                       placeholder="Menge" 
                       required
-                      className="quantity-input-inline"
+                      className="quantity"
                     />
                     <button type="submit" className="delete-button-inline">Löschen</button>
                   </form>
