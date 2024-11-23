@@ -72,8 +72,37 @@ router.get('/items/sort/quantity', (req, res) => {
 });
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // DELETE: Bestimmte Menge eines Items anhand des Namens löschen
 router.delete('/item/:name', (req, res) => {
+  console.log(`DELETE-Anfrage erhalten für Item: ${req.params.name}`);
+  console.log('Request Body:', req.body);
+
   const itemName = req.params.name;
   const deleteQuantity = parseInt(req.body.quantity, 10) || 1; // Standardmäßig 1
 
@@ -84,6 +113,7 @@ router.delete('/item/:name', (req, res) => {
 
     if (deleteQuantity >= item.quantity) {
       // Lösche das gesamte Item
+      console.log(`Lösche gesamtes Item: ${item.name}`);
       inventoryItems.splice(itemIndex, 1);
       res.status(200).json({
         message: `Item "${item.name}" wurde vollständig gelöscht.`,
@@ -92,6 +122,7 @@ router.delete('/item/:name', (req, res) => {
       });
     } else if (deleteQuantity > 0) {
       // Reduziere die Menge des Items
+      console.log(`Reduziere Menge von Item: ${item.name} um ${deleteQuantity}`);
       item.quantity -= deleteQuantity;
       res.status(200).json({
         message: `Es wurden ${deleteQuantity} von "${item.name}" gelöscht.`,
@@ -99,14 +130,32 @@ router.delete('/item/:name', (req, res) => {
         remainingQuantity: item.quantity,
       });
     } else {
+      console.log('Ungültige Löschmenge:', deleteQuantity);
       res.status(400).json({
         message: 'Die zu löschende Menge muss größer als 0 sein.',
       });
     }
   } else {
+    console.log(`Item mit Namen "${itemName}" nicht gefunden.`);
     res.status(404).json({
       message: `Item mit dem Namen "${itemName}" wurde nicht gefunden.`,
     });
   }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = router;
