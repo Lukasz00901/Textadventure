@@ -1,4 +1,4 @@
-// frontend/Inventory.js
+// frontend/src/orte/Inventory/Inventory.js
 import React, { useState, useEffect } from 'react';
 import './Inventory.css'; // Import der CSS-Datei
 
@@ -7,32 +7,13 @@ const Inventory = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   
+<<<<<<< HEAD
   // State für das Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [deleteQuantity, setDeleteQuantity] = useState(1);
   
-  // Übersetzungsobjekt
-  const translations = {
-    // Übersetzungen für 'type'
-    weapon: 'Waffe',
-    equipment: 'Ausrüstung',
-    consumable: 'Heilung',
-    misc: 'Gegenstände',
-    // Weitere Typen hinzufügen, falls nötig
-
-    // Übersetzungen für andere Begriffe
-    name: 'Name',
-    typeLabel: 'Typ', // Um Kollision mit 'type' zu vermeiden
-    strength: 'Stärke',
-    category: 'Kategorie',
-    worth: 'Wert',
-    quantity: 'Menge',
-    gold: 'Gold',
-    buy: 'Kaufen',
-    sell: 'Verkaufen',
-    // Weitere Begriffe hinzufügen, falls nötig
-  };
+  
   
   // Funktion, um Backend-Daten vor der Anzeige zu übersetzen
   const translateItemKeys = (items) => {
@@ -43,6 +24,8 @@ const Inventory = () => {
     }));
   };
   
+=======
+>>>>>>> 2f9dfd5f3dd0717707b72e799492f0b6fda23d64
   // State für Benachrichtigungen
   const [notification, setNotification] = useState({ message: '', type: '' }); // type: 'success' oder 'error'
 
@@ -81,16 +64,23 @@ const Inventory = () => {
 
   // Funktion zum Abrufen von Items
   const fetchItems = async (endpoint) => {
+    console.log(`Abrufe Items von: ${endpoint}`);
     setLoading(true);
     setError(null);
     try {
       const response = await fetch(`http://localhost:3000/inventory/${endpoint}`);
+      console.log('Antwort Status:', response.status);
       if (!response.ok) {
         throw new Error('Netzwerkantwort war nicht ok');
       }
       const data = await response.json();
+<<<<<<< HEAD
       const translatedItems = translateItemKeys(data.items); // Übersetzen der Items
       setItems(translatedItems);
+=======
+      console.log('Abruf-Daten:', data);
+      setItems(data.items);
+>>>>>>> 2f9dfd5f3dd0717707b72e799492f0b6fda23d64
     } catch (err) {
       console.error('Fehler beim Abrufen der Daten:', err);
       setError('Fehler beim Abrufen der Daten.');
@@ -99,44 +89,32 @@ const Inventory = () => {
     }
   };
 
-  // Funktion zum Öffnen des Modals
-  const openDeleteModal = (item) => {
-    setItemToDelete(item);
-    setDeleteQuantity(1); // Standardmäßig 1
-    setIsModalOpen(true);
-    setNotification({ message: '', type: '' }); // Reset der Benachrichtigung
-  };
-
-  // Funktion zum Schließen des Modals
-  const closeDeleteModal = () => {
-    setIsModalOpen(false);
-    setItemToDelete(null);
-    setDeleteQuantity(1);
-  };
-
   // Funktion zum Löschen eines Items
-  const deleteItem = async () => {
-    if (!itemToDelete) return;
+  const deleteItem = async (itemName, quantity) => {
+    console.log(`Lösche ${quantity} von Item:`, itemName);
 
     try {
-      const response = await fetch(`http://localhost:3000/inventory/item/${encodeURIComponent(itemToDelete.name)}`, {
+      const response = await fetch(`http://localhost:3000/inventory/item/${encodeURIComponent(itemName)}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ quantity: deleteQuantity }),
+        body: JSON.stringify({ quantity }),
       });
 
+      console.log('Antwort vom Server:', response);
+
       const data = await response.json();
+      console.log('Daten vom Server:', data);
 
       if (response.ok) {
         if (data.remainingQuantity === 0) {
           // Entferne das gesamte Item aus dem State
-          setItems(items.filter(item => item.name !== itemToDelete.name));
+          setItems(items.filter(item => item.name !== itemName));
         } else {
           // Aktualisiere die Menge des Items im State
           setItems(items.map(item => 
-            item.name === itemToDelete.name 
+            item.name === itemName 
               ? { ...item, quantity: data.remainingQuantity } 
               : item
           ));
@@ -150,8 +128,6 @@ const Inventory = () => {
     } catch (err) {
       console.error('Fehler beim Löschen des Items:', err);
       setNotification({ message: 'Fehler beim Löschen des Items.', type: 'error' });
-    } finally {
-      closeDeleteModal();
     }
   };
 
@@ -219,7 +195,30 @@ const Inventory = () => {
                 <td className="table-cell">{item.worth}</td>
                 <td className="table-cell">{item.quantity}</td>
                 <td className="table-cell">
-                  <button onClick={() => openDeleteModal(item)} className="delete-button">Löschen</button>
+                  <form 
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const quantity = parseInt(e.target.elements.quantity.value, 10);
+                      if (isNaN(quantity) || quantity < 1) {
+                        setNotification({ message: 'Bitte gib eine gültige Menge ein.', type: 'error' });
+                        return;
+                      }
+                      deleteItem(item.name, quantity);
+                      e.target.reset();
+                    }}
+                    className="delete-form"
+                  >
+                    <input 
+                      type="number" 
+                      name="quantity"
+                      min="1" 
+                      max={item.quantity} 
+                      placeholder="Menge" 
+                      required
+                      className="quantity-input-inline"
+                    />
+                    <button type="submit" className="delete-button-inline">Löschen</button>
+                  </form>
                 </td>
               </tr>
             ))}
@@ -227,37 +226,6 @@ const Inventory = () => {
         </table>
       ) : (
         !loading && <p>Keine Items gefunden.</p>
-      )}
-
-      {/* Benutzerdefiniertes Modal */}
-      {isModalOpen && itemToDelete && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Item löschen</h2>
-            <p>Wie viele von "{itemToDelete.name}" möchtest du löschen?</p>
-            <input 
-              type="number" 
-              min="1" 
-              max={itemToDelete.quantity} 
-              value={deleteQuantity} 
-              onChange={(e) => {
-                const value = parseInt(e.target.value, 10);
-                if (value >= 1 && value <= itemToDelete.quantity) {
-                  setDeleteQuantity(value);
-                } else if (value < 1) {
-                  setDeleteQuantity(1);
-                } else {
-                  setDeleteQuantity(itemToDelete.quantity);
-                }
-              }} 
-              className="quantity-input"
-            />
-            <div className="modal-buttons">
-              <button onClick={deleteItem} className="confirm-button">Bestätigen</button>
-              <button onClick={closeDeleteModal} className="cancel-button">Abbrechen</button>
-            </div>
-          </div>
-        </div>
       )}
     </div>
   );
