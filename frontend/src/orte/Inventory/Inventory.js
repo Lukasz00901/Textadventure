@@ -7,25 +7,6 @@ const Inventory = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   
-<<<<<<< HEAD
-  // State für das Modal
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState(null);
-  const [deleteQuantity, setDeleteQuantity] = useState(1);
-  
-  
-  
-  // Funktion, um Backend-Daten vor der Anzeige zu übersetzen
-  const translateItemKeys = (items) => {
-    return items.map((item) => ({
-      ...item,
-      type: translations[item.type] || item.type,
-      category: translations[item.category] || item.category,
-    }));
-  };
-  
-=======
->>>>>>> 2f9dfd5f3dd0717707b72e799492f0b6fda23d64
   // State für Benachrichtigungen
   const [notification, setNotification] = useState({ message: '', type: '' }); // type: 'success' oder 'error'
 
@@ -74,13 +55,8 @@ const Inventory = () => {
         throw new Error('Netzwerkantwort war nicht ok');
       }
       const data = await response.json();
-<<<<<<< HEAD
-      const translatedItems = translateItemKeys(data.items); // Übersetzen der Items
-      setItems(translatedItems);
-=======
       console.log('Abruf-Daten:', data);
       setItems(data.items);
->>>>>>> 2f9dfd5f3dd0717707b72e799492f0b6fda23d64
     } catch (err) {
       console.error('Fehler beim Abrufen der Daten:', err);
       setError('Fehler beim Abrufen der Daten.');
@@ -160,9 +136,9 @@ const Inventory = () => {
       
       <div className="button-group">
         <button onClick={() => fetchItems('all/items')} className="button">Alle Items</button>
-        <button onClick={() => fetchItems('equipment/items')} className="button">Ausrüstung</button>
-        <button onClick={() => fetchItems('consumable/items')} className="button">Heilungen</button>
-        <button onClick={() => fetchItems('misc/items')} className="button">Gegenstände</button>
+        <button onClick={() => fetchItems('equipment/items')} className="button">Equipment</button>
+        <button onClick={() => fetchItems('consumable/items')} className="button">Consumables</button>
+        <button onClick={() => fetchItems('misc/items')} className="button">Misc</button>
       </div>
       <div className="button-group">
         <button onClick={() => fetchItems('items/sort/strength')} className="button">Nach Stärke sortieren</button>
@@ -176,12 +152,12 @@ const Inventory = () => {
         <table className="inventory-table">
           <thead>
             <tr>
-              <th className="table-header">{translations.name}</th>
-              <th className="table-header">{translations.typeLabel}</th>
-              <th className="table-header">{translations.strength}</th>
-              <th className="table-header">{translations.category}</th>
-              <th className="table-header">{translations.worth}</th>
-              <th className="table-header">{translations.quantity}</th>
+              <th className="table-header">Name</th>
+              <th className="table-header">Typ</th>
+              <th className="table-header">Stärke</th>
+              <th className="table-header">Kategorie</th>
+              <th className="table-header">Wert</th>
+              <th className="table-header">Menge</th>
               <th className="table-header">Aktionen</th> {/* Neue Spalte für Aktionen */}
             </tr>
           </thead>
@@ -215,7 +191,7 @@ const Inventory = () => {
                       max={item.quantity} 
                       placeholder="Menge" 
                       required
-                      className="quantity"
+                      className="quantity-input-inline"
                     />
                     <button type="submit" className="delete-button-inline">Löschen</button>
                   </form>
