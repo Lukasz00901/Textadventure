@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = express.Router();
 
@@ -15,6 +16,7 @@ router.post('/gather', (req, res) => {
     { name: "Fichtenholz", type: "Material", category: "misc", worth: 3, strength: 0 },
     { name: "Rinde", type: "Material", category: "misc", worth: 2, strength: 0 },
     { name: "Stöcke", type: "Material", category: "misc", worth: 2, strength: 0 },
+    { name: "Zapfen", type: "Material", category: "misc", worth: 1, strength: 0 },
     { name: "Pfifferlinge", type: "Material", category: "misc", worth: 3, strength: 0 },
     { name: "Steinpilze", type: "Material", category: "misc", worth: 3, strength: 0 },
     { name: "Harz", type: "Material", category: "misc", worth: 2, strength: 0 },
@@ -23,10 +25,15 @@ router.post('/gather', (req, res) => {
   ];
 
   // Generiere zufällige Mengen für die Ressourcen
-  const woodCount = Math.floor(Math.random() * 5) + 1; // 1 bis 5
-  const barkCount = Math.floor(Math.random() * 3) + 1; // 1 bis 3
-  const stickCount = Math.floor(Math.random() * 4) + 1; // 1 bis 4
-  const coneCount = Math.floor(Math.random() * 2) + 1; // 1 bis 2
+  const woodCount = Math.floor(Math.random() * 5) + 1;      // 1 bis 5
+  const barkCount = Math.floor(Math.random() * 3) + 1;      // 1 bis 3
+  const stickCount = Math.floor(Math.random() * 4) + 1;     // 1 bis 4
+  const coneCount = Math.floor(Math.random() * 2) + 1;      // 1 bis 2
+  const pfifferlingeCount = Math.floor(Math.random() * 3) + 1; // 1 bis 3
+  const steinpilzeCount = Math.floor(Math.random() * 3) + 1;  // 1 bis 3
+  const harzCount = Math.floor(Math.random() * 2) + 1;        // 1 bis 2
+  const kraeuterCount = Math.floor(Math.random() * 2) + 1;    // 1 bis 2
+  const rankenCount = Math.floor(Math.random() * 2) + 1;      // 1 bis 2
 
   // Fichtenholz hinzufügen oder Menge erhöhen
   const woodIndex = findItemIndex("Fichtenholz");
@@ -60,6 +67,46 @@ router.post('/gather', (req, res) => {
     inventoryItems.push({ ...items[3], quantity: coneCount }); // Neues Item hinzufügen
   }
 
+  // Pfifferlinge hinzufügen oder Menge erhöhen
+  const pfifferlingeIndex = findItemIndex("Pfifferlinge");
+  if (pfifferlingeIndex !== -1) {
+    inventoryItems[pfifferlingeIndex].quantity += pfifferlingeCount;
+  } else {
+    inventoryItems.push({ ...items[4], quantity: pfifferlingeCount });
+  }
+
+  // Steinpilze hinzufügen oder Menge erhöhen
+  const steinpilzeIndex = findItemIndex("Steinpilze");
+  if (steinpilzeIndex !== -1) {
+    inventoryItems[steinpilzeIndex].quantity += steinpilzeCount;
+  } else {
+    inventoryItems.push({ ...items[5], quantity: steinpilzeCount });
+  }
+
+  // Harz hinzufügen oder Menge erhöhen
+  const harzIndex = findItemIndex("Harz");
+  if (harzIndex !== -1) {
+    inventoryItems[harzIndex].quantity += harzCount;
+  } else {
+    inventoryItems.push({ ...items[6], quantity: harzCount });
+  }
+
+  // Kräuter hinzufügen oder Menge erhöhen
+  const kraeuterIndex = findItemIndex("Kräuter");
+  if (kraeuterIndex !== -1) {
+    inventoryItems[kraeuterIndex].quantity += kraeuterCount;
+  } else {
+    inventoryItems.push({ ...items[7], quantity: kraeuterCount });
+  }
+
+  // Ranken hinzufügen oder Menge erhöhen
+  const rankenIndex = findItemIndex("Ranken");
+  if (rankenIndex !== -1) {
+    inventoryItems[rankenIndex].quantity += rankenCount;
+  } else {
+    inventoryItems.push({ ...items[8], quantity: rankenCount });
+  }
+
   res.status(201).json({
     message: 'Ressourcen erfolgreich gesammelt!',
     addedItems: [
@@ -67,6 +114,11 @@ router.post('/gather', (req, res) => {
       { name: "Rinde", quantity: barkCount },
       { name: "Stöcke", quantity: stickCount },
       { name: "Zapfen", quantity: coneCount },
+      { name: "Pfifferlinge", quantity: pfifferlingeCount },
+      { name: "Steinpilze", quantity: steinpilzeCount },
+      { name: "Harz", quantity: harzCount },
+      { name: "Kräuter", quantity: kraeuterCount },
+      { name: "Ranken", quantity: rankenCount },
     ],
     currentInventory: inventoryItems,
   });
