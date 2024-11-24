@@ -16,7 +16,7 @@ let inventoryItems = [
     worth: 8, // price: 15 → worth: 8
     strength: 15, 
     category: 'consumable', 
-    quantity: 3
+    quantity: 1
   },
   { 
     id: 2, 
@@ -25,7 +25,7 @@ let inventoryItems = [
     worth: 13, // price: 25 → worth: 13
     strength: 40, 
     category: 'consumable', 
-    quantity: 2
+    quantity: 1
   },
   { 
     id: 3, 
@@ -43,7 +43,7 @@ let inventoryItems = [
     worth: 30, // price: 60 → worth: 30
     strength: 150, 
     category: 'consumable', 
-    quantity: 0
+    quantity: 1
   },
   { 
     id: 5, 

@@ -49,8 +49,12 @@ const Inventory = () => {
       const data = await response.json();
       console.log('Abruf-Daten:', data);
 
+
       // Übersetzte Items setzen
       setItems(translateItemKeys(data.items));
+
+      setItems(data.items);
+
     } catch (err) {
       console.error('Fehler beim Abrufen der Daten:', err);
       setError('Fehler beim Abrufen der Daten.');
@@ -77,9 +81,9 @@ const Inventory = () => {
       
       <div className="button-group">
         <button onClick={() => fetchItems('all/items')} className="button">Alle Items</button>
-        <button onClick={() => fetchItems('equipment/items')} className="button">Ausrüstung</button>
-        <button onClick={() => fetchItems('consumable/items')} className="button">Heilungen</button>
-        <button onClick={() => fetchItems('misc/items')} className="button">Gegenstände</button>
+        <button onClick={() => fetchItems('equipment/items')} className="button">Equipment</button>
+        <button onClick={() => fetchItems('consumable/items')} className="button">Consumables</button>
+        <button onClick={() => fetchItems('misc/items')} className="button">Misc</button>
       </div>
       <div className="button-group">
         <button onClick={() => fetchItems('items/sort/strength')} className="button">Nach Stärke sortieren</button>
@@ -93,6 +97,7 @@ const Inventory = () => {
         <table className="inventory-table">
           <thead>
             <tr>
+
               <th>{translations.name}</th>
               <th>{translations.type}</th>
               <th>{translations.strength}</th>
@@ -100,6 +105,15 @@ const Inventory = () => {
               <th>{translations.worth}</th>
               <th>{translations.quantity}</th>
               <th>Aktionen</th>
+
+              <th className="table-header">Name</th>
+              <th className="table-header">Typ</th>
+              <th className="table-header">Stärke</th>
+              <th className="table-header">Kategorie</th>
+              <th className="table-header">Wert</th>
+              <th className="table-header">Menge</th>
+              <th className="table-header">Aktionen</th> {/* Neue Spalte für Aktionen */}
+
             </tr>
           </thead>
           <tbody>

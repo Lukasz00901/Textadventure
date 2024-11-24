@@ -24,7 +24,7 @@
   border-radius: 5px;
   border: 1px solid #a77f33; /* Bronzerahmen */
   background-color: #160e0c; /* Schokoladenbrauner Hintergrund */
-  color: #f4e3c1; /* Cremeweiße Schrift */
+  color: #f7f7f7; /* Cremeweiße Schrift */
   font-family: 'UnifrakturCook', cursive, serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -100,13 +100,21 @@ tr:hover {
   font-size: 14px;
   cursor: pointer;
   border-radius: 3px;
-  border: 1px solid #ff4d4d; /* Roter Rahmen */
-  background-color: #ffcccc; /* Heller Rotton Hintergrund */
-  color: #a00; /* Dunkles Rot für die Schrift */
+  border: 1px solid #00000000; /* Roter Rahmen */
+  background-color: #c81909ae; /* Heller Rotton Hintergrund */
+  color: rgb(27, 2, 2); /* Dunkles Rot für die Schrift */
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.delete-button-inline:hover {
-  background-color: #ff4d4d; /* Roter Hover-Effekt */
-  color: #fff; /* Weiße Schrift auf Rot */
+
+
+.quantity{
+  width: 50px;
+  padding: 5px;
+  border: 1px solid #a77f33;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #f5deb351;
+  color: #000;
+
 }
