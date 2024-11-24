@@ -5,13 +5,16 @@ let { inventoryItems } = require('./Inventar_Inhalt');
 // Route für das Mining von Erzen
 router.post('/mine', (req, res) => {
   const items = [
-    { name: "Eisenerz", type: "Material", category: "misc", worth: 3},
-    { name: "Kohle", type: "Material", category: "misc", worth: 3}, 
-    { name: "Golderz", type: "Material", category: "misc", worth: 3 },
-    { name: "Uran", type: "Material", category: "misc", worth: 3},
-    { name: "Osmium", type: "Material", category: "misc", worth: 3 },
-    { name: "Diamanten", type: "Material", category: "misc", worth: 3 },
-    { name: "Kupfererz", type: "Material", category: "misc", worth: 3 },
+    { name: "Eisenerz", type: "Material", category: "misc", worth: 3, strength: 0},
+    { name: "Kohle", type: "Material", category: "misc", worth: 2, strength: 0}, 
+    { name: "Golderz", type: "Material", category: "misc", worth: 4, strength: 0 },
+    { name: "Silbererz", type: "Material", category: "misc", worth: 4, strength: 0},
+    { name: "Zinnerz", type: "Material", category: "misc", worth: 3, strength: 0 },
+    { name: "Diamanten", type: "Material", category: "misc", worth: 6, strength: 0 },
+    { name: "Kupfererz", type: "Material", category: "misc", worth: 2, strength: 0 },
+    { name: "Zinkerz", type: "Material", category: "misc", worth: 2, strength: 0 },
+    { name: "Schwefelerz", type: "Material", category: "misc", worth: 3, strength: 0 },
+    { name: "Bleierz", type: "Material", category: "misc", worth: 3, strength: 0 },
   ];
 
   const addedItems = []; // Nur die tatsächlich hinzugefügten Items

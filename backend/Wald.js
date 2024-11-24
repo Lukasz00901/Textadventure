@@ -12,10 +12,10 @@ const findItemIndex = (name) => {
 // Route für das Sammeln von Ressourcen
 router.post('/gather', (req, res) => {
   const items = [
-    { name: "Fichtenholz", type: "Material", category: "misc" },
-    { name: "Rinde", type: "Material", category: "misc" },
-    { name: "Stöcke", type: "Material", category: "misc" },
-    { name: "Zapfen", type: "Material", category: "misc" },
+    { name: "Fichtenholz", type: "Material", category: "misc", worth: 3, strength: 0 },
+    { name: "Rinde", type: "Material", category: "misc", worth: 2, strength: 0 },
+    { name: "Stöcke", type: "Material", category: "misc", worth: 2, strength: 0 },
+    { name: "Zapfen", type: "Material", category: "misc", worth: 3, strength: 0 },
   ];
 
   // Generiere zufällige Mengen für die Ressourcen
