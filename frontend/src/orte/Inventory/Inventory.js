@@ -1,39 +1,47 @@
+// frontend/src/orte/Inventory/Inventory.js
 import React, { useState, useEffect } from 'react';
 import './Inventory.css'; // Import der CSS-Datei
-
-// Übersetzungsobjekt
-const translations = {
-  name: 'Name',
-  type: 'Typ',
-  strength: 'Stärke',
-  category: 'Kategorie',
-  worth: 'Wert',
-  quantity: 'Menge',
-  weapon: 'Waffe',
-  equipment: 'Ausrüstung',
-  consumable: 'Heilung',
-  misc: 'Gegenstände',
-  gold: 'Gold',
-  buy: 'Kaufen',
-  sell: 'Verkaufen',
-};
-
-// Funktion, um Backend-Daten vor der Anzeige zu übersetzen (falls nötig)
-const translateItemKeys = (items) => {
-  return items.map((item) => ({
-    ...item,
-    type: translations[item.type] || item.type,
-    category: translations[item.category] || item.category,
-  }));
-};
 
 const Inventory = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  
   // State für Benachrichtigungen
   const [notification, setNotification] = useState({ message: '', type: '' }); // type: 'success' oder 'error'
+
+  // Liste von zufälligen Erfolgsmeldungen
+  const successMessages = [
+    "Weg damit! Dieser Gegenstand wollte sowieso nicht bleiben.",
+    "Tschüssi, Item! Möge es in den virtuellen Himmel fliegen.",
+    "Das Item wurde in die ewigen Datenjagdgründe geschickt.",
+    "Und zack, weg ist es! Du wirst es wahrscheinlich eh nicht vermissen.",
+    "Auf Wiedersehen, alter Freund! Oder eher... nie wiedersehen.",
+    "Ein Klick für dich, ein Neuanfang für das Item im Daten-Nirwana.",
+    "Wo das Item hingeht? Auf einen unendlichen Urlaub in die binäre Karibik.",
+    "Das Item hat gerade gekündigt. Es will seine Träume verfolgen.",
+    "Bye-bye! Das Item ist jetzt frei, um auf Weltreise zu gehen.",
+    "Item gelöscht! Jetzt hat dein Inventar etwas mehr Luft zum Atmen.",
+    "Und weg damit! Wer braucht schon ein [Item-Name]?!",
+    "Löschtaste gedrückt, Problem gelöst. Tschüss, Item.",
+    "Das Item wollte eh schon immer ein NFT werden. Lass es frei.",
+    "Ups, Item gelöscht! Möge es in Frieden ruhen... oder einfach verschwinden.",
+    "Bye-bye, Gegenstand! Genieße deinen Aufenthalt im virtuellen Nirvana.",
+    "Du hast das Item gelöscht... aber das Item löscht auch dich! (Nur Spaß.)",
+    "Dieses Item ist jetzt digitaler Fischfutter. Blub, blub.",
+    "Weg damit! Wer braucht schon ein Inventar voller unnötiger Sachen.",
+    "Item weggezaubert! Abrakadabra, hokus pokus, nicht mehr da.",
+    "Das Item hat die Entscheidung getroffen, ein besseres Leben zu führen... als Nichts.",
+    "Das Item wurde gerade in die digitale Müllhalde geworfen. Es ist jetzt glücklich dort.",
+    "Zack, weg damit! Dieses Item wollte eh Karriere als Datenmüll machen.",
+    "Du hast gerade ein Item gelöscht. Es weint jetzt in der Ecke... irgendwo im Speicher.",
+    "Achtung, Achtung! Das Item ist jetzt offiziell arbeitslos. Herzlichen Glückwunsch.",
+    "Item entfernt! Es lebt jetzt als Geist im Internet weiter.",
+    "Tschüss, Item! Es hat gesagt, es geht einkaufen und kommt nie wieder zurück.",
+    "Das Item hat sich freiwillig gemeldet, um gelöscht zu werden. Es war bereit.",
+    "Du hast das Item gelöscht. Es schließt sich jetzt den anderen verlorenen Daten an.",
+    "Item entfernt! Es ist jetzt ein Mitglied im Club der verlorenen Dateien."
+  ];
 
   // Funktion zum Abrufen von Items
   const fetchItems = async (endpoint) => {
@@ -48,13 +56,7 @@ const Inventory = () => {
       }
       const data = await response.json();
       console.log('Abruf-Daten:', data);
-
-
-      // Übersetzte Items setzen
-      setItems(translateItemKeys(data.items));
-
       setItems(data.items);
-
     } catch (err) {
       console.error('Fehler beim Abrufen der Daten:', err);
       setError('Fehler beim Abrufen der Daten.');
@@ -62,6 +64,59 @@ const Inventory = () => {
       setLoading(false);
     }
   };
+
+  // Funktion zum Löschen eines Items
+  const deleteItem = async (itemName, quantity) => {
+    console.log(`Lösche ${quantity} von Item:`, itemName);
+
+    try {
+      const response = await fetch(`http://localhost:3000/inventory/item/${encodeURIComponent(itemName)}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ quantity }),
+      });
+
+      console.log('Antwort vom Server:', response);
+
+      const data = await response.json();
+      console.log('Daten vom Server:', data);
+
+      if (response.ok) {
+        if (data.remainingQuantity === 0) {
+          // Entferne das gesamte Item aus dem State
+          setItems(items.filter(item => item.name !== itemName));
+        } else {
+          // Aktualisiere die Menge des Items im State
+          setItems(items.map(item => 
+            item.name === itemName 
+              ? { ...item, quantity: data.remainingQuantity } 
+              : item
+          ));
+        }
+        // Wähle eine zufällige Erfolgsmeldung aus der Liste
+        const randomMessage = successMessages[Math.floor(Math.random() * successMessages.length)];
+        setNotification({ message: randomMessage, type: 'success' }); // Erfolgsnachricht
+      } else {
+        setNotification({ message: data.message, type: 'error' }); // Fehlermeldung
+      }
+    } catch (err) {
+      console.error('Fehler beim Löschen des Items:', err);
+      setNotification({ message: 'Fehler beim Löschen des Items.', type: 'error' });
+    }
+  };
+
+  // Automatisches Ausblenden der Benachrichtigung nach 4 Sekunden
+  useEffect(() => {
+    if (notification.message) {
+      const timer = setTimeout(() => {
+        setNotification({ message: '', type: '' });
+      }, 4000); // 4 Sekunden
+
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
 
   // Initiale Abrufung aller Items
   useEffect(() => {
@@ -97,15 +152,6 @@ const Inventory = () => {
         <table className="inventory-table">
           <thead>
             <tr>
-
-              <th>{translations.name}</th>
-              <th>{translations.type}</th>
-              <th>{translations.strength}</th>
-              <th>{translations.category}</th>
-              <th>{translations.worth}</th>
-              <th>{translations.quantity}</th>
-              <th>Aktionen</th>
-
               <th className="table-header">Name</th>
               <th className="table-header">Typ</th>
               <th className="table-header">Stärke</th>
@@ -113,12 +159,11 @@ const Inventory = () => {
               <th className="table-header">Wert</th>
               <th className="table-header">Menge</th>
               <th className="table-header">Aktionen</th> {/* Neue Spalte für Aktionen */}
-
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr key={item.name}>
+              <tr key={item.name}> {/* Verwende den Namen als Schlüssel */}
                 <td className="table-cell">{item.name}</td>
                 <td className="table-cell">{item.type}</td>
                 <td className="table-cell">{item.strength}</td>
@@ -126,7 +171,30 @@ const Inventory = () => {
                 <td className="table-cell">{item.worth}</td>
                 <td className="table-cell">{item.quantity}</td>
                 <td className="table-cell">
-                  {/* Löschen-Formular */}
+                  <form 
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const quantity = parseInt(e.target.elements.quantity.value, 10);
+                      if (isNaN(quantity) || quantity < 1) {
+                        setNotification({ message: 'Bitte gib eine gültige Menge ein.', type: 'error' });
+                        return;
+                      }
+                      deleteItem(item.name, quantity);
+                      e.target.reset();
+                    }}
+                    className="delete-form"
+                  >
+                    <input 
+                      type="number" 
+                      name="quantity"
+                      min="1" 
+                      max={item.quantity} 
+                      placeholder="Menge" 
+                      required
+                      className="quantity-input-inline"
+                    />
+                    <button type="submit" className="delete-button-inline">Löschen</button>
+                  </form>
                 </td>
               </tr>
             ))}
