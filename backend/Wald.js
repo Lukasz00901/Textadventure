@@ -15,7 +15,11 @@ router.post('/gather', (req, res) => {
     { name: "Fichtenholz", type: "Material", category: "misc", worth: 3, strength: 0 },
     { name: "Rinde", type: "Material", category: "misc", worth: 2, strength: 0 },
     { name: "Stöcke", type: "Material", category: "misc", worth: 2, strength: 0 },
-    { name: "Zapfen", type: "Material", category: "misc", worth: 3, strength: 0 },
+    { name: "Pfifferlinge", type: "Material", category: "misc", worth: 3, strength: 0 },
+    { name: "Steinpilze", type: "Material", category: "misc", worth: 3, strength: 0 },
+    { name: "Harz", type: "Material", category: "misc", worth: 2, strength: 0 },
+    { name: "Kräuter", type: "Material", category: "misc", worth: 2, strength: 0 },
+    { name: "Ranken", type: "Material", category: "misc", worth: 2, strength: 0 },
   ];
 
   // Generiere zufällige Mengen für die Ressourcen
