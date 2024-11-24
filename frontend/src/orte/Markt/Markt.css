@@ -22,13 +22,12 @@
   font-family: 'UnifrakturCook', cursive, serif;
   font-weight: 700;
   font-size: 20px;
-  gap: 50px; /* Erhöhter Gap von 40px auf 50px */
+  gap: 100px; /* Erhöhter Gap von 40px auf 50px */
 }
 
 .item-text {
   display: flex;
   flex: 1;
-  gap: 40px; /* Erhöhter Gap von 30px auf 40px */
   align-items: center;
 }
 
@@ -93,45 +92,6 @@
   color: #3e2723;
 }
 
-div.inventory {
-  background: #2a2a4000;
-}
-
-/* Zusätzliche Styles für neue Bereiche */
-.player-status, .tavern-keeper, .quest, .inventory {
-  margin: 20px 0;
-  padding: 10px;
-  background-color: #2a2a40;
-  border-radius: 5px;
-}
-
-.tavern-keeper button, .keeper-actions button, .inventory ul li button {
-  padding: 10px 20px;
-  background-color: #2a2a40;
-  color: #c9b040;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-  font-family: 'UnifrakturCook', cursive, serif;
-  font-weight: 700;
-  font-size: 18px;
-  margin: 5px;
-}
-
-.tavern-keeper button:hover, .keeper-actions button:hover, .inventory ul li button:hover {
-  background-color: #d4af37;
-  color: #3e2723;
-}
-
-.keeper-actions {
-  margin-top: 10px;
-}
-
-.keeper-actions button {
-  width: 200px;
-}
-
 /* Fehler- und Informationsnachrichten */
 .error-message {
   color: red;
@@ -143,53 +103,10 @@ div.inventory {
   font-weight: bold;
 }
 
-/* Quest Status Styles */
-.completed {
-  color: green;
-}
-
 .in-progress {
   color: orange;
 }
 
-/* Zusätzliche Styles für das Inventar im Markt */
-.inventory ul {
-  list-style: none;
-  padding: 0;
-}
-
-.inventory ul li {
-  background-color: #311e1c57;
-  padding: 10px;
-  border: 1px solid #c9b040;
-  border-radius: 5px;
-  color: #c9b040;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: 'UnifrakturCook', cursive, serif;
-  font-weight: 700;
-  font-size: 18px;
-}
-
-.inventory ul li button {
-  padding: 5px 10px;
-  background-color: #7a2020;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-  font-family: 'UnifrakturCook', cursive, serif;
-  font-weight: 700;
-  font-size: 16px;
-}
-
-.inventory ul li button:hover {
-  background-color: #d4af37;
-  color: #3e2723;
-}
 
 /* Responsive Anpassungen */
 @media (max-width: 1200px) {
@@ -197,9 +114,6 @@ div.inventory {
     max-width: 800px; /* Reduziert die Breite auf 800px für mittelgroße Bildschirme */
   }
 
-  .item-text {
-    gap: 30px; /* Verkleinert den Gap für kleinere Bildschirme */
-  }
 
   .item-quantity {
     margin-left: 50px; /* Verkleinert den Abstand */
@@ -211,17 +125,6 @@ div.inventory {
     max-width: 100%; /* Maximiert die Breite auf kleineren Bildschirmen */
   }
 
-  .Markt ul li {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px; /* Reduziert den Gap für vertikale Ausrichtung */
-  }
-
-  .item-text {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px; /* Reduziert den Gap */
-  }
 
   .item-quantity {
     margin-left: 0; /* Entfernt den Abstand */
