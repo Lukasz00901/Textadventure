@@ -1,4 +1,5 @@
 // src/App.js
+// src/App.js
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
@@ -10,6 +11,7 @@ import Schmiede from './orte/Schmiede/Schmiede';
 import Wald from './orte/Wald/Wald';
 import Mine from './orte/Mine/Mine';
 import Taverne from './orte/Taverne/Taverne';
+import Start from './orte/Start/StartScreen';
 
 const App = () => {
   return (
@@ -19,7 +21,7 @@ const App = () => {
           <Header />
           <div className="Content">
             <Routes>
-              <Route path="/" element={<Navigate to="/inventar" replace />} />
+              <Route path="/" element={<Start />} />
               <Route path="/inventar" element={<Inventory />} />
               <Route path="/dungeon" element={<Dungeon />} />
               <Route path="/markt" element={<Markt />} />
