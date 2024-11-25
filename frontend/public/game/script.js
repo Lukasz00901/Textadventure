@@ -1,10 +1,13 @@
-// script.js
+// HTML-Elemente
 const cards = document.querySelectorAll('.memory-card');
 const resetButton = document.getElementById('reset-button'); // Reset-Button auswählen
+const timerDisplay = document.getElementById('timer'); // Timer-Anzeige auswählen (z. B. <div id="timer"></div>)
 
 let hasFlippedCard = false;
 let firstCard, secondCard;
 let lockBoard = false;
+let timer; // Variable für den Timer
+let timeLeft = 120; // 120 Sekunden
 
 // Funktion zum Umdrehen der Karten
 function flipCard() {
@@ -66,6 +69,11 @@ function shuffle() {
 
 // Funktion zum Zurücksetzen des Spiels
 function resetGame() {
+    // Timer zurücksetzen
+    clearInterval(timer);
+    timeLeft = 120;
+    startTimer();
+
     // Alle Karten umdrehen, falls sie umgedreht sind
     cards.forEach(card => {
         card.classList.remove('flip');
@@ -76,8 +84,25 @@ function resetGame() {
     shuffle();
 }
 
-// Sofortige Kartenmischung beim Laden des Spiels
+// Funktion zum Starten des Timers
+function startTimer() {
+    timerDisplay.textContent = `Time left: ${timeLeft}s`;
+
+    timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `Time left: ${timeLeft}s`;
+
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            alert('Time is up! Resetting the game.');
+            resetGame();
+        }
+    }, 1000);
+}
+
+// Sofortige Kartenmischung und Timer-Start beim Laden des Spiels
 shuffle();
+startTimer();
 
 // Event Listener für jede Karte
 cards.forEach(card => card.addEventListener('click', flipCard));

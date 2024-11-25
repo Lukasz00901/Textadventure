@@ -23,18 +23,18 @@ h1 {
 
 /* Memory-Spielbereich */
 .memory-game {
-    width: 900px; /* Vergrößerte Breite für größere Karten */
+    width: 735px; /* Vergrößerte Breite für größere Karten */
     margin: 40px auto;
     display: grid;
-    grid-template-columns: repeat(4, 225px); /* Vergrößerte Kartenbreite */
+    grid-template-columns: repeat(4, 160px); /* Vergrößerte Kartenbreite */
     grid-gap: 30px; /* Vergrößerte Abstände */
-    perspective: 1000px; /* Für 3D-Effekt */
+    perspective: 100px; /* Für 3D-Effekt */
 }
 
 /* Karten-Styling */
 .memory-card {
-    width: 225px; /* Vergrößerte Kartenbreite */
-    height: 225px; /* Vergrößerte Kartenhöhe */
+    width: 160px; /* Vergrößerte Kartenbreite */
+    height: 160px; /* Vergrößerte Kartenhöhe */
     position: relative;
     cursor: pointer;
     transform: scale(1);
@@ -70,16 +70,18 @@ h1 {
 
 .front-face {
     transform: rotateY(180deg); /* Beibehaltung der Drehung */
+    background: #292929; /* Optional: Hintergrundfarbe */
+
 }
 
 .back-face {
-    background: #292929; /* Optional: Hintergrundfarbe */
+    background: #313131; /* Optional: Hintergrundfarbe */
 }
 
 /* Bildgrößen anpassen */
 .front-face img, .back-face img {
-    width: 90%;  /* Bilder füllen die Faces größtenteils aus */
-    height: 90%;
+    width: 93%;  /* Bilder füllen die Faces größtenteils aus */
+    height: 93%;
     object-fit: cover; /* Bild füllt den Container ohne Verzerrung */
     border-radius: 8px;
 }
@@ -111,50 +113,16 @@ h1 {
 #reset-button:hover {
     background-color: #c0392b;
     transform: scale(1.1);
-    color: #dad759;
+    color: #b68080;
 }
 
 /* Responsives Design */
-@media (max-width: 1200px) {
-    .memory-game {
-        width: 80%;
-        grid-template-columns: repeat(3, 200px); /* Anpassung */
-        grid-gap: 25px;
-    }
-
-    .memory-card {
-        width: 200px;
-        height: 200px;
-    }
-
-    .front-face img, .back-face img {
-        width: 90%;
-        height: 90%;
-    }
-}
 
 @media (max-width: 900px) {
     .memory-game {
         width: 90%;
         grid-template-columns: repeat(2, 180px);
         grid-gap: 20px;
-    }
-
-    .memory-card {
-        width: 180px;
-        height: 180px;
-    }
-
-    .front-face img, .back-face img {
-        width: 90%;
-        height: 90%;
-    }
-}
-
-@media (max-width: 600px) {
-    .memory-game {
-        grid-template-columns: repeat(2, 150px);
-        grid-gap: 15px;
     }
 
     .memory-card {
@@ -165,32 +133,5 @@ h1 {
     .front-face img, .back-face img {
         width: 90%;
         height: 90%;
-    }
-
-    #reset-button {
-        padding: 10px 20px;
-        font-size: 16px;
-    }
-}
-
-@media (max-width: 400px) {
-    .memory-game {
-        grid-template-columns: repeat(1, 120px);
-        grid-gap: 10px;
-    }
-
-    .memory-card {
-        width: 120px;
-        height: 120px;
-    }
-
-    .front-face img, .back-face img {
-        width: 90%;
-        height: 90%;
-    }
-
-    #reset-button {
-        padding: 8px 16px;
-        font-size: 14px;
     }
 }
