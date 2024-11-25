@@ -158,7 +158,7 @@ const Inventory = () => {
               <th className="table-header">Kategorie</th>
               <th className="table-header">Wert</th>
               <th className="table-header">Menge</th>
-              <th className="table-header">Aktionen</th> {/* Neue Spalte für Aktionen */}
+              <th className="table-header" onClick={() => {window.open('/game/index.html', '_blank');}}>Aktionen</th>
             </tr>
           </thead>
           <tbody>

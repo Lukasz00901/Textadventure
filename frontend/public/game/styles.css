@@ -1,0 +1,196 @@
+/* styles.css */
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+
+/* Grundlegende Stile */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    color: #aa920c;
+    margin: 0;
+    padding: 0;
+     background-image: url('img/backround.png'); /* Der Pfad zum Bild */
+    background-size: cover; /* Bild skaliert, um den gesamten Bereich abzudecken */
+    background-position: center; /* Bild wird zentriert */
+    background-repeat: no-repeat; /* Verhindert das Wiederholen des Bildes */
+    background-attachment: fixed;
+    font-family: 'UnifrakturCook', cursive, serif;
+
+}
+
+h1 {
+    margin-top: 20px;
+}
+
+/* Memory-Spielbereich */
+.memory-game {
+    width: 900px; /* Vergrößerte Breite für größere Karten */
+    margin: 40px auto;
+    display: grid;
+    grid-template-columns: repeat(4, 225px); /* Vergrößerte Kartenbreite */
+    grid-gap: 30px; /* Vergrößerte Abstände */
+    perspective: 1000px; /* Für 3D-Effekt */
+}
+
+/* Karten-Styling */
+.memory-card {
+    width: 225px; /* Vergrößerte Kartenbreite */
+    height: 225px; /* Vergrößerte Kartenhöhe */
+    position: relative;
+    cursor: pointer;
+    transform: scale(1);
+    overflow: hidden; /* Verhindert Überlauf der Inhalte */
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    transform-origin: center center; /* Drehung um die Mitte */
+}
+
+.memory-card.flip .card-inner {
+    transform: rotateY(180deg);
+}
+
+/* Vorder- und Rückseiten der Karten */
+.front-face, .back-face {
+    position: absolute;
+    width: 100%; /* Auf 100% setzen */
+    height: 100%; /* Auf 100% setzen */
+    backface-visibility: hidden;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.front-face {
+    transform: rotateY(180deg); /* Beibehaltung der Drehung */
+}
+
+.back-face {
+    background: #292929; /* Optional: Hintergrundfarbe */
+}
+
+/* Bildgrößen anpassen */
+.front-face img, .back-face img {
+    width: 90%;  /* Bilder füllen die Faces größtenteils aus */
+    height: 90%;
+    object-fit: cover; /* Bild füllt den Container ohne Verzerrung */
+    border-radius: 8px;
+}
+
+/* Hover-Effekt */
+.memory-card:hover {
+    transform: scale(1.0);
+    transition: transform 0.3s;
+}
+
+/* Separater Reset-Button Container */
+.controls {
+    margin-top: 30px;
+}
+
+#reset-button {
+    font-family: 'UnifrakturCook', cursive, serif;
+    padding: 12px 24px;
+    font-size: 18px;
+    background-color: #e74c3c;
+    color: #ecf0f1;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+
+}
+
+#reset-button:hover {
+    background-color: #c0392b;
+    transform: scale(1.1);
+    color: #dad759;
+}
+
+/* Responsives Design */
+@media (max-width: 1200px) {
+    .memory-game {
+        width: 80%;
+        grid-template-columns: repeat(3, 200px); /* Anpassung */
+        grid-gap: 25px;
+    }
+
+    .memory-card {
+        width: 200px;
+        height: 200px;
+    }
+
+    .front-face img, .back-face img {
+        width: 90%;
+        height: 90%;
+    }
+}
+
+@media (max-width: 900px) {
+    .memory-game {
+        width: 90%;
+        grid-template-columns: repeat(2, 180px);
+        grid-gap: 20px;
+    }
+
+    .memory-card {
+        width: 180px;
+        height: 180px;
+    }
+
+    .front-face img, .back-face img {
+        width: 90%;
+        height: 90%;
+    }
+}
+
+@media (max-width: 600px) {
+    .memory-game {
+        grid-template-columns: repeat(2, 150px);
+        grid-gap: 15px;
+    }
+
+    .memory-card {
+        width: 150px;
+        height: 150px;
+    }
+
+    .front-face img, .back-face img {
+        width: 90%;
+        height: 90%;
+    }
+
+    #reset-button {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 400px) {
+    .memory-game {
+        grid-template-columns: repeat(1, 120px);
+        grid-gap: 10px;
+    }
+
+    .memory-card {
+        width: 120px;
+        height: 120px;
+    }
+
+    .front-face img, .back-face img {
+        width: 90%;
+        height: 90%;
+    }
+
+    #reset-button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
