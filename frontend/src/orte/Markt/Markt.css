@@ -1,15 +1,81 @@
-/* Markt.css */
+/* frontend/Markt.css */
 
-.Markt ul {
+/* Hauptcontainer */
+.Markt {
+  padding: 20px;
+  font-family: 'UnifrakturCook', cursive, serif;
+}
+
+/* Titel */
+.Markt h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2em;
+  color: #c9b040;
+}
+
+/* Benachrichtigungen */
+.error-message, .info-message {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.error-message {
+  color: red;
+}
+
+.info-message {
+  color: green;
+}
+
+/* Spielerstatus */
+.player-status {
+  margin: 20px 0;
+  padding: 20px;
+ 
+  color: #c9b040;
+}
+
+/* Inhalt mit flexbox */
+.content {
+  display: flex;
+  justify-content: space-between; /* Platz zwischen den Flex-Items */
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap; /* Ermöglicht Umbrüche bei kleineren Bildschirmen */
+}
+
+/* Markt-Panel: Item-Liste */
+.market {
+  max-width: 600px;
+  width: 100%;
+  margin-left: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.market h2 {
+  text-align: center;
+  margin-bottom: 5px;
+  font-size: 22px;
+  color: #c9b040;
+  width: 100%;
+  margin-left: -770px;
+}
+
+.market ul {
   list-style: none;
   padding: 0;
-  width: 100%;
-  max-width: 900px; /* Erhöht von 700px auf 900px für mehr Breite */
-  margin: 0 auto;
+  margin: 0;
+  width: calc(100% + 150px); /* Vergrößert die Breite um 40px */
+  margin-left: -80px; /* Schiebt die Liste nach links */
   background-color: transparent;
 }
 
-.Markt ul li {
+.market ul li {
   background-color: #311e1c57;
   padding: 15px;
   border: 1px solid #c9b040;
@@ -22,23 +88,25 @@
   font-family: 'UnifrakturCook', cursive, serif;
   font-weight: 700;
   font-size: 20px;
-  gap: 100px; /* Erhöhter Gap von 40px auf 50px */
+  gap: 20px;
+  margin-bottom: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .item-text {
   display: flex;
   flex: 1;
+  gap: 20px;
   align-items: center;
 }
 
-/* Individuelle Klassen für die Textelemente */
 .item-name {
-  flex: 2;
+  flex: 3; /* Erhöht die Breite des Namens */
   text-align: left;
 }
 
 .item-description {
-  flex: 3;
+  flex: 2;
   text-align: center;
 }
 
@@ -50,41 +118,22 @@
 .item-quantity {
   flex: 1;
   text-align: right;
-  font-size: 100px; /* Erhöhte Schriftgröße von 16px auf 20px */
+  font-size: 18px;
   color: #f0c040;
-  margin-left: 100px; /* Erhöhter Abstand von 70px auf 100px */
-  white-space: nowrap; /* Verhindert Zeilenumbruch */
+  white-space: nowrap;
 }
 
-.Markt ul li .item-button {
-  padding: 10px;
+.item-button {
+  padding: 10px 20px; /* Größere Buttons */
   background-color: #271816;
   color: #c9b040;
   border: none;
   cursor: pointer;
   border-radius: 5px;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
   font-family: 'UnifrakturCook', cursive, serif;
   font-weight: 700;
-  font-size: 20px;
-  margin-left: auto;
-}
-
-/* Individuelle Styles für spezifische Buttons */
-.item-button-0 {
-  background-color: #7a2020;
-}
-
-.item-button-1 {
-  background-color: #4a7020;
-}
-
-.item-button-2 {
-  background-color: #20207a;
-}
-
-.item-button-3 {
-  background-color: #7a2020;
+  font-size: 18px;
 }
 
 .item-button:hover {
@@ -92,45 +141,46 @@
   color: #3e2723;
 }
 
-/* Fehler- und Informationsnachrichten */
-.error-message {
-  color: red;
-  font-weight: bold;
+/* Quest Log */
+.quest-section {
+  flex: 1; /* Quest-Log nimmt weniger Platz ein */
+  min-width: 300px; /* Mindestbreite für bessere Darstellung auf kleineren Bildschirmen */
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 100px;
 }
 
-.info-message {
-  color: green;
-  font-weight: bold;
+.quest-log-title {
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: #c9b040;
+  margin-left: 200px;
 }
 
-.in-progress {
+
+.quest-log {
+  background-color: #160e0c70;
+  color: #c9b040;
+  border-radius: 5px;
+  padding: 20px; /* Erhöht den Innenabstand */
+  height: 400px; /* Höhe bleibt konstant */
+  overflow-y: scroll;
+  border: 1px solid #c9b040;
+  box-sizing: border-box; /* Box-Sizing für konsistente Maße */
+  margin-left: -600px;
+}
+
+.log-content p {
+  margin: 5px 0;
+  font-size: 16px;
+  border-bottom: 1px solid #c9b040;
+  padding-bottom: 5px;
+}
+
+.cooldown-entry {
   color: orange;
+  font-weight: bold;
 }
 
 
-/* Responsive Anpassungen */
-@media (max-width: 1200px) {
-  .item-list {
-    max-width: 800px; /* Reduziert die Breite auf 800px für mittelgroße Bildschirme */
-  }
-
-
-  .item-quantity {
-    margin-left: 50px; /* Verkleinert den Abstand */
-  }
-}
-
-@media (max-width: 800px) {
-  .item-list {
-    max-width: 100%; /* Maximiert die Breite auf kleineren Bildschirmen */
-  }
-
-
-  .item-quantity {
-    margin-left: 0; /* Entfernt den Abstand */
-  }
-
-  .item-button {
-    width: 100%; /* Maximiert die Breite des Buttons */
-  }
-}

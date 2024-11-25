@@ -243,3 +243,21 @@ Für den kommenden Montag haben wir uns folgende Ziele gesetzt:
 Texte für die verschiedenen Orte implementieren: Um die Welt noch lebendiger und immersiver zu gestalten, werden wir detaillierte Beschreibungen und Hintergrundgeschichten für alle wichtigen Orte hinzufügen.
 Einführung des Craftingsystems: Trotz der heutigen Verzögerungen werden wir uns darauf konzentrieren, das Craftingsystem vollständig zu integrieren und sicherzustellen, dass es reibungslos funktioniert.
 Einbau der Belohnungen: Um die Motivation der Spieler zu steigern, planen wir, attraktive Belohnungen in verschiedenen Bereichen des Spiels zu implementieren.
+
+#################################################################################################################################################
+
+Tagesbericht – 25.11.2024
+
+Heute wurden zahlreiche Verbesserungen und Updates im Spiel implementiert, die das Spielerlebnis erheblich bereichern. Die Cooldown-Zeit für Quests wurde auf nur eine Minute verkürzt, 
+damit dies bei der Präsentation nocht so lange dauert. Zudem ist es nun möglich, bis zu drei Quests hintereinander zu erledigen, bevor der Cooldown aktiviert wird. 
+Diese Anpassung ermöglicht ein intensiveres und dynamischeres Gameplay, da Spieler mehr Aufgaben in kürzerer Zeit abschließen können.
+
+Der Marktplatz erhielt einen Markt-Log, der den Spielern detaillierte Einblicke in die Handelsstatistiken bietet. Dies erleichtert es den Spielern, 
+ihre Käufe im Überblick zu haben. Darüber hinaus wurden die bisherigen Questlogs der Taverne und der Schmiede umbenannt in „Tavernen Log“ und „Schmiede Log“, um eine klarere 
+und übersichtlichere Darstellung der Questaktivitäten und Fortschritte in diesen Bereichen zu gewährleisten.
+
+Die Questboxen wurden ebenfalls verfeinert, indem die Benutzeroberfläche intuitiver gestaltet und die Navigation verbessert wurde. Zudem funktionieren die Quests der Schmiede und der Taverne nun einwandfrei, 
+da alle bisherigen Bugs und Probleme behoben wurden. Spieler können somit reibungslos ihre Aufgaben in diesen Bereichen erfüllen, ohne auf technische Hindernisse zu stoßen.
+
+Zusammenfassend tragen diese Updates zu einer insgesamt verbesserten Spielperformance und einem angenehmeren Spielerlebnis bei. Die kontinuierlichen Anpassungen basieren auf dem Feedback der Community: (BFF und Lebenspartnerein) und 
+zeigen das Engagement des Entwicklerteams, das Spiel stetig weiterzuentwickeln und zu optimieren. Die Spieler können sich auf weitere spannende Neuerungen und Verbesserungen in den kommenden Tagen freuen.
