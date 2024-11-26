@@ -261,3 +261,21 @@ da alle bisherigen Bugs und Probleme behoben wurden. Spieler können somit reibu
 
 Zusammenfassend tragen diese Updates zu einer insgesamt verbesserten Spielperformance und einem angenehmeren Spielerlebnis bei. Die kontinuierlichen Anpassungen basieren auf dem Feedback der Community: (BFF und Lebenspartnerein) und 
 zeigen das Engagement des Entwicklerteams, das Spiel stetig weiterzuentwickeln und zu optimieren. Die Spieler können sich auf weitere spannende Neuerungen und Verbesserungen in den kommenden Tagen freuen.
+
+#################################################################################################################################################
+
+Tagesbericht 26.11.24
+
+Heute wurden wesentliche Fortschritte im Projekt erzielt, die das Spielerlebnis erheblich verbessern. Der Startbildschirm und der Header wurden vollständig fertiggestellt, 
+wobei besonders auf ein stimmiges und ansprechendes Design geachtet wurde. Mit der Namensgebung der zentralen Stadt, "Schwarzbach", erhielt die Spielwelt einen greifbaren Charakter, 
+der die Atmosphäre weiter stärkt und die Immersion der Spieler vertieft.
+
+Ein weiterer bedeutender Meilenstein war die erfolgreiche Integration des Spielerstatus in die Module der Schmiede, Taverne und des Marktes. 
+Diese Komponenten können nun in Echtzeit auf den aktuellen Zustand des Spielers zugreifen. Die Synchronisation zwischen den Modulen funktioniert reibungslos und trägt wesentlich zu einem konsistenten Spielerlebnis bei.
+
+Zusätzlich wurde das Inventar überarbeitet und um eine Scroll-Funktion erweitert, um Platzprobleme bei umfangreichen Item-Sammlungen zu lösen. 
+Die neue Scrollbar fügt sich optisch in das Gesamtdesign ein und sorgt für eine einfache und flüssige Navigation. Spieler können nun auch große Inventare mühelos durchsuchen und verwalten, 
+ohne die Übersicht zu verlieren.
+
+Mit diesen Entwicklungen wurde ein solider Grundstein für die weiteren Arbeiten gelegt. 
+Der nächste Schritt besteht darin, weitere Css Bearbeitungen zu machen.

@@ -188,9 +188,7 @@ function Schmiede() {
 
       {talkingToKeeper && (
         <div className="keeper-buttons">
-          <button className="sleep-button" onClick={handleSleep}>
-            Schlafen
-          </button>
+          
           <button
             className="accept-quest-button"
             onClick={acceptQuest}

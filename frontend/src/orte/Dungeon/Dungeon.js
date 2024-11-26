@@ -196,7 +196,7 @@ const Dungeon = () => {
 
   return (
     <div className="dungeon-container">
-      <h1>Dungeon Spiel</h1>
+      <h1>Der Ewige Abgrund ⚔️</h1>
       <div className="player-stats">
         <p>HP: {playerHP} / {playerMaxHP}</p>
         <p>Woth: {playerMoney}</p>
