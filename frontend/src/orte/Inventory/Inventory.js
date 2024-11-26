@@ -12,35 +12,7 @@ const Inventory = () => {
 
   // Liste von zufälligen Erfolgsmeldungen
   const successMessages = [
-    "Weg damit! Dieser Gegenstand wollte sowieso nicht bleiben.",
-    "Tschüssi, Item! Möge es in den virtuellen Himmel fliegen.",
-    "Das Item wurde in die ewigen Datenjagdgründe geschickt.",
-    "Und zack, weg ist es! Du wirst es wahrscheinlich eh nicht vermissen.",
-    "Auf Wiedersehen, alter Freund! Oder eher... nie wiedersehen.",
-    "Ein Klick für dich, ein Neuanfang für das Item im Daten-Nirwana.",
-    "Wo das Item hingeht? Auf einen unendlichen Urlaub in die binäre Karibik.",
-    "Das Item hat gerade gekündigt. Es will seine Träume verfolgen.",
-    "Bye-bye! Das Item ist jetzt frei, um auf Weltreise zu gehen.",
-    "Item gelöscht! Jetzt hat dein Inventar etwas mehr Luft zum Atmen.",
-    "Und weg damit! Wer braucht schon ein [Item-Name]?!",
-    "Löschtaste gedrückt, Problem gelöst. Tschüss, Item.",
-    "Das Item wollte eh schon immer ein NFT werden. Lass es frei.",
-    "Ups, Item gelöscht! Möge es in Frieden ruhen... oder einfach verschwinden.",
-    "Bye-bye, Gegenstand! Genieße deinen Aufenthalt im virtuellen Nirvana.",
-    "Du hast das Item gelöscht... aber das Item löscht auch dich! (Nur Spaß.)",
-    "Dieses Item ist jetzt digitaler Fischfutter. Blub, blub.",
-    "Weg damit! Wer braucht schon ein Inventar voller unnötiger Sachen.",
-    "Item weggezaubert! Abrakadabra, hokus pokus, nicht mehr da.",
-    "Das Item hat die Entscheidung getroffen, ein besseres Leben zu führen... als Nichts.",
-    "Das Item wurde gerade in die digitale Müllhalde geworfen. Es ist jetzt glücklich dort.",
-    "Zack, weg damit! Dieses Item wollte eh Karriere als Datenmüll machen.",
-    "Du hast gerade ein Item gelöscht. Es weint jetzt in der Ecke... irgendwo im Speicher.",
-    "Achtung, Achtung! Das Item ist jetzt offiziell arbeitslos. Herzlichen Glückwunsch.",
-    "Item entfernt! Es lebt jetzt als Geist im Internet weiter.",
-    "Tschüss, Item! Es hat gesagt, es geht einkaufen und kommt nie wieder zurück.",
-    "Das Item hat sich freiwillig gemeldet, um gelöscht zu werden. Es war bereit.",
-    "Du hast das Item gelöscht. Es schließt sich jetzt den anderen verlorenen Daten an.",
-    "Item entfernt! Es ist jetzt ein Mitglied im Club der verlorenen Dateien."
+"Weg damit! Dieser Gegenstand wollte sowieso nicht bleiben.", "Tschüssi, Item! Möge es in den virtuellen Himmel fliegen.", "Auf Nimmerwiedersehen, du digitaler Ballast!", "Mach's gut, Gegenstand! Wir werden dich nicht vermissen.", "Item gelöscht! Zeit für etwas Neues.", "Leb wohl, kleines Datenpaket!", "Ab in den Datenmüll mit dir!", "Und weg bist du! So schnell kann's gehen.", "Bye-bye, unnötiges Item!", "Das war's, Gegenstand. Deine Reise endet hier.", "Ein Klick, und du bist Geschichte.", "Das Inventar sagt: 'Danke für den freien Platz!'", "Item entfernt. Jetzt herrscht wieder Ordnung.", "Tschüss, du Staubfänger!", "Auf Wiedersehen, du Platzverschwender!", "Gelöscht und vergessen!", "Dein Speicherplatz gehört jetzt uns!", "Das Item ist weg. Ruhe in digitalen Frieden.", "Ein letztes Lebewohl, kleines Item.", "Und tschüss! Mach's gut im Daten-Nirwana.", "Item gelöscht. Endlich mehr Platz für Wichtiges.", "Du bist frei, Gegenstand! Frei von meinem Inventar.", "Das war's dann wohl, Item.", "Adieu, du unnötiger Kram!", "Der Papierkorb freut sich auf dich.", "Item gelöscht. Wir sind besser ohne dich dran.", "Mach's gut, Datenmüll!", "Du wurdest entfernt. Kein Grund zur Sorge.", "Bis nie wieder, Gegenstand!", "Zeit für den Abschied. Tschüss!", "Item entfernt. Auf zu neuen Abenteuern!", "Und weg ist es! So einfach geht das.", "Dein Platz wurde neu vergeben.", "Auf Wiedersehen, Datenklumpen!", "Das Inventar sagt: 'Leb wohl!'", "Du bist gelöscht. Kein Zurück mehr.", "Mach's gut, digitale Last.", "Dein Speicherplatz wird neu genutzt.", "Item entfernt. Jetzt herrscht wieder Ordnung.", "Das war der letzte Klick für dich.", "Tschüss, Gegenstand! Vielleicht sieht man sich nie wieder.", "Du bist weg. Fühlt sich gut an.", "Item gelöscht. Ein weiterer Schritt zur Ordnung.", "Leb wohl, du unnützes Etwas!", "Deine Zeit ist abgelaufen. Tschüss!", "Ab in den digitalen Ruhestand mit dir.", "Gelöscht und vergessen. So soll's sein.", "Das Item ist weg. Endlich!", "Auf Nimmerwiedersehen, kleines Item.", "Ein Klick, und du bist Geschichte.", "Item entfernt. Das fühlt sich richtig an.", "Tschau, Gegenstand! War nett mit dir.", "Du bist gelöscht. Mach's gut!", "Zeit für Neues. Tschüss, altes Item!", "Der Platz ist frei. Danke fürs Gehen.", "Mach's gut, du digitales Relikt.", "Item gelöscht. Keine Tränen nötig.", "Auf Wiedersehen, du unnötige Datei!", "Dein Speicherplatz wird besser genutzt.", "Du bist weg. Das ist okay so.", "Gelöscht! Und keiner wird dich vermissen.", "Tschüss, Gegenstand! Auf ins Daten-Nichts.", "Ein letztes Adieu, kleines Item.", "Dein Abenteuer endet hier.", "Item entfernt. Weiter geht's!", "Du bist frei. Und wir auch.", "Leb wohl, digitale Bürde!", "Das war's, Gegenstand. Lebe wohl.", "Mach's gut, du Platzverschwender!", "Item gelöscht. Weiter zum nächsten.", "Du bist weg. Das Inventar freut sich.", "Auf Wiedersehen, du alte Datei.", "Gelöscht und vergessen. So läuft das.", "Tschüssi, Item! Wir sehen uns nicht mehr.", "Dein Platz wird neu vergeben.", "Item entfernt. Ein guter Tag!", "Du bist gelöscht. Und das ist gut so.", "Mach's gut, digitaler Ballast.", "Leb wohl, unnötiges Item!", "Das war der letzte Akt für dich.", "Item gelöscht. Zeit für Veränderung.", "Auf Nimmerwiedersehen, Datenklumpen!", "Du bist weg. Das fühlt sich gut an.", "Gelöscht! Danke für nichts.", "Tschau, Gegenstand! Es war nett.", "Ein Klick, und du bist fort.", "Item entfernt. Platz für Neues.", "Du bist gelöscht. Keine Sorge.", "Mach's gut, du virtuelle Last.", "Leb wohl, altes Item!", "Das Inventar sagt: 'Danke und tschüss!'", "Item gelöscht. Wir machen Platz.", "Auf Wiedersehen, du alte Datei.", "Du bist weg. Endlich Ordnung!", "Gelöscht und vorbei.", "Tschüss, Gegenstand! Bis nie wieder.", "Dein Platz wird neu vergeben.", "Item entfernt. Weiter so!", "Du bist gelöscht. Fühlt sich gut an.", "Mach's gut, du digitale Altlast.", "Leb wohl, unnötiges Ding!", "Das war's, Item. Danke für nichts.", "Item gelöscht. Weiter geht's.", "Auf Nimmerwiedersehen, du Datenhaufen.", "Du bist weg. Das Inventar jubelt.",
   ];
 
   // Funktion zum Abrufen von Items
@@ -112,7 +84,7 @@ const Inventory = () => {
     if (notification.message) {
       const timer = setTimeout(() => {
         setNotification({ message: '', type: '' });
-      }, 4000); // 4 Sekunden
+      }, 10000); // 4 Sekunden
 
       return () => clearTimeout(timer);
     }

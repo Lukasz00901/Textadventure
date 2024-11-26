@@ -40,7 +40,8 @@ const StartScreen = () => {
 
   return (
     <div className="StartScreen">
-      <h1>Willkommen zum Spiel</h1>
+      <h1>Willkommen in den Hallen der Finsternis.
+      </h1>
       <div className="dialog" ref={dialogRef}>
         {dialogLines.slice(0, currentStep).map((line, index) => (
           <p key={index}>{line}</p>
