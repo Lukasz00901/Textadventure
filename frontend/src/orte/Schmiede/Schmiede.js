@@ -1,105 +1,124 @@
+// frontend/Schmiede.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Schmiede.css';
 
-function CustomModal({ message, onClose }) {
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h1>Erfolg!</h1>
-        <p>{message}</p>
-        <button onClick={onClose}>OK</button>
-      </div>
-    </div>
-  );
-}
-
 function Schmiede() {
   const [smithyItems, setSmithyItems] = useState([]);
   const [inventoryItems, setInventoryItems] = useState([]);
-  const [quest, setQuest] = useState(null);
+  const [activeQuests, setActiveQuests] = useState([]);
+  const [lastCompletedQuest, setLastCompletedQuest] = useState(null); // Neue State-Variable
+  const [playerStatus, setPlayerStatus] = useState({ money: 0, hp: 0, maxHp: 0 });
   const [errorMessage, setErrorMessage] = useState('');
   const [questErrorMessage, setQuestErrorMessage] = useState('');
-  const [modalMessage, setModalMessage] = useState('');
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [infoMessage, setInfoMessage] = useState('');
+  const [talkingToKeeper, setTalkingToKeeper] = useState(false);
+  const [questLog, setQuestLog] = useState([]); // Zustand für den Questlog
 
-  // Übersetzungsobjekt
-  const translations = {
-    weapon: 'Waffe',
-  };
-
-  // Fetch smithy items and active quest on component mount
   useEffect(() => {
-    const fetchSmithyItems = async () => {
+    const fetchInitialData = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/smithy/items');
-        setSmithyItems(response.data);
+        await fetchPlayerStatus();
+        await fetchSmithyItems();
+        await fetchQuests();
+        await fetchQuestLog(); // Quest-Log beim Laden abrufen
       } catch (error) {
-        console.error('Error fetching smithy items:', error);
-        setErrorMessage('Fehler beim Laden der Schmiede-Items.');
+        console.error('Error fetching initial data:', error);
+        setErrorMessage('Fehler beim Laden der Schmiede-Daten.');
       }
     };
-
-    const fetchQuest = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/smithy/quest');
-        setQuest(response.data);
-      } catch (error) {
-        console.error('Error fetching quest:', error);
-        setQuestErrorMessage('Fehler beim Laden der Quest.');
-      }
-    };
-
-    fetchSmithyItems();
-    fetchQuest();
+    fetchInitialData();
   }, []);
 
-  // Buy item from the smithy
+  useEffect(() => {
+    // Starte einen Timer, der das Quest-Log jede Sekunde aktualisiert
+    const interval = setInterval(() => {
+      fetchQuestLog();
+      fetchQuests(); // Aktive Quests regelmäßig aktualisieren
+    }, 1000); // 1000 ms = 1 Sekunde
+
+    return () => clearInterval(interval); // Aufräumen beim Unmounten
+  }, []);
+
+  const fetchPlayerStatus = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/smithy/player-status');
+      setPlayerStatus(response.data);
+    } catch (error) {
+      console.error('Error fetching player status:', error);
+      setErrorMessage('Fehler beim Laden des Spielerstatus.');
+    }
+  };
+
+  const fetchSmithyItems = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/smithy/items');
+      setSmithyItems(response.data);
+    } catch (error) {
+      console.error('Error fetching smithy items:', error);
+      setErrorMessage('Fehler beim Laden der Schmiede-Items.');
+    }
+  };
+
+  const fetchQuests = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/smithy/quests');
+      setActiveQuests(response.data);
+    } catch (error) {
+      console.error('Error fetching quests:', error);
+      setErrorMessage('Fehler beim Laden der Quests.');
+    }
+  };
+
+  const fetchQuestLog = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/smithy/quest-log');
+      setQuestLog(response.data);
+    } catch (error) {
+      console.error('Error fetching quest log:', error);
+      setErrorMessage('Fehler beim Laden des Quest-Logs.');
+    }
+  };
+
   const buyItem = async (itemName) => {
     try {
       const response = await axios.post('http://localhost:3000/smithy/buy', { itemName });
-      const updatedItems = smithyItems.map((item) =>
-        item.name === itemName ? { ...item, quantity: item.quantity - 1 } : item
-      );
-      setSmithyItems(updatedItems);
-      setInventoryItems((prevInventory) => [
-        ...prevInventory,
-        response.data.inventoryItems.find((item) => item.name === itemName),
-      ]);
-      setModalMessage(`Item "${itemName}" erfolgreich gekauft!`);
-      setIsModalVisible(true);
+      setSmithyItems(response.data.smithyItems);
+      setPlayerStatus(response.data.playerStatus);
+      setInventoryItems(response.data.inventoryItems);
+      setInfoMessage(response.data.message);
       setErrorMessage('');
+      // Kein zusätzlicher Aufruf von fetchQuestLog notwendig, da der Timer das Quest-Log automatisch aktualisiert
     } catch (error) {
       console.error('Error buying item:', error);
-      setErrorMessage('Fehler beim Kauf des Items.');
+      setErrorMessage(error.response?.data?.message || 'Fehler beim Kauf des Items.');
     }
   };
 
-  // Sell item from inventory
   const sellItem = async (itemName) => {
     try {
-      await axios.post('http://localhost:3000/smithy/sell', { itemName });
-      setInventoryItems((prevInventory) =>
-        prevInventory.filter((item) => item.name !== itemName)
-      );
-      setModalMessage(`Item "${itemName}" erfolgreich verkauft!`);
-      setIsModalVisible(true);
+      const response = await axios.post('http://localhost:3000/smithy/sell', { itemName });
+      setInventoryItems(response.data.inventoryItems);
+      setInfoMessage(response.data.message);
       setErrorMessage('');
+      // Kein zusätzlicher Aufruf von fetchQuestLog notwendig, da der Timer das Quest-Log automatisch aktualisiert
     } catch (error) {
       console.error('Error selling item:', error);
-      setErrorMessage('Fehler beim Verkauf des Items.');
+      setErrorMessage(error.response?.data?.message || 'Fehler beim Verkauf des Items.');
     }
   };
 
-  // Complete the active quest
-  const completeQuest = async () => {
+  // Funktion: Quest abschließen
+  const completeQuest = async (questName) => {
     try {
-      const response = await axios.post('http://localhost:3000/smithy/complete-quest');
-      setQuest({ ...quest, completed: true });
+      const response = await axios.post('http://localhost:3000/smithy/complete-quest', { questName });
       setInventoryItems(response.data.inventoryItems);
-      setModalMessage('Quest abgeschlossen!');
-      setIsModalVisible(true);
-      setQuestErrorMessage('');
+      setActiveQuests(response.data.activeQuests);
+      setQuestLog(response.data.questLog);
+      setInfoMessage('Quest abgeschlossen!');
+      setErrorMessage('');
+      setLastCompletedQuest(questName); // Setze den Namen der letzten abgeschlossenen Quest
+      // Kein zusätzlicher Aufruf von fetchQuestLog oder fetchQuests notwendig
     } catch (error) {
       console.error('Error completing quest:', error);
       if (error.response && error.response.data) {
@@ -110,79 +129,155 @@ function Schmiede() {
     }
   };
 
-  // Generate a new random quest
-  const generateNewQuest = async () => {
+  // Funktion: Quest annehmen
+  const acceptQuest = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/smithy/quest/new');
-      setQuest(response.data);
-      setModalMessage('Neue Quest generiert!');
-      setIsModalVisible(true);
-      setQuestErrorMessage('');
+      const response = await axios.post('http://localhost:3000/smithy/accept-quest');
+      setActiveQuests(response.data.activeQuests);
+      setQuestLog(response.data.questLog);
+      setInfoMessage('Neue Quest angenommen.');
+      setErrorMessage('');
+      setTalkingToKeeper(false);
+      setLastCompletedQuest(null); // Zurücksetzen der letzten abgeschlossenen Quest
+      // Kein zusätzlicher Aufruf von fetchQuestLog oder fetchQuests notwendig
     } catch (error) {
-      console.error('Error generating new quest:', error);
-      setQuestErrorMessage('Fehler beim Generieren einer neuen Quest.');
+      console.error('Error accepting quest:', error);
+      setQuestErrorMessage(error.response?.data?.message || 'Fehler beim Annehmen der Quest.');
     }
   };
 
-  const closeModal = () => {
-    setIsModalVisible(false);
+
+  // Funktion: Mit Schmied sprechen
+  const handleTalkToKeeper = () => {
+    setTalkingToKeeper(!talkingToKeeper);
   };
+
+  // Funktion zum Rendern einzelner Quest-Log-Einträge
+  const renderQuestLogEntry = (entry, index) => {
+    if (typeof entry === 'string') {
+      // Einfacher Text-Eintrag
+      return <p key={index}>{entry}</p>;
+    } else if (entry.type === 'Cooldown') {
+      // Cooldown-Eintrag - nur die Nachricht anzeigen, da sie bereits die verbleibende Zeit enthält
+      return (
+        <p key={index} className="cooldown-entry">
+          {entry.message}
+        </p>
+      );
+    } else {
+      // Andere Typen können hier hinzugefügt werden
+      return null;
+    }
+  };
+
+  // Funktion zur Überprüfung, ob ein Cooldown aktiv ist
+  const isCooldownActive = questLog.some(entry => entry.type === 'Cooldown');
 
   return (
     <div className="Schmiede">
       <h1>Zisch & Klatsch Metallwerke GmbH ⚒️</h1>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
-      <div className="smithy">
-        <ul>
-          {smithyItems.map((item) => (
-            <li key={item.name}>
-              <div>{item.name}</div>
-              <div>{translations[item.type] || item.type}</div>
-              <div>{item.price} Gold</div>
-              <div>Verfügbar: {item.quantity}</div>
-              <button
-                onClick={() => buyItem(item.name)}
-                disabled={item.quantity <= 0}
-              >
-                {item.quantity > 0 ? 'Kaufen' : 'Ausverkauft'}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
       
-      <div className="quest">
-        <h2>Quest</h2>
-        {quest ? (
-          <>
-            <p><strong>Quest:</strong> {quest.name}</p>
-            <ul>
-              {quest.requirements.map((req) => (
-                <li key={req.name}>
-                  {req.name}: {req.quantity}
-                </li>
-              ))}
-            </ul>
-            <p>
-              Status:{' '}
-              {quest.completed ? (
-                <span className="completed">Abgeschlossen</span>
-              ) : (
-                <span className="in-progress">Noch offen</span>
-              )}
-            </p>
-            {!quest.completed && (
-              <button onClick={completeQuest}>Quest abschließen</button>
-            )}
-            {questErrorMessage && <p className="error-message">{questErrorMessage}</p>}
-          </>
-        ) : (
-          <p>Keine aktive Quest gefunden.</p>
-        )}
-        <button onClick={generateNewQuest}>Neue Quest generieren</button>
+
+      {/* Button: Mit Schmied sprechen */}
+      <button className="talk-button" onClick={handleTalkToKeeper}>
+        Mit Schmied sprechen
+      </button>
+
+      {/* Bedingte Anzeige der Buttons */}
+      {talkingToKeeper && (
+        <div className="keeper-buttons">
+          
+          <button
+            className="accept-quest-button"
+            onClick={acceptQuest}
+            disabled={isCooldownActive || activeQuests.length >= 3}
+          >
+            Quest annehmen
+          </button>
+        </div>
+      )}
+
+      <div className="player-status">
+        <h3>Spielerstatus</h3>
+        <p>Gold: {playerStatus.money} 💰</p>
+        <p>HP: {playerStatus.hp}/{playerStatus.maxHp} ❤️</p>
       </div>
 
-      {isModalVisible && <CustomModal message={modalMessage} onClose={closeModal} />}
+      <div className="content">
+        <div className="smithy">
+          <h2>Items</h2>
+          <ul>
+            {smithyItems.map((item, index) => (
+              <li key={item.name}>
+                <div className="item-text">
+                  <span className="item-name">{item.name}</span>
+                  <span className="item-description">{item.type}</span>
+                  <span className="item-price">{item.price} Gold</span>
+                  <span className="item-quantity">Verfügbar: {item.quantity}</span>
+                </div>
+                <button
+                  className={`item-button item-button-${index}`}
+                  onClick={() => buyItem(item.name)}
+                  disabled={item.quantity <= 0 || playerStatus.money < item.price}
+                >
+                  {item.quantity > 0 ? 'Kaufen' : 'Ausverkauft'}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Quest Log */}
+        <div className="quest-section">
+          <h2 className="quest-log-title">Schmiede-Log</h2>
+          <div className="quest-log">
+            <div className="log-content">
+              {questLog.map((entry, index) => renderQuestLogEntry(entry, index))}
+            </div>
+          </div>
+        </div>
+
+        {/* Aktive Quests */}
+        <div className="quest">
+          <h2>Quests</h2>
+          {isCooldownActive ? (
+            <>
+              {lastCompletedQuest ? (
+                <>
+                  <p><strong>Letzte abgeschlossene Quest:</strong> {lastCompletedQuest}</p>
+                  <p>Du kannst neue Quests erst annehmen, wenn der Schmied neue Aufgaben hat.</p>
+                </>
+              ) : (
+                <p>Neue Aufgaben werden erstellt...</p>
+              )}
+            </>
+          ) : activeQuests.length > 0 ? (
+            <>
+              {activeQuests.map((quest, index) => (
+                <div key={index} className="active-quest">
+                  <p><strong>Quest:</strong> {quest.name}</p>
+                  <p><strong>Ort:</strong> {quest.location}</p>
+                  <ul>
+                    {quest.requirements.map((req, reqIndex) => (
+                      <li key={reqIndex}>
+                        {req.name}: {req.quantity}
+                      </li>
+                    ))}
+                  </ul>
+                  <p>
+                    Status: <span className="in-progress">Noch offen</span>
+                  </p>
+                  <button onClick={() => completeQuest(quest.name)}>Quest abschließen</button>
+                </div>
+              ))}
+            </>
+          ) : (
+            <p>Keine aktiven Quests. Du kannst eine neue Quest annehmen.</p>
+          )}
+          {questErrorMessage && <p className="error-message">{questErrorMessage}</p>}
+        </div>
+      </div>
     </div>
   );
 }
