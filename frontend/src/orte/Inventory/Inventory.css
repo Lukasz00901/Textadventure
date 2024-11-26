@@ -43,7 +43,7 @@
 
 /* Scrollbarer Tabellenbereich */
 .table-container {
-  max-height: 485px; /* Setze die maximale Höhe nach Bedarf */
+  max-height: 555px; /* Setze die maximale Höhe nach Bedarf */
   overflow-y: auto;
   margin: 20px auto;
   width: 950px; /* Passe die Breite nach Bedarf an */
