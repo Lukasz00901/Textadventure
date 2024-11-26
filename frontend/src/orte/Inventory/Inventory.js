@@ -148,61 +148,65 @@ const Inventory = () => {
       </div>
       {loading && <p>Lädt...</p>}
       {error && <p className="error">{error}</p>}
-      {items.length > 0 ? (
-        <table className="inventory-table">
-          <thead>
-            <tr>
-              <th className="table-header">Name</th>
-              <th className="table-header">Typ</th>
-              <th className="table-header">Stärke</th>
-              <th className="table-header">Kategorie</th>
-              <th className="table-header">Wert</th>
-              <th className="table-header">Menge</th>
-              <th className="table-header" onClick={() => {window.open('/game/index.html', '_blank');}}>Aktionen</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => (
-              <tr key={item.name}> {/* Verwende den Namen als Schlüssel */}
-                <td className="table-cell">{item.name}</td>
-                <td className="table-cell">{item.type}</td>
-                <td className="table-cell">{item.strength}</td>
-                <td className="table-cell">{item.category}</td>
-                <td className="table-cell">{item.worth}</td>
-                <td className="table-cell">{item.quantity}</td>
-                <td className="table-cell">
-                  <form 
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      const quantity = parseInt(e.target.elements.quantity.value, 10);
-                      if (isNaN(quantity) || quantity < 1) {
-                        setNotification({ message: 'Bitte gib eine gültige Menge ein.', type: 'error' });
-                        return;
-                      }
-                      deleteItem(item.name, quantity);
-                      e.target.reset();
-                    }}
-                    className="delete-form"
-                  >
-                    <input 
-                      type="number" 
-                      name="quantity"
-                      min="1" 
-                      max={item.quantity} 
-                      placeholder="Menge" 
-                      required
-                      className="quantity-input-inline"
-                    />
-                    <button type="submit" className="delete-button-inline">Löschen</button>
-                  </form>
-                </td>
+      
+      {/* Scrollbarer Tabellenbereich */}
+      <div className="table-container">
+        {items.length > 0 ? (
+          <table className="inventory-table">
+            <thead>
+              <tr>
+                <th className="table-header">Name</th>
+                <th className="table-header">Typ</th>
+                <th className="table-header">Stärke</th>
+                <th className="table-header">Kategorie</th>
+                <th className="table-header">Wert</th>
+                <th className="table-header">Menge</th>
+                <th className="table-header" onClick={() => {window.open('/game/index.html', '_blank');}}>Aktionen</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        !loading && <p>Keine Items gefunden.</p>
-      )}
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr key={item.name}> {/* Verwende den Namen als Schlüssel */}
+                  <td className="table-cell">{item.name}</td>
+                  <td className="table-cell">{item.type}</td>
+                  <td className="table-cell">{item.strength}</td>
+                  <td className="table-cell">{item.category}</td>
+                  <td className="table-cell">{item.worth}</td>
+                  <td className="table-cell">{item.quantity}</td>
+                  <td className="table-cell">
+                    <form 
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        const quantity = parseInt(e.target.elements.quantity.value, 10);
+                        if (isNaN(quantity) || quantity < 1) {
+                          setNotification({ message: 'Bitte gib eine gültige Menge ein.', type: 'error' });
+                          return;
+                        }
+                        deleteItem(item.name, quantity);
+                        e.target.reset();
+                      }}
+                      className="delete-form"
+                    >
+                      <input 
+                        type="number" 
+                        name="quantity"
+                        min="1" 
+                        max={item.quantity} 
+                        placeholder="Menge" 
+                        required
+                        className="quantity-input-inline"
+                      />
+                      <button type="submit" className="delete-button-inline">Löschen</button>
+                    </form>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          !loading && <p>Keine Items gefunden.</p>
+        )}
+      </div>
     </div>
   );
 };
