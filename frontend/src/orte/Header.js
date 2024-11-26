@@ -1,4 +1,3 @@
-// src/orte/Header/Header.js
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Header.css';
@@ -8,8 +7,13 @@ const Header = () => {
 
   return (
     <nav className="Header">
-      <ul>
-      <li>
+      {/* Titel */}
+      <div className="header-title">
+        Schwarzbach
+      </div>
+      {/* Navigation */}
+      <ul className="header-nav">
+        <li>
           <Link to="/mine" className={location.pathname === '/mine' ? 'active' : ''}>
             Mine
           </Link>
