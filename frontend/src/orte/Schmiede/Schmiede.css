@@ -204,7 +204,7 @@
   border-radius: 5px;
   padding: 30px;
   height: 400px; /* Höhe bleibt konstant */
-  overflow-y: scroll;
+  scroll-behavior: smooth;
   margin-top: 0;
   margin-bottom: 0;
   border: 1px solid #c9b040;

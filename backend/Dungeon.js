@@ -152,10 +152,10 @@ router.get('/inventory', (req, res) => {
 // GET Player Stats
 router.get('/player-stats', (req, res) => {
   res.json({
-    PlayerHP: gameState.playerHP,
-    PlayerMaxHP: gameState.playerMaxHP,
-    playerMoney: gameState.playerMoney,
-    playerEP: gameState.playerEP, // EP hinzufügen
+    PlayerHP: PlayerHP[0],
+    PlayerMaxHP: PlayerMaxHP[0],
+    playerMoney: playerMoney[0],
+    playerEP: playerEP[0], // EP hinzufügen
     roomsCompleted: gameState.roomsCompleted,
     MaxDifficulty: MaxDifficulty[0] // MaxDifficulty hinzufügen
   });
@@ -198,6 +198,9 @@ router.post('/event', (req, res) => {
 
 // Kampf Handler
 const handleFight = (res) => {
+  // PlayerHP neu abrufen
+  gameState.playerHP = PlayerHP[0];
+  
   if (!gameState.currentWeapon) {
     return res.status(400).json({ message: 'Keine Waffe ausgerüstet.' });
   }
@@ -235,7 +238,7 @@ const handleFight = (res) => {
     PlayerHP[0] = gameState.playerHP;
 
     res.json({ 
-      message: `Du hast gegen ${enemyName} gekämpft und gewonnen! Du erhältst ${moneyEarned} Woth und ${epEarned} EP.` 
+      message: `Du hast gegen ${enemyName} gekämpft und gewonnen! Du erhältst ${moneyEarned} Gold und ${epEarned} EP.` 
     });
   } else {
     // Spieler verliert
@@ -246,7 +249,7 @@ const handleFight = (res) => {
     PlayerHP[0] = gameState.playerHP;
     playerMoney[0] = gameState.playerMoney;
     res.json({ 
-      message: `Du wurdest von ${enemyName} besiegt! Du verlierst ${moneyLost} Woth und deine HP werden zurückgesetzt.` 
+      message: `Du wurdest von ${enemyName} besiegt! Du verlierst ${moneyLost} Gold und deine HP werden zurückgesetzt.` 
     });
   }
 };
@@ -280,6 +283,9 @@ const handleChest = (res) => {
 
 // Falle Handler
 const handleTrap = (res) => {
+  // PlayerHP neu abrufen
+  gameState.playerHP = PlayerHP[0];
+  
   const trapText = trapTexts[getRandomInt(0, trapTexts.length - 1)];
   let damage = getRandomInt(1, 3) * gameState.difficulty;
 
@@ -298,7 +304,7 @@ const handleTrap = (res) => {
     gameState.playerHP = gameState.playerMaxHP;
     PlayerHP[0] = gameState.playerHP;
     playerMoney[0] = gameState.playerMoney;
-    res.json({ message: `Du hast eine tödliche Falle ausgelöst! Du verlierst ${moneyLost} Woth und deine HP werden zurückgesetzt.` });
+    res.json({ message: `Du hast eine tödliche Falle ausgelöst! Du verlierst ${moneyLost} Gold und deine HP werden zurückgesetzt.` });
   }
 };
 

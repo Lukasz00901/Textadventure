@@ -17,7 +17,7 @@ router.post('/mine', (req, res) => {
     { name: "Bleierz", type: "Material", category: "misc", worth: 3, strength: 0 },
     { name: "Lehm", type: "Material", category: "misc", worth: 3, strength: 0 },
     { name: "Kalkstein", type: "Material", category: "misc", worth: 3, strength: 0 },
-    { name: "Schifer", type: "Material", category: "misc", worth: 3, strength: 0 },
+    { name: "Schiefer", type: "Material", category: "misc", worth: 3, strength: 0 },
     { name: "Feuerstein", type: "Material", category: "misc", worth: 3, strength: 0 },
   ];
 

@@ -1,7 +1,8 @@
-// Backend Taverne.js
+// backend/Taverne.js
+
 const express = require('express');
 const router = express.Router();
-const { inventoryItems } = require('./Inventar_Inhalt');
+const { inventoryItems, PlayerHP, PlayerMaxHP, playerMoney } = require('./Inventar_Inhalt');
 
 // Importiere Mine- und Wald-Items
 const mineItems = [
@@ -17,7 +18,7 @@ const mineItems = [
   { name: "Bleierz", type: "Material", category: "misc", worth: 3, strength: 0 },
   { name: "Lehm", type: "Material", category: "misc", worth: 3, strength: 0 },
   { name: "Kalkstein", type: "Material", category: "misc", worth: 3, strength: 0 },
-  { name: "Schifer", type: "Material", category: "misc", worth: 3, strength: 0 },
+  { name: "Schiefer", type: "Material", category: "misc", worth: 3, strength: 0 }, // Korrigiert: "Schiefer"
   { name: "Feuerstein", type: "Material", category: "misc", worth: 3, strength: 0 },
   { name: "Ranken", type: "Material", category: "misc", worth: 2, strength: 0 },
 ];
@@ -47,10 +48,13 @@ let completedQuestsCount = 0;
 
 // Cooldown-Mechanismus
 let lastCooldownStartTime = null;
-const questCooldown = 60 * 1000; // 1 Minute in Millisekunden
+const questCooldown = 5 * 1000; // 5 Sekunden in Millisekunden
 const maxCompletedQuestsBeforeCooldown = 3;
 
-// Funktion: Zufällige Quest generieren mit Standortinformation
+// Quest-ID-Zähler
+let questIdCounter = 1;
+
+// Funktion: Zufällige Quest generieren mit Standortinformation und eindeutiger ID
 const generateRandomQuest = () => {
   const locations = ["Mine", "Wald", "Wald & Mine"];
   const selectedLocation = locations[Math.floor(Math.random() * locations.length)];
@@ -93,6 +97,7 @@ const generateRandomQuest = () => {
     }
 
     return {
+      id: questIdCounter++, // Eindeutige ID hinzufügen und erhöhen
       name: 'Sammle Ressourcen',
       requirements,
       location: selectedLocation, // Standort hinzufügen
@@ -112,6 +117,7 @@ const generateRandomQuest = () => {
   }
 
   return {
+    id: questIdCounter++, // Eindeutige ID hinzufügen und erhöhen
     name: 'Sammle Ressourcen',
     requirements,
     location: selectedLocation, // Standort hinzufügen
@@ -121,17 +127,15 @@ const generateRandomQuest = () => {
 
 // Taverne-Items
 const tavernItems = [
-  { name: 'Bierkrug', type: 'Getränk', price: 5, worth: 3, quantity: 20 },
-  { name: 'Weinflasche', type: 'Getränk', price: 12, worth: 7, quantity: 10 },
-  { name: 'Braten', type: 'Speise', price: 20, worth: 15, quantity: 8 },
-  { name: 'Eintopf', type: 'Speise', price: 10, worth: 6, quantity: 15 },
-  { name: 'Honigwein', type: 'Getränk', price: 18, worth: 12, quantity: 12 },
-  { name: 'Käseplatte', type: 'Speise', price: 25, worth: 18, quantity: 5 },
+  { name: 'Bierkrug', typ: 'Getränk', price: 5, worth: 3, quantity: 20 },
+  { name: 'Weinflasche', typ: 'Getränk', price: 12, worth: 7, quantity: 10 },
+  { name: 'Braten', typ: 'Speise', price: 20, worth: 15, quantity: 8 },
+  { name: 'Eintopf', typ: 'Speise', price: 10, worth: 6, quantity: 15 },
+  { name: 'Honigwein', typ: 'Getränk', price: 18, worth: 12, quantity: 12 },
+  { name: 'Käseplatte', typ: 'Speise', price: 25, worth: 18, quantity: 5 },
 ];
 
-let playerMoney = [12500]; // Geld des Spielers
-let PlayerHP = [50]; // Aktuelle HP des Spielers
-let PlayerMaxHP = [50]; // Maximale HP des Spielers
+// Button: Schlafen
 const sleepCost = 5; // Kosten fürs Schlafen
 
 // Route: Spielerstatus abrufen
@@ -144,7 +148,7 @@ router.get('/player-status', (req, res) => {
   });
 });
 
-// Button: Schlafen
+// Route: Schlafen
 router.post('/sleep', (req, res) => {
   if (playerMoney[0] >= sleepCost) {
     playerMoney[0] -= sleepCost; // Abziehen der Schlafkosten
@@ -264,9 +268,8 @@ router.post('/accept-quest', (req, res) => {
 
     if (timeSinceCooldownStart < questCooldown) {
       const remainingTime = questCooldown - timeSinceCooldownStart;
-      const remainingMinutes = Math.floor(remainingTime / 60000);
-      const remainingSeconds = Math.ceil((remainingTime % 60000) / 1000);
-      return res.status(400).json({ message: `Du kannst neue Quests erst in ${remainingMinutes} Minute(n) und ${remainingSeconds} Sekunde(n) annehmen.` });
+      const remainingSeconds = Math.ceil(remainingTime / 1000);
+      return res.status(400).json({ message: `Du kannst neue Quests erst in ${remainingSeconds} Sekunde(n) annehmen.` });
     }
   }
 
@@ -275,7 +278,7 @@ router.post('/accept-quest', (req, res) => {
     return res.status(400).json({ message: 'Du hast bereits die maximale Anzahl an aktiven Quests (3).' });
   }
 
-  // Generiere eine zufällige Quest mit Standortinformation
+  // Generiere eine zufällige Quest mit Standortinformation und eindeutiger ID
   const newQuest = generateRandomQuest();
   activeQuests.push(newQuest);
 
@@ -284,7 +287,7 @@ router.post('/accept-quest', (req, res) => {
 
   res.json({
     message: 'Neue Quest angenommen.',
-    quest: newQuest,
+    quest: newQuest, // Sende die gesamte Quest mit ID zurück
     activeQuests,
     questLog, // Aktualisiertes Quest-Log zurücksenden
   });
@@ -297,13 +300,13 @@ router.get('/quests', (req, res) => {
 
 // Route: Quest abschließen
 router.post('/complete-quest', (req, res) => {
-  const { questName } = req.body;
+  const { questId } = req.body; // Verwende questId statt questName
 
-  if (!questName) {
-    return res.status(400).json({ message: 'Questname wird benötigt.' });
+  if (!questId) {
+    return res.status(400).json({ message: 'Quest-ID wird benötigt.' });
   }
 
-  const questIndex = activeQuests.findIndex(q => q.name === questName);
+  const questIndex = activeQuests.findIndex(q => q.id === questId); // Suche nach ID
 
   if (questIndex === -1) {
     return res.status(404).json({ message: 'Aktive Quest nicht gefunden.' });
@@ -349,7 +352,10 @@ router.post('/complete-quest', (req, res) => {
   completedQuestsCount += 1;
 
   // Loggen des Quest-Abschlusses
-  questLog.push(`Quest abgeschlossen: ${quest.name}. Belohnung erhalten!`);
+  questLog.push(`Quest abgeschlossen: ${quest.name}. Belohnung erhalten! 10 Gold`);
+
+  // Belohnung hinzufügen (z.B. 10 Gold)
+  playerMoney[0] += 10;
 
   // Überprüfe, ob der Cooldown gestartet werden muss
   if (completedQuestsCount >= maxCompletedQuestsBeforeCooldown) {
@@ -358,10 +364,10 @@ router.post('/complete-quest', (req, res) => {
     // Loggen des Cooldowns
     questLog.push({
       type: 'Cooldown',
-      message: `Cooldown gestartet: 1 Minute(n) und 0 Sekunde(n) verbleibend.`,
+      message: `Cooldown gestartet: 0 Minute(n) und 5 Sekunde(n) verbleibend.`,
       remainingTime: {
-        minutes: 1,
-        seconds: 0,
+        minutes: 0,
+        seconds: 5,
       },
     });
 
@@ -381,15 +387,14 @@ router.post('/complete-quest', (req, res) => {
       } else {
         // Aktualisiere die verbleibende Zeit
         const remainingTime = questCooldown - timeSinceCooldownStart;
-        const remainingMinutes = Math.floor(remainingTime / 60000);
-        const remainingSeconds = Math.floor((remainingTime % 60000) / 1000);
+        const remainingSeconds = Math.floor(remainingTime / 1000);
 
         // Aktualisiere die Nachricht im Cooldown-Eintrag
         const cooldownEntry = questLog.find(entry => entry.type === 'Cooldown');
         if (cooldownEntry) {
-          cooldownEntry.message = `Cooldown läuft: ${remainingMinutes} Minute(n) und ${remainingSeconds} Sekunde(n) verbleibend.`;
+          cooldownEntry.message = `Cooldown läuft: ${remainingSeconds} Sekunde(n) verbleibend.`;
           cooldownEntry.remainingTime = {
-            minutes: remainingMinutes,
+            minutes: 0,
             seconds: remainingSeconds,
           };
         }
@@ -399,6 +404,11 @@ router.post('/complete-quest', (req, res) => {
 
   res.json({
     message: 'Quest abgeschlossen!',
+    playerStatus: {
+      money: playerMoney[0],
+      hp: PlayerHP[0],
+      maxHp: PlayerMaxHP[0],
+    },
     inventoryItems,
     questLog, // Aktualisiertes Quest-Log zurücksenden
     activeQuests,

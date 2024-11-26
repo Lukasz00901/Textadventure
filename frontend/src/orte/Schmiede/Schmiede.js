@@ -1,5 +1,6 @@
 // frontend/Schmiede.js
-import React, { useEffect, useState } from 'react';
+
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import './Schmiede.css';
 
@@ -7,13 +8,14 @@ function Schmiede() {
   const [smithyItems, setSmithyItems] = useState([]);
   const [inventoryItems, setInventoryItems] = useState([]);
   const [activeQuests, setActiveQuests] = useState([]);
-  const [lastCompletedQuest, setLastCompletedQuest] = useState(null); // Neue State-Variable
+  const [lastCompletedQuest, setLastCompletedQuest] = useState(null);
   const [playerStatus, setPlayerStatus] = useState({ money: 0, hp: 0, maxHp: 0 });
   const [errorMessage, setErrorMessage] = useState('');
   const [questErrorMessage, setQuestErrorMessage] = useState('');
   const [infoMessage, setInfoMessage] = useState('');
   const [talkingToKeeper, setTalkingToKeeper] = useState(false);
-  const [questLog, setQuestLog] = useState([]); // Zustand für den Questlog
+  const [questLog, setQuestLog] = useState([]);
+  const logEndRef = useRef(null);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -21,7 +23,7 @@ function Schmiede() {
         await fetchPlayerStatus();
         await fetchSmithyItems();
         await fetchQuests();
-        await fetchQuestLog(); // Quest-Log beim Laden abrufen
+        await fetchQuestLog();
       } catch (error) {
         console.error('Error fetching initial data:', error);
         setErrorMessage('Fehler beim Laden der Schmiede-Daten.');
@@ -31,14 +33,15 @@ function Schmiede() {
   }, []);
 
   useEffect(() => {
-    // Starte einen Timer, der das Quest-Log jede Sekunde aktualisiert
     const interval = setInterval(() => {
       fetchQuestLog();
-      fetchQuests(); // Aktive Quests regelmäßig aktualisieren
-    }, 1000); // 1000 ms = 1 Sekunde
+      fetchQuests();
+    }, 1000);
 
-    return () => clearInterval(interval); // Aufräumen beim Unmounten
+    return () => clearInterval(interval);
   }, []);
+
+ 
 
   const fetchPlayerStatus = async () => {
     try {
@@ -88,7 +91,6 @@ function Schmiede() {
       setInventoryItems(response.data.inventoryItems);
       setInfoMessage(response.data.message);
       setErrorMessage('');
-      // Kein zusätzlicher Aufruf von fetchQuestLog notwendig, da der Timer das Quest-Log automatisch aktualisiert
     } catch (error) {
       console.error('Error buying item:', error);
       setErrorMessage(error.response?.data?.message || 'Fehler beim Kauf des Items.');
@@ -101,24 +103,21 @@ function Schmiede() {
       setInventoryItems(response.data.inventoryItems);
       setInfoMessage(response.data.message);
       setErrorMessage('');
-      // Kein zusätzlicher Aufruf von fetchQuestLog notwendig, da der Timer das Quest-Log automatisch aktualisiert
     } catch (error) {
       console.error('Error selling item:', error);
       setErrorMessage(error.response?.data?.message || 'Fehler beim Verkauf des Items.');
     }
   };
 
-  // Funktion: Quest abschließen
-  const completeQuest = async (questName) => {
+  const completeQuest = async (questId) => {
     try {
-      const response = await axios.post('http://localhost:3000/smithy/complete-quest', { questName });
+      const response = await axios.post('http://localhost:3000/smithy/complete-quest', { questId });
       setInventoryItems(response.data.inventoryItems);
       setActiveQuests(response.data.activeQuests);
       setQuestLog(response.data.questLog);
-      setInfoMessage('Quest abgeschlossen!');
+      setPlayerStatus(response.data.playerStatus);
       setErrorMessage('');
-      setLastCompletedQuest(questName); // Setze den Namen der letzten abgeschlossenen Quest
-      // Kein zusätzlicher Aufruf von fetchQuestLog oder fetchQuests notwendig
+      setLastCompletedQuest(null);
     } catch (error) {
       console.error('Error completing quest:', error);
       if (error.response && error.response.data) {
@@ -129,48 +128,51 @@ function Schmiede() {
     }
   };
 
-  // Funktion: Quest annehmen
   const acceptQuest = async () => {
     try {
       const response = await axios.post('http://localhost:3000/smithy/accept-quest');
       setActiveQuests(response.data.activeQuests);
       setQuestLog(response.data.questLog);
-      setInfoMessage('Neue Quest angenommen.');
       setErrorMessage('');
       setTalkingToKeeper(false);
-      setLastCompletedQuest(null); // Zurücksetzen der letzten abgeschlossenen Quest
-      // Kein zusätzlicher Aufruf von fetchQuestLog oder fetchQuests notwendig
+      setLastCompletedQuest(null);
     } catch (error) {
       console.error('Error accepting quest:', error);
       setQuestErrorMessage(error.response?.data?.message || 'Fehler beim Annehmen der Quest.');
     }
   };
 
+  const handleSleep = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/smithy/sleep');
+      setPlayerStatus(response.data.playerStatus);
+      setInfoMessage(response.data.message);
+      setErrorMessage('');
+      setQuestLog(response.data.questLog);
+    } catch (error) {
+      console.error('Error sleeping:', error);
+      setErrorMessage(error.response?.data?.message || 'Fehler beim Schlafen.');
+    }
+  };
 
-  // Funktion: Mit Schmied sprechen
   const handleTalkToKeeper = () => {
     setTalkingToKeeper(!talkingToKeeper);
   };
 
-  // Funktion zum Rendern einzelner Quest-Log-Einträge
   const renderQuestLogEntry = (entry, index) => {
     if (typeof entry === 'string') {
-      // Einfacher Text-Eintrag
       return <p key={index}>{entry}</p>;
     } else if (entry.type === 'Cooldown') {
-      // Cooldown-Eintrag - nur die Nachricht anzeigen, da sie bereits die verbleibende Zeit enthält
       return (
         <p key={index} className="cooldown-entry">
           {entry.message}
         </p>
       );
     } else {
-      // Andere Typen können hier hinzugefügt werden
       return null;
     }
   };
 
-  // Funktion zur Überprüfung, ob ein Cooldown aktiv ist
   const isCooldownActive = questLog.some(entry => entry.type === 'Cooldown');
 
   return (
@@ -178,16 +180,17 @@ function Schmiede() {
       <h1>Zisch & Klatsch Metallwerke GmbH ⚒️</h1>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       
+      {questErrorMessage && <p className="error-message">{questErrorMessage}</p>}
 
-      {/* Button: Mit Schmied sprechen */}
       <button className="talk-button" onClick={handleTalkToKeeper}>
         Mit Schmied sprechen
       </button>
 
-      {/* Bedingte Anzeige der Buttons */}
       {talkingToKeeper && (
         <div className="keeper-buttons">
-          
+          <button className="sleep-button" onClick={handleSleep}>
+            Schlafen
+          </button>
           <button
             className="accept-quest-button"
             onClick={acceptQuest}
@@ -228,17 +231,16 @@ function Schmiede() {
           </ul>
         </div>
 
-        {/* Quest Log */}
         <div className="quest-section">
           <h2 className="quest-log-title">Schmiede-Log</h2>
           <div className="quest-log">
             <div className="log-content">
               {questLog.map((entry, index) => renderQuestLogEntry(entry, index))}
+              <div ref={logEndRef} />
             </div>
           </div>
         </div>
 
-        {/* Aktive Quests */}
         <div className="quest">
           <h2>Quests</h2>
           {isCooldownActive ? (
@@ -254,8 +256,8 @@ function Schmiede() {
             </>
           ) : activeQuests.length > 0 ? (
             <>
-              {activeQuests.map((quest, index) => (
-                <div key={index} className="active-quest">
+              {activeQuests.map((quest) => (
+                <div key={quest.id} className="active-quest">
                   <p><strong>Quest:</strong> {quest.name}</p>
                   <p><strong>Ort:</strong> {quest.location}</p>
                   <ul>
@@ -268,7 +270,7 @@ function Schmiede() {
                   <p>
                     Status: <span className="in-progress">Noch offen</span>
                   </p>
-                  <button onClick={() => completeQuest(quest.name)}>Quest abschließen</button>
+                  <button onClick={() => completeQuest(quest.id)}>Quest abschließen</button>
                 </div>
               ))}
             </>

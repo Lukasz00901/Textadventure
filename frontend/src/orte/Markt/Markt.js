@@ -141,7 +141,7 @@ function Markt() {
     <div className="Markt">
       <h1>Marktplatz 💰</h1>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
-      {infoMessage && <p className="info-message">{infoMessage}</p>}
+      
 
       {/* Spielerstatus anzeigen */}
       <div className="player-status">

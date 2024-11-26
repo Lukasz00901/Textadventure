@@ -1,4 +1,5 @@
 // frontend/Taverne.js
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Taverne.css';
@@ -109,15 +110,16 @@ function Taverne() {
   };
 
   // Funktion: Quest abschließen
-  const completeQuest = async (questName) => {
+  const completeQuest = async (questId) => { // Ändere von questName zu questId
     try {
-      const response = await axios.post('http://localhost:3000/tavern/complete-quest', { questName });
+      const response = await axios.post('http://localhost:3000/tavern/complete-quest', { questId }); // Sende questId
       setInventoryItems(response.data.inventoryItems);
       setActiveQuests(response.data.activeQuests);
       setQuestLog(response.data.questLog);
-      setInfoMessage('Quest abgeschlossen!');
+      setPlayerStatus(response.data.playerStatus); // **Spielerstatus aktualisieren**
+      setInfoMessage('Quest abgeschlossen! Du hast 10 Gold erhalten.');
       setErrorMessage('');
-      setLastCompletedQuest(questName); // Setze den Namen der letzten abgeschlossenen Quest
+      setLastCompletedQuest(null); // Setze den Namen der letzten abgeschlossenen Quest zurück, optional
       // Kein zusätzlicher Aufruf von fetchQuestLog oder fetchQuests notwendig
     } catch (error) {
       console.error('Error completing quest:', error);
@@ -191,7 +193,7 @@ function Taverne() {
     <div className="Taverne">
       <h1>Zum singenden Säufer 🍻</h1>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
-      
+      {questErrorMessage && <p className="error-message">{questErrorMessage}</p>} {/* **Quest-Error-Message hinzufügen** */}
 
       {/* Button: Mit Tavernenwirt sprechen */}
       <button className="talk-button" onClick={handleTalkToKeeper}>
@@ -228,7 +230,7 @@ function Taverne() {
               <li key={item.name}>
                 <div className="item-text">
                   <span className="item-name">{item.name}</span>
-                  <span className="item-description">{item.type}</span>
+                  <span className="item-description">{item.typ}</span>
                   <span className="item-price">{item.price} Gold</span>
                   <span className="item-quantity">Verfügbar: {item.quantity}</span>
                 </div>
@@ -262,7 +264,7 @@ function Taverne() {
               {lastCompletedQuest ? (
                 <>
                   <p><strong>Letzte abgeschlossene Quest:</strong> {lastCompletedQuest}</p>
-                  <p>Du kannst neue Quests erst annehmen, wenn der Schmied neue Aufgaben hat</p>
+                  <p>Du kannst neue Quests erst annehmen, wenn der Schmied neue Aufgaben hat.</p>
                 </>
               ) : (
                 <p>Neue Aufgaben werden erstellt...</p>
@@ -270,8 +272,8 @@ function Taverne() {
             </>
           ) : activeQuests.length > 0 ? (
             <>
-              {activeQuests.map((quest, index) => (
-                <div key={index} className="active-quest">
+              {activeQuests.map((quest) => (
+                <div key={quest.id} className="active-quest">
                   <p><strong>Quest:</strong> {quest.name}</p>
                   <p><strong>Ort:</strong> {quest.location}</p>
                   <ul>
@@ -284,7 +286,7 @@ function Taverne() {
                   <p>
                     Status: <span className="in-progress">Noch offen</span>
                   </p>
-                  <button onClick={() => completeQuest(quest.name)}>Quest abschließen</button>
+                  <button onClick={() => completeQuest(quest.id)}>Quest abschließen</button> {/* Verwende quest.id */}
                 </div>
               ))}
             </>

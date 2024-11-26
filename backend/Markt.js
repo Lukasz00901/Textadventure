@@ -1,7 +1,7 @@
 // backend/Markt.js
 const express = require('express');
 const router = express.Router();
-const { inventoryItems } = require('./Inventar_Inhalt');
+const { inventoryItems, PlayerHP, PlayerMaxHP, playerMoney } = require('./Inventar_Inhalt');
 
 // Markt-Items
 const marketItems = [
@@ -20,9 +20,6 @@ const marketItems = [
 ];
 
 // Spielerstatus-Variablen
-let playerMoney = 12500; // Geld des Spielers
-let PlayerHP = 50; // Aktuelle HP des Spielers
-let PlayerMaxHP = 50; // Maximale HP des Spielers
 const sleepCost = 5; // Kosten fürs Schlafen
 
 // Quest-Log
@@ -36,9 +33,9 @@ router.get('/items', (req, res) => {
 // Route: Spielerstatus abrufen
 router.get('/player-status', (req, res) => {
   res.json({
-    money: playerMoney,
-    hp: PlayerHP,
-    maxHp: PlayerMaxHP,
+    money: playerMoney[0],
+    hp: PlayerHP[0],
+    maxHp: PlayerMaxHP[0],
     sleepCost, // Kosten fürs Schlafen hinzufügen
   });
 });
@@ -54,6 +51,10 @@ router.post('/buy', (req, res) => {
   const marketItem = marketItems.find(item => item.name === itemName);
 
   if (marketItem && marketItem.quantity > 0) {
+    if (playerMoney[0] < marketItem.price) {
+      return res.status(400).json({ message: 'Nicht genug Geld, um das Item zu kaufen.' });
+    }
+
     // Prüfen, ob das Item bereits im Inventar existiert
     const existingItem = inventoryItems.find(item => item.name === itemName);
 
@@ -69,7 +70,7 @@ router.post('/buy', (req, res) => {
     marketItem.quantity -= 1;
 
     // Spielerstatus aktualisieren (z.B. Gold abziehen)
-    playerMoney -= marketItem.price;
+    playerMoney[0] -= marketItem.price;
 
     // Loggen des Kaufes
     questLog.push(`Gekauft: ${marketItem.name} für ${marketItem.price} Gold.`);
@@ -77,9 +78,9 @@ router.post('/buy', (req, res) => {
     res.json({
       message: `${marketItem.name} wurde gekauft.`,
       playerStatus: {
-        money: playerMoney,
-        hp: PlayerHP,
-        maxHp: PlayerMaxHP,
+        money: playerMoney[0],
+        hp: PlayerHP[0],
+        maxHp: PlayerMaxHP[0],
       },
       marketItems, // Aktualisierte Markt-Items zurücksenden, falls nötig
       inventoryItems,
@@ -106,7 +107,7 @@ router.post('/sell', (req, res) => {
 
     // Spielerstatus aktualisieren (z.B. Gold hinzufügen)
     const soldItem = marketItems.find(item => item.name === itemName) || item;
-    playerMoney += soldItem.price;
+    playerMoney[0] += soldItem.price;
 
     // Loggen des Verkaufs
     questLog.push(`Verkauft: ${itemName} für ${soldItem.price} Gold.`);
@@ -115,9 +116,9 @@ router.post('/sell', (req, res) => {
       message: 'Item verkauft.',
       inventoryItems,
       playerStatus: {
-        money: playerMoney,
-        hp: PlayerHP,
-        maxHp: PlayerMaxHP,
+        money: playerMoney[0],
+        hp: PlayerHP[0],
+        maxHp: PlayerMaxHP[0],
       },
       questLog, // Aktualisiertes Quest-Log zurücksenden
     });
