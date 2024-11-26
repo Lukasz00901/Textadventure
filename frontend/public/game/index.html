@@ -8,10 +8,9 @@
 </head>
 <body>
     <h1>Memory-Spiel</h1>
-    <div id="timer">Zeit: 120s</div> <!-- Timer-Anzeige -->
+    <div id="timer">Zeit: 1s</div> <!-- Timer-Anzeige -->
     <button id="reset-button">Neustarten</button>
     <div class="memory-game">
-        <!-- Beispiel für Kartenpaare -->
         <div class="memory-card" data-framework="a">
             <div class="card-inner">
                 <div class="front-face">
@@ -189,10 +188,16 @@
                 </div>
             </div>
         </div>
-
-
-        <!-- Wiederhole dies für alle benötigten Kartenpaare -->
+    <!-- Modal für die benutzerdefinierte Texteingabe -->
+    <div id="custom-text-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="modal-title">Spiel beendet</h2>
+            <p id="modal-message">Herzlichen Glückwunsch! Du hast alle Paare gefunden.</p>
+            <button id="play-again-button">Nochmal spielen?</button>
+        </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>

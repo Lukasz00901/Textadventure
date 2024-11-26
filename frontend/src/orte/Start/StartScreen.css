@@ -1,31 +1,55 @@
-/* src/StartScreen.css */
 .StartScreen {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #282c34;
-    color: white;
-  }
-  
-  .StartScreen h1 {
-    font-size: 3rem;
-    margin-bottom: 20px;
-  }
-  
-  .StartScreen button {
-    padding: 10px 20px;
-    font-size: 1.5rem;
-    cursor: pointer;
-    background-color: #61dafb;
-    border: none;
-    border-radius: 5px;
-    color: black;
-    transition: background-color 0.3s ease;
-  }
-  
-  .StartScreen button:hover {
-    background-color: #21a1f1;
-  }
-  
+  text-align: center;
+  padding: 20px;
+}
+
+.dialog {
+  background-color: rgba(43, 43, 43, 0.81); /* Kürzere Schreibweise für Transparenz */
+  padding: 20px;
+  border: 2px solid #464646;
+  border-radius: 5px;
+  margin: 20px auto; /* Zentriert das Textfenster */
+  width: 90%; /* Setzt die Breite auf 90% des Containers */
+  max-width: 1200px; /* Erhöht die maximale Breite */
+  height: 60vh; /* Setzt die Höhe auf 70% der Viewport-Höhe */
+  overflow-y: auto; /* Fügt eine vertikale Scrollleiste hinzu, wenn nötig */
+  text-align: left; 
+  line-height: 1.8; /* Zeilenhöhe für Abstand zwischen Zeilen */
+  font-size: 19px;
+  box-sizing: border-box; /* Stellt sicher, dass Padding zur Gesamtbreite gehört */
+}
+
+/* Optional: sanftes Scrollen */
+.dialog {
+  scroll-behavior: smooth;
+}
+
+.dialog p {
+  margin-bottom: 20px; /* Abstand zwischen Absätzen */
+}
+
+.next-button,
+.start-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #000000; /* Schwarzer Hintergrund */
+  color: rgb(184, 173, 21);
+  border: none;
+  border-radius: 5px; 
+  border: 2px solid #464646;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s; /* Smooth transition */
+}
+
+.next-button:hover,
+.start-button:hover {
+  background-color: #000000; /* Dunklerer Hintergrund beim Hover */
+  color: rgb(184, 173, 21);
+  transform: scale(1.05); /* Button wächst leicht beim Hover */
+}
+
+.next-button:active,
+.start-button:active {
+  transform: scale(0.95); /* Button schrumpft leicht beim Klick */
+}

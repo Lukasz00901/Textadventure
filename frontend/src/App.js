@@ -21,7 +21,7 @@ const App = () => {
           <Header />
           <div className="Content">
             <Routes>
-              <Route path="/" element={<Start />} />
+              <Route path="/" element={<Start className="start-wrapper"/>} />
               <Route path="/inventar" element={<Inventory />} />
               <Route path="/dungeon" element={<Dungeon />} />
               <Route path="/markt" element={<Markt />} />
@@ -48,6 +48,9 @@ const BodyClassManager = ({ children }) => {
 
     // Add a class based on the current route
     switch (location.pathname) {
+      case '/':
+        document.body.classList.add('start-page');
+        break;
       case '/inventar':
         document.body.classList.add('inventory-page');
         break;

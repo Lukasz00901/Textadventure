@@ -109,4 +109,12 @@ p {
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
-  
+
+.start-page {
+  background-image: url('../public/backround/skibidi.webp');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}

@@ -101,20 +101,48 @@ tr:hover {
   cursor: pointer;
   border-radius: 3px;
   border: 1px solid #00000000; /* Roter Rahmen */
-  background-color: #c81909ae; /* Heller Rotton Hintergrund */
+  background-color: #c00303ae; /* Heller Rotton Hintergrund */
   color: rgb(27, 2, 2); /* Dunkles Rot für die Schrift */
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 
 
-.quantity{
-  width: 50px;
-  padding: 5px;
-  border: 1px solid #a77f33;
-  border-radius: 4px;
-  font-size: 14px;
-  background-color: #f5deb351;
-  color: #000;
+/* Grundstil für das Eingabefeld */
+.quantity-input-inline {
+  width: 60px; /* Breite des Eingabefelds */
+  padding: 5px 10px; /* Innenabstand */
+  border: 2px solid #927c00; /* Rahmenfarbe und -stärke */
+  border-radius: 4px; /* Abgerundete Ecken */
+  font-size: 14px; /* Schriftgröße */
+  text-align: center; /* Text zentrieren */
+  transition: border-color 0.3s, box-shadow 0.3s; /* Übergangseffekte für Interaktionen */
+  
+  /* Optional: Hintergrund- und Textfarbe */
+  background-color: #b99b1428;
+  color: #000000;
+}
 
+/* Stil beim Fokussieren des Eingabefelds */
+.quantity-input-inline:focus {
+  border-color: #000000; /* Rahmenfarbe beim Fokus */
+  outline: none; /* Entfernt die Standard-Fokusumrandung */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+}
+
+/* Optional: Fehlerzustand (falls du eine Fehlerklasse hinzufügst) */
+.quantity-input-inline.error {
+  border-color: #000000; /* Rote Rahmenfarbe bei Fehler */
+  background-color: #000000; /* Hellroter Hintergrund bei Fehler */
+}
+
+/* Hover-Effekt */
+.quantity-input-inline:hover {
+  border-color: #000000; /* Rahmenfarbe beim Hover */
+}
+
+/* Placeholder-Stil */
+.quantity-input-inline::placeholder {
+  color: #000000; /* Farbe des Platzhaltertextes */
+  font-family: 'UnifrakturCook', cursive, serif;
 }

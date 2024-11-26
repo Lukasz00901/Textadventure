@@ -19,7 +19,14 @@ body {
 
 h1 {
     margin-top: 20px;
+
 }
+
+#timer{
+margin-bottom: 20px;
+
+}
+
 
 /* Memory-Spielbereich */
 .memory-game {
@@ -134,4 +141,76 @@ h1 {
         width: 90%;
         height: 90%;
     }
+}
+
+.modal {
+    display: none; /* Standardmäßig ausgeblendet */
+    position: fixed; /* Bleibt an Ort und Stelle */
+    z-index: 1; /* Über allen anderen Elementen */
+    left: 0;
+    top: 0;
+    width: 100%; /* Volle Breite */
+    height: 100%; /* Volle Höhe */
+    overflow: auto; /* Scrollen bei Bedarf */
+    background-color: rgba(0, 0, 0, 0); /* Schwarzer Hintergrund mit Transparenz */
+}
+
+/* Modal Inhalt */
+.modal-content {
+    background-color: #333333;
+    margin: 15% auto; /* 15% von oben und zentriert */
+    padding: 20px;
+    border: 2px solid #888;
+    width: 80%;
+    max-width: 400px; /* Maximale Breite */
+    text-align: center;
+    border-radius: 8px;
+}
+
+/* Schließen-Button */
+.close-button {
+    color: #a59507;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: rgb(190, 190, 190);
+    text-decoration: none;
+}
+
+.play-again-button{
+background-color: #e74c3c;
+}
+
+
+#play-again-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: #616161; /* Grüner Hintergrund */
+    color: #aa920c;
+    border: none; /* Kein Rahmen */
+    border-radius: 8px; /* Abgerundete Ecken */
+    cursor: pointer; /* Mauszeiger als Hand-Symbol */
+    font-size: 18px; /* Größere Schrift */
+    font-weight: bold; /* Fettere Schrift */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Übergangseffekte */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Leichter Schatten */
+    font-family: 'UnifrakturCook', cursive, serif;
+
+}
+
+#play-again-button:hover {
+    background-color: #5c5c5c; /* Dunkleres Grün beim Hover */
+    transform:scale(1.1)
+}
+
+#play-again-button:active {
+    background-color: #5e5e5e; /* Noch dunkleres Grün beim Klicken */
+    transform: translateY(0); /* Zurück zur Originalposition */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0); /* Intensiverer Schatten beim Klicken */
 }
