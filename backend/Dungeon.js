@@ -18,10 +18,13 @@ let gameState = {
   difficulty: 1,
   roomsCompleted: 0, // Raumzähler
   currentWeapon: null,
+  currentArmor: null, // Aktuelle Rüstung
   playerHP: PlayerHP[0],
   playerMaxHP: PlayerMaxHP[0],
   playerMoney: playerMoney[0],
   playerEP: playerEP[0], // EP hinzufügen
+  playerLevel: 1, // Spielerlevel hinzufügen
+  nextEPThreshold: 100 // Nächste EP-Schwelle
 };
 
 // Listen für Loot
@@ -57,6 +60,11 @@ const weaponNames = [
   'Schädelspalter (Keule)', 'Sturmbrecher (Keule)', 'Mondbrecher (Keule)'
 ];
 
+const armorNames = [
+  'Lederharnisch', 'Kettenhemd', 'Plattenrüstung', 'Schuppenpanzer', 'Geweihter Schild',
+  'Stahlrüstung', 'Drachenleder', 'Magische Robe', 'Titanharnisch', 'Silberpanzer'
+];
+
 const materialNames = [
   'Knochen', 'Leder', 'Fasern', 'Pelzreste', 'Stofffetzen', 'Steinscherben',
   'Metallfragmente', 'Treibholz', 'Staubpartikel', 'Kristallstücke',
@@ -85,18 +93,20 @@ router.get('/difficulty', (req, res) => {
 router.post('/difficulty', (req, res) => {
   const { difficulty } = req.body;
   
-  // Validierung: difficulty muss eine ganze Zahl zwischen 1 und MaxDifficulty[0] +1 sein
+  // Validierung: difficulty muss eine ganze Zahl ab 1 sein
   if (!difficulty || typeof difficulty !== 'number' || difficulty < 1) {
     return res.status(400).json({ message: 'Ungültiger Schwierigkeitsgrad. Muss eine ganze Zahl ab 1 sein.' });
   }
 
-  if (difficulty > MaxDifficulty[0] + 1) {
-    return res.status(400).json({ message: `Schwierigkeitsgrad kann nur auf ${MaxDifficulty[0] + 1} erhöht werden.` });
-  }
-
+  // Erhöhen der Schwierigkeitsstufe
   if (difficulty > gameState.difficulty) {
-    // Erhöhen der Schwierigkeitsstufe
-    if (difficulty === gameState.difficulty + 1 && gameState.roomsCompleted >= 20) {
+    if (difficulty <= MaxDifficulty[0]) {
+      // Setze auf eine bereits erreichte Schwierigkeit
+      gameState.difficulty = difficulty;
+      gameState.roomsCompleted = 0;
+      res.json({ message: `Schwierigkeitsgrad auf ${difficulty} gesetzt.` });
+    } else if (difficulty === MaxDifficulty[0] + 1 && gameState.roomsCompleted >= 20) {
+      // Erhöhe auf eine neue Schwierigkeit
       gameState.difficulty = difficulty;
       gameState.roomsCompleted = 0;
 
@@ -144,6 +154,28 @@ router.post('/weapon', (req, res) => {
   }
 });
 
+// GET Armor
+router.get('/armor', (req, res) => {
+  res.json({ currentArmor: gameState.currentArmor });
+});
+
+// POST Armor
+router.post('/armor', (req, res) => {
+  const { armorName } = req.body;
+  if (!armorName) {
+    return res.status(400).json({ message: 'Kein Rüstungsname angegeben.' });
+  }
+
+  const armor = inventoryItems.find(item => item.name === armorName && item.type === 'armor');
+
+  if (armor) {
+    gameState.currentArmor = armor;
+    res.json({ message: `Rüstung ${armorName} ausgerüstet.`, currentArmor: gameState.currentArmor });
+  } else {
+    res.status(400).json({ message: 'Rüstung nicht gefunden oder ungültig.' });
+  }
+});
+
 // GET Inventory
 router.get('/inventory', (req, res) => {
   res.json({ inventoryItems });
@@ -157,7 +189,10 @@ router.get('/player-stats', (req, res) => {
     playerMoney: playerMoney[0],
     playerEP: playerEP[0], // EP hinzufügen
     roomsCompleted: gameState.roomsCompleted,
-    MaxDifficulty: MaxDifficulty[0] // MaxDifficulty hinzufügen
+    MaxDifficulty: MaxDifficulty[0], // MaxDifficulty hinzufügen
+    currentArmor: gameState.currentArmor, // Aktuelle Rüstung hinzufügen
+    playerLevel: gameState.playerLevel, // Spielerlevel hinzufügen
+    nextEPThreshold: gameState.nextEPThreshold // Nächste EP-Schwelle hinzufügen
   });
 });
 
@@ -211,16 +246,19 @@ const handleFight = (res) => {
   const enemyDamage = getRandomInt(2, 5) * gameState.difficulty;
 
   let playerCurrentHP = gameState.playerHP;
-  let enemyCurrentHP = enemyHP;
+  let enemyCurrentHPVal = enemyHP;
 
   // Kampf Schleife
-  while (playerCurrentHP > 0 && enemyCurrentHP > 0) {
+  while (playerCurrentHP > 0 && enemyCurrentHPVal > 0) {
     // Spieler greift zuerst an
-    enemyCurrentHP -= gameState.currentWeapon.strength;
-    if (enemyCurrentHP <= 0) break;
+    enemyCurrentHPVal -= gameState.currentWeapon.strength;
+    if (enemyCurrentHPVal <= 0) break;
 
     // Gegner greift an
     let damageReceived = enemyDamage;
+    if (gameState.currentArmor && gameState.currentArmor.strength) {
+      damageReceived = Math.max(enemyDamage - gameState.currentArmor.strength, 0);
+    }
     gameState.playerHP -= damageReceived;
     playerCurrentHP = gameState.playerHP;
   }
@@ -237,8 +275,26 @@ const handleFight = (res) => {
     gameState.playerHP = playerCurrentHP;
     PlayerHP[0] = gameState.playerHP;
 
+    let levelUpMessage = '';
+
+    // Check EP Threshold
+    while (gameState.playerEP >= gameState.nextEPThreshold) {
+      gameState.playerLevel += 1;
+      gameState.playerEP -= gameState.nextEPThreshold;
+      gameState.nextEPThreshold = Math.round(gameState.nextEPThreshold * 2.1);
+      gameState.playerMaxHP += 5;
+      PlayerMaxHP[0] = gameState.playerMaxHP;
+      levelUpMessage += `\nHerzlichen Glückwunsch! Du hast Level ${gameState.playerLevel} erreicht! Deine maximale HP wurde auf ${gameState.playerMaxHP} erhöht.`;
+    }
+
+    let responseMessage = `Du hast gegen ${enemyName} gekämpft und gewonnen! Du erhältst ${moneyEarned} Gold und ${epEarned} EP.`;
+
+    if (levelUpMessage) {
+      responseMessage += levelUpMessage;
+    }
+
     res.json({ 
-      message: `Du hast gegen ${enemyName} gekämpft und gewonnen! Du erhältst ${moneyEarned} Gold und ${epEarned} EP.` 
+      message: responseMessage 
     });
   } else {
     // Spieler verliert
@@ -259,8 +315,8 @@ const handleChest = (res) => {
   const loot = generateLoot();
   console.log(`Loot generiert: ${JSON.stringify(loot)}`); // Debugging-Log
 
-  // Füge das Loot zum Inventar hinzu, falls es eine Waffe, Trank oder Material ist
-  if (loot.type === 'weapon' || loot.type === 'Trank' || loot.type === 'Material') {
+  // Füge das Loot zum Inventar hinzu, falls es eine Waffe, Trank, Material oder Rüstung ist
+  if (loot.type === 'weapon' || loot.type === 'Trank' || loot.type === 'Material' || loot.type === 'armor') {
     const existingItem = inventoryItems.find(item => item.name === loot.name && item.type === loot.type);
     if (existingItem) {
       existingItem.quantity += 1;
@@ -289,6 +345,10 @@ const handleTrap = (res) => {
   const trapText = trapTexts[getRandomInt(0, trapTexts.length - 1)];
   let damage = getRandomInt(1, 3) * gameState.difficulty;
 
+  if (gameState.currentArmor && gameState.currentArmor.strength) {
+    damage = Math.max(damage - gameState.currentArmor.strength, 0);
+  }
+
   gameState.playerHP -= damage;
   PlayerHP[0] = gameState.playerHP;
 
@@ -314,10 +374,10 @@ const handleEmptyRoom = (res) => {
   res.json({ message: 'Der Raum ist leer. Nichts passiert.' });
 };
 
-// Loot Erstellung: Tränke, Waffen, Materialien
+// Loot Erstellung: Tränke, Waffen, Materialien, Rüstungen
 const generateLoot = () => {
   // Bestimme, basierend auf dem Schwierigkeitsgrad, welche Lootkategorien verfügbar sind
-  const lootCategories = ['Trank', 'weapon', 'Material'];
+  const lootCategories = ['Trank', 'weapon', 'Material', 'armor'];
 
   // Wähle eine zufällige Lootkategorie
   const selectedCategory = lootCategories[getRandomInt(0, lootCategories.length - 1)];
@@ -330,7 +390,7 @@ const generateLoot = () => {
       // Filtere Tränke basierend auf der aktuellen Schwierigkeitsstufe
       const availablePotions = potions.filter(potion => {
         const unlock = potionUnlockDifficulty[potion.name];
-        return unlock === gameState.difficulty && potion.quantity > 0;
+        return unlock <= gameState.difficulty && potion.quantity > 0;
       });
       console.log(`Verfügbare Tränke für Schwierigkeitsgrad ${gameState.difficulty}: ${availablePotions.map(p => p.name).join(', ')}`); // Debugging-Log
       if (availablePotions.length === 0) {
@@ -365,6 +425,20 @@ const generateLoot = () => {
         worth: materialWorth
       };
       console.log(`Material generiert: ${JSON.stringify(loot)}`); // Debugging-Log
+      break;
+    case 'armor':
+      // Erstelle eine zufällige Rüstung
+      const armorName = armorNames[getRandomInt(0, armorNames.length - 1)];
+      const armorStrength = getRandomInt(3, 7); // Abwehrwert zwischen 3 und 7
+      const armorWorth = Math.floor((getRandomInt(2, 5) * gameState.difficulty) / 2); // Halbiere den Wert und runde ab
+      loot = {
+        name: armorName,
+        type: 'armor',
+        category: 'equipment',
+        strength: armorStrength,
+        worth: armorWorth
+      };
+      console.log(`Rüstung generiert: ${JSON.stringify(loot)}`); // Debugging-Log
       break;
     default:
       loot = { name: 'Nichts', type: 'none' };

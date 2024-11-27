@@ -2,10 +2,10 @@
 
 let inventoryItems = [
   { 
-    name: 'minigun', 
+    name: 'ALter Dolch', 
     type: 'weapon', 
-    worth: 8, // Ursprünglich price: 15 → worth: 8
-    strength: 150, 
+    worth: 1, // Ursprünglich price: 15 → worth: 8
+    strength: 1, 
     category: 'equipment', 
     quantity: 1 
   },
@@ -61,7 +61,7 @@ let PlayerHP = [30];
 let PlayerMaxHP = [50];
 let playerMoney = [125];
 let playerEP = [0]; // Erfahrungspunkte des Spielers
-let MaxDifficulty = [7]; // Maximale abgeschlossene Schwierigkeitsstufe, z.B. 7
+let MaxDifficulty = [70]; // Maximale abgeschlossene Schwierigkeitsstufe, z.B. 7
 
 module.exports = {
   inventoryItems,

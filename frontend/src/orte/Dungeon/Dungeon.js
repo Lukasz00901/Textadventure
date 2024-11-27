@@ -7,18 +7,22 @@ import './Dungeon.css';
 const Dungeon = () => {
   const [difficulty, setDifficulty] = useState(1);
   const [currentWeapon, setCurrentWeapon] = useState(null);
+  const [currentArmor, setCurrentArmor] = useState(null); // Aktuelle Rüstung
   const [inventory, setInventory] = useState([]);
   const [playerHP, setPlayerHP] = useState(30);
   const [playerMaxHP, setPlayerMaxHP] = useState(50);
   const [playerMoney, setPlayerMoney] = useState(125);
   const [playerEP, setPlayerEP] = useState(0); // EP hinzufügen
+  const [playerLevel, setPlayerLevel] = useState(1); // Spielerlevel hinzufügen
   const [roomsCompleted, setRoomsCompleted] = useState(0); // Raumzähler
   const [maxDifficulty, setMaxDifficulty] = useState(7); // MaxDifficulty aktualisiert
+  const [nextEPThreshold, setNextEPThreshold] = useState(100); // Nächste EP-Schwelle
   const [event, setEvent] = useState(null);
   const [roomName, setRoomName] = useState('');
   const [log, setLog] = useState([]);
   const [selectedWeapon, setSelectedWeapon] = useState('');
   const [selectedPotion, setSelectedPotion] = useState('');
+  const [selectedArmor, setSelectedArmor] = useState(''); // Ausgewählte Rüstung
 
   const logEndRef = useRef(null);
 
@@ -38,6 +42,7 @@ const Dungeon = () => {
     // Initial Daten laden
     fetchDifficulty();
     fetchWeapon();
+    fetchArmor(); // Rüstung laden
     fetchInventory();
     fetchPlayerStats();
   }, []);
@@ -72,6 +77,16 @@ const Dungeon = () => {
     }
   };
 
+  const fetchArmor = async () => {
+    try {
+      const res = await axios.get('http://localhost:3000/api/dungeon/armor');
+      setCurrentArmor(res.data.currentArmor);
+      console.log(`Aktuelle Rüstung: ${JSON.stringify(res.data.currentArmor)}`); // Debugging-Log
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const fetchInventory = async () => {
     try {
       const res = await axios.get('http://localhost:3000/api/dungeon/inventory');
@@ -91,7 +106,10 @@ const Dungeon = () => {
       setPlayerEP(res.data.playerEP); // EP aktualisieren
       setRoomsCompleted(res.data.roomsCompleted); // Raumzähler aktualisieren
       setMaxDifficulty(res.data.MaxDifficulty); // MaxDifficulty aktualisieren
-      console.log(`Spielerstatus geladen: HP ${res.data.PlayerHP}/${res.data.PlayerMaxHP}, Woth: ${res.data.playerMoney}, EP: ${res.data.playerEP}, Räume abgeschlossen: ${res.data.roomsCompleted}, MaxDifficulty: ${res.data.MaxDifficulty}`); // Debugging-Log
+      setPlayerLevel(res.data.playerLevel); // Spielerlevel aktualisieren
+      setNextEPThreshold(res.data.nextEPThreshold); // Nächste EP-Schwelle aktualisieren
+      setCurrentArmor(res.data.currentArmor); // Aktuelle Rüstung aktualisieren
+      console.log(`Spielerstatus geladen: HP ${res.data.PlayerHP}/${res.data.PlayerMaxHP}, Woth: ${res.data.playerMoney}, EP: ${res.data.playerEP}, Level: ${res.data.playerLevel}, Räume abgeschlossen: ${res.data.roomsCompleted}, MaxDifficulty: ${res.data.MaxDifficulty}, Nächste EP-Schwelle: ${res.data.nextEPThreshold}, Aktuelle Rüstung: ${JSON.stringify(res.data.currentArmor)}`); // Debugging-Log
     } catch (error) {
       console.error(error);
     }
@@ -109,7 +127,7 @@ const Dungeon = () => {
       setLog(prevLog => [...prevLog, res.data.message]);
       console.log(res.data.message); // Debugging-Log
       fetchDifficulty();
-      fetchPlayerStats(); // Aktualisiere auch MaxDifficulty und EP
+      fetchPlayerStats(); // Aktualisiere auch MaxDifficulty, EP und Level
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
         setLog(prevLog => [...prevLog, error.response.data.message]);
@@ -129,6 +147,27 @@ const Dungeon = () => {
     try {
       const res = await axios.post('http://localhost:3000/api/dungeon/weapon', { weaponName: selectedWeapon });
       setCurrentWeapon(res.data.currentWeapon);
+      setLog(prevLog => [...prevLog, res.data.message]);
+      console.log(res.data.message); // Debugging-Log
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setLog(prevLog => [...prevLog, error.response.data.message]);
+        console.log(error.response.data.message); // Debugging-Log
+      } else {
+        console.error(error);
+      }
+    }
+  };
+
+  const handleEquipArmor = async () => {
+    if (!selectedArmor) {
+      setLog(prevLog => [...prevLog, 'Keine Rüstung ausgewählt.']);
+      return;
+    }
+
+    try {
+      const res = await axios.post('http://localhost:3000/api/dungeon/armor', { armorName: selectedArmor });
+      setCurrentArmor(res.data.currentArmor);
       setLog(prevLog => [...prevLog, res.data.message]);
       console.log(res.data.message); // Debugging-Log
     } catch (error) {
@@ -180,6 +219,7 @@ const Dungeon = () => {
       fetchPlayerStats();
       fetchInventory();
       fetchWeapon();
+      fetchArmor();
       fetchDifficulty();
     } catch (error) {
       console.error(error);
@@ -194,6 +234,13 @@ const Dungeon = () => {
   );
   console.log(`Verfügbare Tränke für Schwierigkeitsgrad ${difficulty}: ${availablePotions.map(p => p.name).join(', ')}`); // Debugging-Log
 
+  // Filtere Rüstungen aus dem Inventar
+  const availableArmors = inventory.filter(item => 
+    item.type === 'armor' && 
+    item.quantity > 0
+  );
+  console.log(`Verfügbare Rüstungen: ${availableArmors.map(a => a.name).join(', ')}`); // Debugging-Log
+
   return (
     <div className="dungeon-container">
       <h1>Der Ewige Abgrund ⚔️</h1>
@@ -201,8 +248,10 @@ const Dungeon = () => {
         <p>HP: {playerHP} / {playerMaxHP}</p>
         <p>Woth: {playerMoney}</p>
         <p>EP: {playerEP}</p> {/* EP anzeigen */}
+        <p>Level: {playerLevel}</p> {/* Spielerlevel anzeigen */}
         <p>Schaden: {currentWeapon ? currentWeapon.strength : 'Keine Waffe'}</p>
         <p>Waffe: {currentWeapon ? currentWeapon.name : 'Keine ausgerüstet'}</p>
+        <p>Rüstung: {currentArmor ? `${currentArmor.name} (Abwehr: ${currentArmor.strength})` : 'Keine Rüstung ausgerüstet'}</p> {/* Aktuelle Rüstung anzeigen */}
         <p>Räume abgeschlossen: {roomsCompleted}</p> {/* Raumzähler angezeigt */}
         <p>Maximal abgeschlossener Schwierigkeitsgrad: {maxDifficulty}</p> {/* MaxDifficulty angezeigt */}
       </div>
@@ -229,6 +278,18 @@ const Dungeon = () => {
             ))}
           </select>
           <button onClick={handleEquipWeapon}>Waffe ausrüsten</button>
+        </div>
+
+        <div className="armor-selector">
+          <select value={selectedArmor} onChange={(e) => setSelectedArmor(e.target.value)}>
+            <option value="">Rüstung auswählen</option>
+            {availableArmors.map((armor, index) => (
+              <option key={index} value={armor.name}>
+                {armor.name} (Abwehr: {armor.strength}) - Woth: {armor.worth}
+              </option>
+            ))}
+          </select>
+          <button onClick={handleEquipArmor}>Rüstung ausrüsten</button>
         </div>
 
         <div className="potion-selector">
