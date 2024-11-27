@@ -5,10 +5,42 @@ const router = express.Router();
 const { inventoryItems, PlayerHP, PlayerMaxHP, playerMoney } = require('./Inventar_Inhalt');
 
 const smithyItems = [
-  { name: 'Schwert', type: 'Waffe', category: 'melee', worth: 10, strength: 5, price: 50, quantity: 5 },
-  { name: 'Axt', type: 'Waffe', category: 'melee', worth: 8, strength: 4, price: 40, quantity: 10 },
-  { name: 'Schild', type: 'Rüstung', category: 'defense', worth: 7, strength: 3, price: 35, quantity: 8 },
-  { name: 'Rüstung', type: 'Rüstung', category: 'defense', worth: 15, strength: 7, price: 75, quantity: 3 },
+  { 
+    name: 'Schwert', 
+    type: 'weapon', 
+    worth: 10, // Ursprünglich price: 15 → worth: 8
+    price: 20,
+    strength: 2, 
+    category: 'equipment', 
+    quantity: 1 
+  },
+  { 
+    name: 'Axt', 
+    type: 'weapon', 
+    worth: 17, // Ursprünglich price: 15 → worth: 8
+    price: 35,
+    strength: 3, 
+    category: 'equipment', 
+    quantity: 1 
+  },
+  { 
+    name: 'Schild', 
+    type: 'armor', 
+    worth: 10, // Ursprünglich price: 15 → worth: 8
+    price: 20,
+    strength: 1, 
+    category: 'equipment', 
+    quantity: 1 
+  },
+  { 
+    name: 'Rüstung', 
+    type: 'armor', 
+    worth: 25, // Ursprünglich price: 15 → worth: 8
+    price: 50,
+    strength: 3, 
+    category: 'equipment', 
+    quantity: 1 
+  },
 ];
 
 const forestItems = [
@@ -176,7 +208,9 @@ router.post('/buy', (req, res) => {
   if (existingItem) {
     existingItem.quantity += 1;
   } else {
-    inventoryItems.push({ name: smithyItem.name, quantity: 1 });
+    // Geänderte Zeile: Füge alle relevanten Eigenschaften hinzu
+    const { name, type, worth, strength, category } = smithyItem;
+    inventoryItems.push({ name, type, worth, strength, category, quantity: 1 });
   }
 
   questLog.push(`Gekauft: ${smithyItem.name} für ${smithyItem.price} Gold.`);

@@ -41,12 +41,12 @@ body {
 }
 
 /* Box Styling */
-.resource-box {
+.resource-box-wald {
     margin: 50px auto;
     padding: 20px;
-    border: 2px solid #FFD700; /*Rahmen*/
+    border: 2px solid #c9b040; /*Rahmen*/
     border-radius: 10px;
-    background-color: #160e0c; /*Huntergrund*/
+    background-color: #160e0c91; /*Huntergrund*/
     text-align: left;
     max-width: 500px;
     max-height: 200px;
@@ -74,4 +74,16 @@ body {
     border-top: 2px solid #FFD700; /*Strich zwischen den Materialien*/
     margin: 20px 0;
     width: 100%;
+}
+
+.cooldown-message {
+    margin-top: 20px;
+    padding: 10px;
+    color: #e70707;
+    
+    text-align: center;
+    font-weight: bold;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
 }

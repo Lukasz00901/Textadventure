@@ -212,6 +212,8 @@
   box-sizing: border-box; /* Box-Sizing für konsistente Maße */
 }
 
+
+
 .log-content p {
   margin: 5px 0;
   font-size: 16px;

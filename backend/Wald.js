@@ -1,4 +1,4 @@
-
+//Backend Wald.js
 const express = require('express');
 const router = express.Router();
 
@@ -10,8 +10,42 @@ const findItemIndex = (name) => {
   return inventoryItems.findIndex((item) => item.name === name);
 };
 
+// *** Hinzugefügte Variablen für Cooldown-Mechanismus ***
+let gatherCount = 0;
+let cooldown = false;
+let cooldownEndTime = null;
+
 // Route für das Sammeln von Ressourcen
 router.post('/gather', (req, res) => {
+  const now = Date.now();
+
+  // *** Überprüfen, ob Cooldown aktiv ist ***
+  if (cooldown) {
+    if (now >= cooldownEndTime) {
+      // Cooldown ist abgelaufen
+      cooldown = false;
+      gatherCount = 0;
+    } else {
+      // Cooldown noch aktiv
+      const remainingTime = cooldownEndTime - now;
+      const remainingMinutes = Math.ceil(remainingTime / 60000);
+      return res.status(429).json({
+        message: `Cooldown aktiv. Bitte warte ${remainingMinutes} Minuten.`,
+        cooldown: true,
+        remainingTime: remainingTime,
+      });
+    }
+  }
+
+  // *** Sammelaktionen zählen ***
+  gatherCount++;
+
+  // *** Nach 3 Sammelaktionen Cooldown aktivieren ***
+  if (gatherCount >= 3) {
+    cooldown = true;
+    cooldownEndTime = now + 5 * 60 * 1000; // 5 Minuten in Millisekunden
+  }
+
   const items = [
     { name: "Fichtenholz", type: "Material", category: "misc", worth: 3, strength: 0 },
     { name: "Rinde", type: "Material", category: "misc", worth: 2, strength: 0 },
@@ -107,6 +141,7 @@ router.post('/gather', (req, res) => {
     inventoryItems.push({ ...items[8], quantity: rankenCount });
   }
 
+  // *** Antwort mit Cooldown-Status ***
   res.status(201).json({
     message: 'Ressourcen erfolgreich gesammelt!',
     addedItems: [
@@ -121,6 +156,8 @@ router.post('/gather', (req, res) => {
       { name: "Ranken", quantity: rankenCount },
     ],
     currentInventory: inventoryItems,
+    cooldown: cooldown,
+    cooldownEndTime: cooldownEndTime,
   });
 });
 

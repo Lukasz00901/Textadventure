@@ -1,11 +1,8 @@
-/* src/Markt.css */
+/* src/Mine.css */
+
 @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
-.Mine {
-  text-align: center;
-}
 
 body {
-    /*background-color: #271816;*/
     color: #c9b040;
     font-family: Arial, sans-serif;
     margin: 0;
@@ -19,9 +16,9 @@ body {
     font-size: 1.2rem;
 }
 
-
-button {
-    padding: 10px;
+/* Button Styling */
+.button {
+    padding: 10px 20px;
     background-color: #271816;
     color: #c9b040;
     border: none;
@@ -30,21 +27,64 @@ button {
     transition: all 0.3s ease;
     font-family: 'UnifrakturCook', cursive;
     font-weight: 700;
-    font-size: 30px;
+    font-size: 1.2rem;
 }
 
-button:hover {
+.button:hover {
     background-color: #d4af37;
     color: #000;
 }
 
-button:disabled {
+.button:disabled {
     background-color: #555;
     color: #ccc;
     cursor: not-allowed;
 }
 
+/* Box Styling */
+.resource-box-mine {
+    margin: 50px auto;
+    padding: 20px;
+    border: 2px solid #c9b040; /*Rahmen*/
+    border-radius: 5px;
+    background-color: #160e0c91; /*Huntergrund*/
+    text-align: left;
+    max-width: 500px;
+    max-height: 200px;
+    overflow-y: auto;
+}
 
-header {
-    position: static;
+/*Überschrift-Box bevor gesammelt wird*/
+.resource-box h2 {
+    color: #FFD700;
+}
+
+.resource-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+/*Box - Schrift*/
+.resource-box li {
+    color: #FFD700;
+    margin-top: 10px; /* Zusätzlicher Abstand vom Text zur Linie */
+}
+
+.resource-separator {
+    border: none;
+    border-top: 2px solid #FFD700; /*Strich zwischen den Materialien*/
+    margin: 20px 0;
+    width: 100%;
+}
+
+/* *** Hinzugefügte CSS für Cooldown *** */
+.cooldown-message {
+    margin-top: 20px;
+    padding: 10px;
+    color: #990000;
+    text-align: center;
+    font-weight: bold;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
 }
