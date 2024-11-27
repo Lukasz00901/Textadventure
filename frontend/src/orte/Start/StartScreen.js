@@ -1,4 +1,3 @@
-// src/orte/Start/StartScreen.js
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StartScreen.css';
@@ -20,19 +19,14 @@ const dialogLines = [
 const StartScreen = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
+  const [isDialogRunning, setIsDialogRunning] = useState(false);
   const [name, setName] = useState('');
   const [isNameSubmitted, setIsNameSubmitted] = useState(false);
   const dialogRef = useRef(null);
   const { setPlayerName } = useContext(PlayerContext); // Verwende den Context
 
-  const handleNext = () => {
-    if (currentStep < dialogLines.length) {
-      setCurrentStep(prevStep => prevStep + 1);
-    }
-  };
-
-  const handleStart = () => {
-    navigate('/inventar'); // Leitet zur Haupt-App weiter
+  const handleStartDialog = () => {
+    setIsDialogRunning(true);
   };
 
   const handleSubmitName = async (e) => {
@@ -42,7 +36,7 @@ const StartScreen = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/player', { // Backend auf Port 3000
+      const response = await fetch('http://localhost:3000/api/player', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -54,32 +48,50 @@ const StartScreen = () => {
 
       if (response.ok) {
         setIsNameSubmitted(true);
-        setPlayerName(data.name); // Aktualisiere den Context mit dem neuen Namen
+        setPlayerName(data.name); // Setze den Namen im Context
       } else {
-        // Handle error without alert
+        console.error('Fehler beim Speichern des Namens:', data.error);
       }
     } catch (error) {
       console.error('Fehler beim Setzen des Namens:', error);
-      // Handle error without alert
     }
   };
 
-  // Effekt, um nach jedem Update zu scrollen
+  // Effekt: Satz für Satz automatisch anzeigen
+  useEffect(() => {
+    if (isDialogRunning && currentStep < dialogLines.length) {
+      const interval = setInterval(() => {
+        setCurrentStep((prevStep) => prevStep + 1);
+      }, 3000); // Nächster Satz alle 3 Sekunden
+      return () => clearInterval(interval); // Bereinigen
+    }
+
+    if (currentStep === dialogLines.length) {
+      // Navigiere nach der Einleitung zur Tutorial-Seite
+      const delayTimer = setTimeout(() => {
+        navigate('/tutorial');
+      }, 5000); // 5 Sekunden Verzögerung für den letzten Satz
+      return () => clearTimeout(delayTimer); // Bereinigen
+    }
+  }, [isDialogRunning, currentStep, navigate]);
+
+  // Effekt: Automatisches Scrollen
   useEffect(() => {
     if (dialogRef.current) {
-      dialogRef.current.scrollTop = dialogRef.current.scrollHeight;
+      const scrollInterval = setInterval(() => {
+        dialogRef.current.scrollTop += 2; // Langsames Scrollen
+        if (dialogRef.current.scrollTop >= dialogRef.current.scrollHeight - dialogRef.current.clientHeight) {
+          clearInterval(scrollInterval); // Stoppe das Scrollen, wenn das Ende erreicht ist
+        }
+      }, 30); // Scrollgeschwindigkeit
+      return () => clearInterval(scrollInterval); // Bereinigen
     }
   }, [currentStep]);
 
   return (
     <div className="StartScreen">
       <h1>Willkommen in den Hallen der Finsternis.</h1>
-      <div className="dialog" ref={dialogRef}>
-        {dialogLines.slice(0, currentStep).map((line, index) => (
-          <p key={index}>{line}</p>
-        ))}
-      </div>
-      {!isNameSubmitted && (
+      {!isNameSubmitted && ( // Namenseingabe unter der Überschrift
         <form onSubmit={handleSubmitName} className="name-form">
           <input
             type="text"
@@ -91,14 +103,19 @@ const StartScreen = () => {
           <button type="submit">Name speichern</button>
         </form>
       )}
-      {currentStep < dialogLines.length ? (
-        <button onClick={handleNext} className="next-button">
-          Weiter
-        </button>
-      ) : (
-        <button onClick={handleStart} className="start-button">
-          Ab ins Abenteuer!
-        </button>
+      {isNameSubmitted && ( // Zeige Dialogfeld erst, wenn der Name gespeichert wurde
+        <>
+          <div className="dialog" ref={dialogRef}>
+            {dialogLines.slice(0, currentStep).map((line, index) => (
+              <p key={index}>{line}</p>
+            ))}
+          </div>
+          {!isDialogRunning && (
+            <button onClick={handleStartDialog} className="start-dialog-button">
+              Weiter
+            </button>
+          )}
+        </>
       )}
     </div>
   );

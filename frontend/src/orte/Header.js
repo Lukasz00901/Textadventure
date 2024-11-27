@@ -1,4 +1,3 @@
-// src/orte/Header.js
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Header.css';
@@ -9,7 +8,13 @@ const Header = () => {
   const navigate = useNavigate();
   const { playerName, setPlayerName } = useContext(PlayerContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isNameValid, setIsNameValid] = useState(false); // Lokaler Zustand für die Validierung des Namens
   const dropdownRef = useRef(null);
+
+  // Überprüfung, ob der Spielername gültig ist
+  useEffect(() => {
+    setIsNameValid(!!playerName); // Spielername als boolesche Bedingung auswerten
+  }, [playerName]);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(prev => !prev);
@@ -56,7 +61,6 @@ const Header = () => {
         )}
         {isDropdownOpen && (
           <div className="dropdown" ref={dropdownRef}>
-            
             <button onClick={handleLogout} className="dropdown-item">
               Abmelden
             </button>
@@ -66,37 +70,72 @@ const Header = () => {
       {/* Navigation */}
       <ul className="header-nav">
         <li>
-          <Link to="/mine" className={location.pathname === '/mine' ? 'active' : ''}>
+          <Link
+            to="/mine"
+            className={location.pathname === '/mine' ? 'active' : ''}
+            onClick={(e) => !isNameValid && e.preventDefault()}
+            style={{ pointerEvents: isNameValid ? 'auto' : 'none', opacity: isNameValid ? 1 : 0.5 }}
+          >
             Mine
           </Link>
         </li>
         <li>
-          <Link to="/dungeon" className={location.pathname === '/dungeon' ? 'active' : ''}>
+          <Link
+            to="/dungeon"
+            className={location.pathname === '/dungeon' ? 'active' : ''}
+            onClick={(e) => !isNameValid && e.preventDefault()}
+            style={{ pointerEvents: isNameValid ? 'auto' : 'none', opacity: isNameValid ? 1 : 0.5 }}
+          >
             Dungeon
           </Link>
         </li>
         <li>
-          <Link to="/schmiede" className={location.pathname === '/schmiede' ? 'active' : ''}>
+          <Link
+            to="/schmiede"
+            className={location.pathname === '/schmiede' ? 'active' : ''}
+            onClick={(e) => !isNameValid && e.preventDefault()}
+            style={{ pointerEvents: isNameValid ? 'auto' : 'none', opacity: isNameValid ? 1 : 0.5 }}
+          >
             Schmiede
           </Link>
         </li>
         <li>
-          <Link to="/inventar" className={location.pathname === '/inventar' ? 'active' : ''}>
+          <Link
+            to="/inventar"
+            className={location.pathname === '/inventar' ? 'active' : ''}
+            onClick={(e) => !isNameValid && e.preventDefault()}
+            style={{ pointerEvents: isNameValid ? 'auto' : 'none', opacity: isNameValid ? 1 : 0.5 }}
+          >
             Inventar
           </Link>
         </li>
         <li>
-          <Link to="/taverne" className={location.pathname === '/taverne' ? 'active' : ''}>
+          <Link
+            to="/taverne"
+            className={location.pathname === '/taverne' ? 'active' : ''}
+            onClick={(e) => !isNameValid && e.preventDefault()}
+            style={{ pointerEvents: isNameValid ? 'auto' : 'none', opacity: isNameValid ? 1 : 0.5 }}
+          >
             Taverne
           </Link>
         </li>
         <li>
-          <Link to="/markt" className={location.pathname === '/markt' ? 'active' : ''}>
+          <Link
+            to="/markt"
+            className={location.pathname === '/markt' ? 'active' : ''}
+            onClick={(e) => !isNameValid && e.preventDefault()}
+            style={{ pointerEvents: isNameValid ? 'auto' : 'none', opacity: isNameValid ? 1 : 0.5 }}
+          >
             Markt
           </Link>
         </li>
         <li>
-          <Link to="/wald" className={location.pathname === '/wald' ? 'active' : ''}>
+          <Link
+            to="/wald"
+            className={location.pathname === '/wald' ? 'active' : ''}
+            onClick={(e) => !isNameValid && e.preventDefault()}
+            style={{ pointerEvents: isNameValid ? 'auto' : 'none', opacity: isNameValid ? 1 : 0.5 }}
+          >
             Wald
           </Link>
         </li>
