@@ -25,7 +25,7 @@ const smithyItems = [
   },
   { 
     name: 'Schild', 
-    type: 'armor', 
+    type: 'amor', 
     worth: 10, // Ursprünglich price: 15 → worth: 8
     price: 20,
     strength: 1, 
@@ -34,7 +34,7 @@ const smithyItems = [
   },
   { 
     name: 'Rüstung', 
-    type: 'armor', 
+    type: 'amor', 
     worth: 25, // Ursprünglich price: 15 → worth: 8
     price: 50,
     strength: 3, 
