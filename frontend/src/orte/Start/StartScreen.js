@@ -1,7 +1,8 @@
-// src/StartScreen.js
-import React, { useState, useRef, useEffect } from 'react';
+// src/orte/Start/StartScreen.js
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StartScreen.css';
+import { PlayerContext } from '../../PlayerContext';
 
 const dialogLines = [
   "Du wandelst über den Marktplatz und füllst gerade deine Vorräte auf, als ein Fremder dich anspricht.",
@@ -19,7 +20,10 @@ const dialogLines = [
 const StartScreen = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
-  const dialogRef = useRef(null); // Ref für das Dialog-Element
+  const [name, setName] = useState('');
+  const [isNameSubmitted, setIsNameSubmitted] = useState(false);
+  const dialogRef = useRef(null);
+  const { setPlayerName } = useContext(PlayerContext); // Verwende den Context
 
   const handleNext = () => {
     if (currentStep < dialogLines.length) {
@@ -31,6 +35,35 @@ const StartScreen = () => {
     navigate('/inventar'); // Leitet zur Haupt-App weiter
   };
 
+  const handleSubmitName = async (e) => {
+    e.preventDefault();
+    if (name.trim() === '') {
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/api/player', { // Backend auf Port 3000
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setIsNameSubmitted(true);
+        setPlayerName(data.name); // Aktualisiere den Context mit dem neuen Namen
+      } else {
+        // Handle error without alert
+      }
+    } catch (error) {
+      console.error('Fehler beim Setzen des Namens:', error);
+      // Handle error without alert
+    }
+  };
+
   // Effekt, um nach jedem Update zu scrollen
   useEffect(() => {
     if (dialogRef.current) {
@@ -40,13 +73,24 @@ const StartScreen = () => {
 
   return (
     <div className="StartScreen">
-      <h1>Willkommen in den Hallen der Finsternis.
-      </h1>
+      <h1>Willkommen in den Hallen der Finsternis.</h1>
       <div className="dialog" ref={dialogRef}>
         {dialogLines.slice(0, currentStep).map((line, index) => (
           <p key={index}>{line}</p>
         ))}
       </div>
+      {!isNameSubmitted && (
+        <form onSubmit={handleSubmitName} className="name-form">
+          <input
+            type="text"
+            placeholder="Gib deinen Namen ein"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <button type="submit">Name speichern</button>
+        </form>
+      )}
       {currentStep < dialogLines.length ? (
         <button onClick={handleNext} className="next-button">
           Weiter

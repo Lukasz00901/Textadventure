@@ -279,3 +279,20 @@ ohne die Übersicht zu verlieren.
 
 Mit diesen Entwicklungen wurde ein solider Grundstein für die weiteren Arbeiten gelegt. 
 Der nächste Schritt besteht darin, weitere Css Bearbeitungen zu machen.
+
+#################################################################################################################################################
+
+Tagesbericht 27.11.24
+
+Heute wurden mehrere Änderungen und Erweiterungen am Textadventure vorgenommen. Zunächst bekamen die Spielbereiche Wald und Mine einen Cooldown, 
+um die Spielmechanik ausgewogener zu gestalten. Auf der Startseite wurde ein Eingabefeld für den Spielernamen hinzugefügt, und dieser Name erscheint nun auch dynamisch im Header des Spiels, 
+was die Immersion erhöht. 
+
+Es wurde die Idee diskutiert, dass der Spieler erst schlafen muss, bevor er Wald und Mine erneut nutzen kann um Materialaien zu farmen. 
+Allerdings stellte sich diese Mechanik als schwer umsetzbar heraus und wurde daher wieder verworfen. Zusätzlich wurden Rüstungen implementiert, 
+die nun Abwehrwerte für die Spielerfigur bieten, und ein Levelsystem wurde hinzugefügt, um den Spielfortschritt besser abzubilden.
+
+Diverse Buggs wurden behoben: Spieler konnte weder Waffe noch Rüstung ausrüsten, obwohl sie vorhanden und einsazufähig war. 
+Ein detailierteres Kernsystem zu entwickeln musste aus Zeitgründen abgebrochen werden. 
+
+Abschließend gab es einige CSS-Anpassungen in den Bereichen Wald und Mine, um die visuelle Darstellung und Benutzerfreundlichkeit weiter zu verbessern.

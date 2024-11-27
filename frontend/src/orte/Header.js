@@ -1,15 +1,67 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+// src/orte/Header.js
+import React, { useContext, useState, useEffect, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Header.css';
+import { PlayerContext } from '../PlayerContext'; // Korrigierter Pfad
 
 const Header = () => {
-  const location = useLocation(); // Zum Überprüfen des aktiven Links
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { playerName, setPlayerName } = useContext(PlayerContext);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(prev => !prev);
+  };
+
+  const handleNavigateStart = () => {
+    navigate('/');
+    setIsDropdownOpen(false);
+  };
+
+  const handleLogout = () => {
+    setPlayerName('');
+    setIsDropdownOpen(false);
+    navigate('/');
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   return (
     <nav className="Header">
-      {/* Titel */}
+      {/* Titel mit Spielernamen */}
       <div className="header-title">
-        Schwarzbach
+        Schwarzbach{' '}
+        {playerName && (
+          <span className="player-name" onClick={toggleDropdown}>
+            - {playerName}
+          </span>
+        )}
+        {isDropdownOpen && (
+          <div className="dropdown" ref={dropdownRef}>
+            
+            <button onClick={handleLogout} className="dropdown-item">
+              Abmelden
+            </button>
+          </div>
+        )}
       </div>
       {/* Navigation */}
       <ul className="header-nav">
