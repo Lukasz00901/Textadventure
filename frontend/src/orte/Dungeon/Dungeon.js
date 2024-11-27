@@ -7,7 +7,7 @@ import './Dungeon.css';
 const Dungeon = () => {
   const [difficulty, setDifficulty] = useState(1);
   const [currentWeapon, setCurrentWeapon] = useState(null);
-  const [currentArmor, setCurrentArmor] = useState(null); // Aktuelle Rüstung
+  const [currentAmor, setCurrentAmor] = useState(null); // Aktuelle Rüstung
   const [inventory, setInventory] = useState([]);
   const [playerHP, setPlayerHP] = useState(30);
   const [playerMaxHP, setPlayerMaxHP] = useState(50);
@@ -22,7 +22,7 @@ const Dungeon = () => {
   const [log, setLog] = useState([]);
   const [selectedWeapon, setSelectedWeapon] = useState('');
   const [selectedPotion, setSelectedPotion] = useState('');
-  const [selectedArmor, setSelectedArmor] = useState(''); // Ausgewählte Rüstung
+  const [selectedAmor, setSelectedAmor] = useState(''); // Ausgewählte Rüstung
 
   const logEndRef = useRef(null);
 
@@ -42,7 +42,7 @@ const Dungeon = () => {
     // Initial Daten laden
     fetchDifficulty();
     fetchWeapon();
-    fetchArmor(); // Rüstung laden
+    fetchAmor(); // Rüstung laden
     fetchInventory();
     fetchPlayerStats();
   }, []);
@@ -77,11 +77,11 @@ const Dungeon = () => {
     }
   };
 
-  const fetchArmor = async () => {
+  const fetchAmor = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/dungeon/armor');
-      setCurrentArmor(res.data.currentArmor);
-      console.log(`Aktuelle Rüstung: ${JSON.stringify(res.data.currentArmor)}`); // Debugging-Log
+      const res = await axios.get('http://localhost:3000/api/dungeon/amor');
+      setCurrentAmor(res.data.currentAmor);
+      console.log(`Aktuelle Rüstung: ${JSON.stringify(res.data.currentAmor)}`); // Debugging-Log
     } catch (error) {
       console.error(error);
     }
@@ -108,8 +108,8 @@ const Dungeon = () => {
       setMaxDifficulty(res.data.MaxDifficulty); // MaxDifficulty aktualisieren
       setPlayerLevel(res.data.playerLevel); // Spielerlevel aktualisieren
       setNextEPThreshold(res.data.nextEPThreshold); // Nächste EP-Schwelle aktualisieren
-      setCurrentArmor(res.data.currentArmor); // Aktuelle Rüstung aktualisieren
-      console.log(`Spielerstatus geladen: HP ${res.data.PlayerHP}/${res.data.PlayerMaxHP}, Woth: ${res.data.playerMoney}, EP: ${res.data.playerEP}, Level: ${res.data.playerLevel}, Räume abgeschlossen: ${res.data.roomsCompleted}, MaxDifficulty: ${res.data.MaxDifficulty}, Nächste EP-Schwelle: ${res.data.nextEPThreshold}, Aktuelle Rüstung: ${JSON.stringify(res.data.currentArmor)}`); // Debugging-Log
+      setCurrentAmor(res.data.currentAmor); // Aktuelle Rüstung aktualisieren
+      console.log(`Spielerstatus geladen: HP ${res.data.PlayerHP}/${res.data.PlayerMaxHP}, Woth: ${res.data.playerMoney}, EP: ${res.data.playerEP}, Level: ${res.data.playerLevel}, Räume abgeschlossen: ${res.data.roomsCompleted}, MaxDifficulty: ${res.data.MaxDifficulty}, Nächste EP-Schwelle: ${res.data.nextEPThreshold}, Aktuelle Rüstung: ${JSON.stringify(res.data.currentAmor)}`); // Debugging-Log
     } catch (error) {
       console.error(error);
     }
@@ -159,15 +159,15 @@ const Dungeon = () => {
     }
   };
 
-  const handleEquipArmor = async () => {
-    if (!selectedArmor) {
+  const handleEquipAmor = async () => {
+    if (!selectedAmor) {
       setLog(prevLog => [...prevLog, 'Keine Rüstung ausgewählt.']);
       return;
     }
 
     try {
-      const res = await axios.post('http://localhost:3000/api/dungeon/armor', { armorName: selectedArmor });
-      setCurrentArmor(res.data.currentArmor);
+      const res = await axios.post('http://localhost:3000/api/dungeon/amor', { amorName: selectedAmor });
+      setCurrentAmor(res.data.currentAmor);
       setLog(prevLog => [...prevLog, res.data.message]);
       console.log(res.data.message); // Debugging-Log
     } catch (error) {
@@ -219,7 +219,7 @@ const Dungeon = () => {
       fetchPlayerStats();
       fetchInventory();
       fetchWeapon();
-      fetchArmor();
+      fetchAmor();
       fetchDifficulty();
     } catch (error) {
       console.error(error);
@@ -235,30 +235,82 @@ const Dungeon = () => {
   console.log(`Verfügbare Tränke für Schwierigkeitsgrad ${difficulty}: ${availablePotions.map(p => p.name).join(', ')}`); // Debugging-Log
 
   // Filtere Rüstungen aus dem Inventar
-  const availableArmors = inventory.filter(item => 
-    item.type === 'armor' && 
+  const availableAmors = inventory.filter(item => 
+    item.type === 'amor' && 
     item.quantity > 0
   );
-  console.log(`Verfügbare Rüstungen: ${availableArmors.map(a => a.name).join(', ')}`); // Debugging-Log
+  console.log(`Verfügbare Rüstungen: ${availableAmors.map(a => a.name).join(', ')}`); // Debugging-Log
 
   return (
     <div className="dungeon-container">
       <h1>Der Ewige Abgrund ⚔️</h1>
+      
       <div className="player-stats">
-        <p>HP: {playerHP} / {playerMaxHP}</p>
-        <p>Woth: {playerMoney}</p>
-        <p>EP: {playerEP}</p> {/* EP anzeigen */}
-        <p>Level: {playerLevel}</p> {/* Spielerlevel anzeigen */}
-        <p>Schaden: {currentWeapon ? currentWeapon.strength : 'Keine Waffe'}</p>
-        <p>Waffe: {currentWeapon ? currentWeapon.name : 'Keine ausgerüstet'}</p>
-        <p>Rüstung: {currentArmor ? `${currentArmor.name} (Abwehr: ${currentArmor.strength})` : 'Keine Rüstung ausgerüstet'}</p> {/* Aktuelle Rüstung anzeigen */}
-        <p>Räume abgeschlossen: {roomsCompleted}</p> {/* Raumzähler angezeigt */}
-        <p>Maximal abgeschlossener Schwierigkeitsgrad: {maxDifficulty}</p> {/* MaxDifficulty angezeigt */}
+        <div className="stat-card">
+          <div className="stat-info">
+            <h3>HP</h3>
+            <div className="progress-bar">
+              <div 
+                className="progress" 
+                style={{ width: `${(playerHP / playerMaxHP) * 100}%` }}
+              ></div>
+            </div>
+            <p>{playerHP} / {playerMaxHP}</p>
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-info">
+            <h3>Woth</h3>
+            <p>{playerMoney}</p>
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-info">
+            <h3>EP</h3>
+            <div className="progress-bar">
+              <div 
+                className="progress" 
+                style={{ width: `${(playerEP / nextEPThreshold) * 100}%` }}
+              ></div>
+            </div>
+            <p>{playerEP} / {nextEPThreshold}</p>
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-info">
+            <h3>Rüstung</h3>
+            <p>{currentAmor ? `${currentAmor.name} (Abwehr: ${currentAmor.strength})` : 'Keine Rüstung ausgerüstet'}</p>
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-info">
+            <h3>Waffe</h3>
+            <p>{currentWeapon ? `${currentWeapon.name} (Schaden: ${currentWeapon.strength})` : 'Keine Waffe ausgerüstet'}</p>
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-info">
+            <h3>Räume</h3>
+            <p>{roomsCompleted} abgeschlossen</p>
+          </div>
+        </div>
+
+        <div className="stat-card full-width">
+          <h3>Level: {playerLevel}</h3>
+          <p>Maximal abgeschlossener Schwierigkeitsgrad: {maxDifficulty}</p>
+        </div>
       </div>
 
       <div className="controls">
         <div className="difficulty-setter">
+          <label htmlFor="difficulty-input">Schwierigkeit:</label>
           <input
+            id="difficulty-input"
             type="number"
             value={difficulty}
             onChange={(e) => setDifficulty(Number(e.target.value))}
@@ -269,31 +321,46 @@ const Dungeon = () => {
         </div>
 
         <div className="weapon-selector">
-          <select value={selectedWeapon} onChange={(e) => setSelectedWeapon(e.target.value)}>
+          <label htmlFor="weapon-select">Waffe auswählen:</label>
+          <select 
+            id="weapon-select" 
+            value={selectedWeapon} 
+            onChange={(e) => setSelectedWeapon(e.target.value)}
+          >
             <option value="">Waffe auswählen</option>
             {inventory.filter(w => w.type === 'weapon').map((w, index) => (
               <option key={index} value={w.name}>
-                {w.name} (Stärke: {w.strength}) - Woth: {w.worth}
+                {w.name} (Schaden: {w.strength}) - Woth: {w.worth}
               </option>
             ))}
           </select>
           <button onClick={handleEquipWeapon}>Waffe ausrüsten</button>
         </div>
 
-        <div className="armor-selector">
-          <select value={selectedArmor} onChange={(e) => setSelectedArmor(e.target.value)}>
+        <div className="amor-selector">
+          <label htmlFor="amor-select">Rüstung auswählen:</label>
+          <select 
+            id="amor-select" 
+            value={selectedAmor} 
+            onChange={(e) => setSelectedAmor(e.target.value)}
+          >
             <option value="">Rüstung auswählen</option>
-            {availableArmors.map((armor, index) => (
-              <option key={index} value={armor.name}>
-                {armor.name} (Abwehr: {armor.strength}) - Woth: {armor.worth}
+            {availableAmors.map((amor, index) => (
+              <option key={index} value={amor.name}>
+                {amor.name} (Abwehr: {amor.strength}) - Woth: {amor.worth}
               </option>
             ))}
           </select>
-          <button onClick={handleEquipArmor}>Rüstung ausrüsten</button>
+          <button onClick={handleEquipAmor}>Rüstung ausrüsten</button>
         </div>
 
         <div className="potion-selector">
-          <select value={selectedPotion} onChange={(e) => setSelectedPotion(e.target.value)}>
+          <label htmlFor="potion-select">Trank auswählen:</label>
+          <select 
+            id="potion-select" 
+            value={selectedPotion} 
+            onChange={(e) => setSelectedPotion(e.target.value)}
+          >
             <option value="">Trank auswählen</option>
             {availablePotions.map((potion, index) => (
               <option key={index} value={potion.name}>
@@ -304,7 +371,7 @@ const Dungeon = () => {
           <button onClick={handleDrinkPotion}>Trank trinken</button>
         </div>
 
-        <button onClick={handleNextRoom}>Nächster Raum</button>
+        <button className="next-room-button" onClick={handleNextRoom}>Nächster Raum</button>
       </div>
 
       <div className="log">

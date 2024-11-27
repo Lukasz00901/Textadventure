@@ -18,7 +18,7 @@ let gameState = {
   difficulty: 1,
   roomsCompleted: 0, // Raumzähler
   currentWeapon: null,
-  currentArmor: null, // Aktuelle Rüstung
+  currentAmor: null, // Aktuelle Rüstung als 'amor'
   playerHP: PlayerHP[0],
   playerMaxHP: PlayerMaxHP[0],
   playerMoney: playerMoney[0],
@@ -154,23 +154,23 @@ router.post('/weapon', (req, res) => {
   }
 });
 
-// GET Armor
-router.get('/armor', (req, res) => {
-  res.json({ currentArmor: gameState.currentArmor });
+// GET Amor (statt Armor)
+router.get('/amor', (req, res) => {
+  res.json({ currentAmor: gameState.currentAmor });
 });
 
-// POST Armor
-router.post('/armor', (req, res) => {
-  const { armorName } = req.body;
-  if (!armorName) {
+// POST Amor (statt Armor)
+router.post('/amor', (req, res) => {
+  const { amorName } = req.body;
+  if (!amorName) {
     return res.status(400).json({ message: 'Kein Rüstungsname angegeben.' });
   }
 
-  const armor = inventoryItems.find(item => item.name === armorName && item.type === 'armor');
+  const amor = inventoryItems.find(item => item.name === amorName && item.type === 'amor');
 
-  if (armor) {
-    gameState.currentArmor = armor;
-    res.json({ message: `Rüstung ${armorName} ausgerüstet.`, currentArmor: gameState.currentArmor });
+  if (amor) {
+    gameState.currentAmor = amor;
+    res.json({ message: `Rüstung ${amorName} ausgerüstet.`, currentAmor: gameState.currentAmor });
   } else {
     res.status(400).json({ message: 'Rüstung nicht gefunden oder ungültig.' });
   }
@@ -190,7 +190,7 @@ router.get('/player-stats', (req, res) => {
     playerEP: playerEP[0], // EP hinzufügen
     roomsCompleted: gameState.roomsCompleted,
     MaxDifficulty: MaxDifficulty[0], // MaxDifficulty hinzufügen
-    currentArmor: gameState.currentArmor, // Aktuelle Rüstung hinzufügen
+    currentAmor: gameState.currentAmor, // Aktuelle Rüstung hinzufügen
     playerLevel: gameState.playerLevel, // Spielerlevel hinzufügen
     nextEPThreshold: gameState.nextEPThreshold // Nächste EP-Schwelle hinzufügen
   });
@@ -256,8 +256,8 @@ const handleFight = (res) => {
 
     // Gegner greift an
     let damageReceived = enemyDamage;
-    if (gameState.currentArmor && gameState.currentArmor.strength) {
-      damageReceived = Math.max(enemyDamage - gameState.currentArmor.strength, 0);
+    if (gameState.currentAmor && gameState.currentAmor.strength) { // Änderung von currentArmor zu currentAmor
+      damageReceived = Math.max(enemyDamage - gameState.currentAmor.strength, 0); // Änderung von currentArmor zu currentAmor
     }
     gameState.playerHP -= damageReceived;
     playerCurrentHP = gameState.playerHP;
@@ -281,7 +281,7 @@ const handleFight = (res) => {
     while (gameState.playerEP >= gameState.nextEPThreshold) {
       gameState.playerLevel += 1;
       gameState.playerEP -= gameState.nextEPThreshold;
-      gameState.nextEPThreshold = Math.round(gameState.nextEPThreshold * 2.1);
+      gameState.nextEPThreshold = Math.round(gameState.nextEPThreshold * 1.5); // Änderung von 2.1 zu 1.5
       gameState.playerMaxHP += 5;
       PlayerMaxHP[0] = gameState.playerMaxHP;
       levelUpMessage += `\nHerzlichen Glückwunsch! Du hast Level ${gameState.playerLevel} erreicht! Deine maximale HP wurde auf ${gameState.playerMaxHP} erhöht.`;
@@ -315,8 +315,8 @@ const handleChest = (res) => {
   const loot = generateLoot();
   console.log(`Loot generiert: ${JSON.stringify(loot)}`); // Debugging-Log
 
-  // Füge das Loot zum Inventar hinzu, falls es eine Waffe, Trank, Material oder Rüstung ist
-  if (loot.type === 'weapon' || loot.type === 'Trank' || loot.type === 'Material' || loot.type === 'armor') {
+  // Füge das Loot zum Inventar hinzu, falls es eine Waffe, Trank, Material oder Amor ist
+  if (loot.type === 'weapon' || loot.type === 'Trank' || loot.type === 'Material' || loot.type === 'amor') { // Änderung von 'armor' zu 'amor'
     const existingItem = inventoryItems.find(item => item.name === loot.name && item.type === loot.type);
     if (existingItem) {
       existingItem.quantity += 1;
@@ -345,8 +345,8 @@ const handleTrap = (res) => {
   const trapText = trapTexts[getRandomInt(0, trapTexts.length - 1)];
   let damage = getRandomInt(1, 3) * gameState.difficulty;
 
-  if (gameState.currentArmor && gameState.currentArmor.strength) {
-    damage = Math.max(damage - gameState.currentArmor.strength, 0);
+  if (gameState.currentAmor && gameState.currentAmor.strength) { // Änderung von currentArmor zu currentAmor
+    damage = Math.max(damage - gameState.currentAmor.strength, 0); // Änderung von currentArmor zu currentAmor
   }
 
   gameState.playerHP -= damage;
@@ -374,10 +374,10 @@ const handleEmptyRoom = (res) => {
   res.json({ message: 'Der Raum ist leer. Nichts passiert.' });
 };
 
-// Loot Erstellung: Tränke, Waffen, Materialien, Rüstungen
+// Loot Erstellung: Tränke, Waffen, Materialien, Amor
 const generateLoot = () => {
   // Bestimme, basierend auf dem Schwierigkeitsgrad, welche Lootkategorien verfügbar sind
-  const lootCategories = ['Trank', 'weapon', 'Material', 'armor'];
+  const lootCategories = ['Trank', 'weapon', 'Material', 'amor']; // Änderung von 'armor' zu 'amor'
 
   // Wähle eine zufällige Lootkategorie
   const selectedCategory = lootCategories[getRandomInt(0, lootCategories.length - 1)];
@@ -426,17 +426,17 @@ const generateLoot = () => {
       };
       console.log(`Material generiert: ${JSON.stringify(loot)}`); // Debugging-Log
       break;
-    case 'armor':
-      // Erstelle eine zufällige Rüstung
-      const armorName = armorNames[getRandomInt(0, armorNames.length - 1)];
-      const armorStrength = getRandomInt(3, 7); // Abwehrwert zwischen 3 und 7
-      const armorWorth = Math.floor((getRandomInt(2, 5) * gameState.difficulty) / 2); // Halbiere den Wert und runde ab
+    case 'amor': // Änderung von 'armor' zu 'amor'
+      // Erstelle eine zufällige Rüstung mit Abwehr zwischen 1 und 3, skaliert mit difficulty
+      const amorName = armorNames[getRandomInt(0, armorNames.length - 1)];
+      const amorStrength = getRandomInt(1, 3) * gameState.difficulty; // Abwehr zwischen 1 und 3, skaliert
+      const amorWorth = Math.floor((getRandomInt(2, 5) * gameState.difficulty) / 2); // Halbiere den Wert und runde ab
       loot = {
-        name: armorName,
-        type: 'armor',
+        name: amorName,
+        type: 'amor', // Änderung von 'armor' zu 'amor'
         category: 'equipment',
-        strength: armorStrength,
-        worth: armorWorth
+        strength: amorStrength,
+        worth: amorWorth
       };
       console.log(`Rüstung generiert: ${JSON.stringify(loot)}`); // Debugging-Log
       break;
