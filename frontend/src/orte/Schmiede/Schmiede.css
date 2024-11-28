@@ -37,7 +37,7 @@
   padding: 15px 30px;
   background-color: #271816;
   color: #f0c040;
-  border: none;
+  border: 3px solid #a58f2f;
   border-radius: 5px;
   cursor: pointer;
   font-size: 20px;
@@ -83,9 +83,10 @@
 /* Inhalt */
 .content {
   display: flex;
+  flex-direction: row; /* Horizontale Anordnung */
   justify-content: flex-start;
   align-items: flex-start;
-  gap: 20px;
+  gap: 20px; /* Abstand zwischen Log und Quest */
 }
 
 /* Schmiede-Panel: Item-Liste */
@@ -183,112 +184,78 @@
 }
 
 /* Neuer Bereich: Questlog */
-.quest-section {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.quest-log-title {
-  margin-bottom: 10px;
-  font-size: 20px;
-  color: #c9b040;
-  margin-left: 210px;
-}
-
 .quest-log {
+  flex: 1; /* Flexibler Platz für das Quest-Log */
   max-width: 500px;
-  width: 100%;
   background-color: #160e0c70;
   color: #c9b040;
   border-radius: 5px;
   padding: 30px;
   height: 400px; /* Höhe bleibt konstant */
   scroll-behavior: smooth;
-  margin-top: 0;
-  margin-bottom: 0;
+  margin: 0; /* Entfernt zusätzliche Margins */
   border: 1px solid #c9b040;
-  margin-left: 100px; /* Verschoben nach links */
-  box-sizing: border-box; /* Box-Sizing für konsistente Maße */
+  box-sizing: border-box; /* Konsistente Maße */
 }
 
+.quest-log-title {
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: #c9b040;
+}
 
+/* Aktive Quest */
+.quest {
+  flex: 1; /* Flexibler Platz für die aktive Quest */
+  padding: 20px 25px;
+  border: 1px solid #c9b040;
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0.7);
+  max-width: 500px;
+  box-sizing: border-box;
+  height: fit-content; /* Höhe passt sich dem Inhalt an */
+}
 
-.log-content p {
-  margin: 5px 0;
-  font-size: 16px;
-  border-bottom: 1px solid #c9b040;
-  padding-bottom: 5px;
+.quest h2 {
+  text-align: center;
+  font-size: 22px;
+  color: #c9b040;
+  margin-bottom: 15px;
+}
+
+.quest p, .quest ul {
+  margin: 10px 0;
+}
+
+.quest ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #f0c040;
+}
+
+.quest .completed, .quest .in-progress {
+  font-weight: bold;
+  color: #f0c040;
 }
 
 /* Spezifische Cooldown-Meldung nur in aktiven Quests */
 .quest .cooldown-entry {
-  color: #ff4500; /* Neue Farbe für Cooldown-Meldung (z. B. ein leuchtendes Orange) */
-  font-weight: bold; /* Text fett darstellen */
-  font-size: 16px; /* Schriftgröße einstellen */
-  text-decoration: underline; /* Optional: unterstrichen, um sie hervorzuheben */
-  margin-top: 10px; /* Zusätzlicher Abstand nach oben */
-}
-
-
-/* Aktive Quest */
-.quest {
-  margin-left: 150px; /* Verschiebt die Box nach rechts */
-  margin-top: 50px; /* Verschiebt die Box nach unten */
-  padding: 20px 25px; /* Fügt gleichmäßigen inneren Abstand hinzu */
-  border: 1px solid #c9b040;
-  border-radius: 5px;
-  background-color: rgba(0, 0, 0, 0.7); /* Optional: dunkler Hintergrund für Kontrast */
-  max-width: 500px; /* Maximale Breite einstellen */
-  box-sizing: border-box; /* Sicherstellen, dass Padding/Border berücksichtigt werden */
-}
-
-/* Titel der Aktiven Quest */
-.quest h2 {
-  text-align: center; /* Zentriert den Titel innerhalb der Box */
-  font-size: 22px; /* Schriftgröße des Titels */
-  color: #c9b040; /* Farbe passend zum Design */
-  margin-bottom: 15px; /* Fügt Abstand nach unten ein */
-}
-
-/* Details in der Quest-Box */
-.quest p, .quest ul {
-  margin: 10px 0; /* Außenabstand für Textelemente und Liste */
-}
-
-/* Liste der Quest-Details */
-.quest ul {
-  list-style: none; /* Entfernt Aufzählungszeichen */
-  padding: 0; /* Kein Innenabstand innerhalb der Liste */
-  margin: 0; /* Kein Außenabstand innerhalb der Liste */
-  color: #f0c040; /* Textfarbe */
-}
-
-/* Status-Anzeige */
-.quest .completed, .quest .in-progress {
-  font-weight: bold; /* Betont den Status */
-  color: #f0c040; /* Farbige Statusanzeige */
+  color: #ff4500;
+  font-weight: bold;
+  font-size: 16px;
+  text-decoration: underline;
+  margin-top: 10px;
 }
 
 /* Responsive Anpassungen */
 @media (max-width: 768px) {
-  .quest-log-title {
-    margin-left: 0;
-    text-align: center;
+  .content {
+    flex-direction: column;
+    gap: 10px; /* Kleinere Abstände im mobilen Layout */
   }
 
-  .quest-log {
-    max-width: 100%;
-    margin-left: 0;
-    height: 400px; /* Konsistente Höhe auf mobilen Geräten */
-  }
-
-  .log-content p {
-    font-size: 14px;
-  }
-
-  .quest {
-    margin-left: 0;
+  .quest-log, .quest {
     max-width: 100%;
   }
 }

@@ -4,12 +4,12 @@ import './Tutorial.css';
 
 const tutorialSteps = [
   "Willkommen beim Tutorial! Hier lernst du die Grundlagen des Spiels.",
-  "1. Klicke auf die Orte im Menü, um verschiedene Aktionen durchzuführen.",
-  "2. In der Mine kannst du Ressourcen sammeln.",
-  "3. Im Markt kannst du Gegenstände kaufen und verkaufen.",
-  "4. Die Schmiede erlaubt dir, Ausrüstung herzustellen.",
-  "5. Achte auf deinen Inventarplatz! Du kannst nicht mehr tragen, als dein Platz erlaubt.",
-  "6. Abenteuer erwarten dich! Der Wald und der Dungeon sind gefährlich, aber voller Belohnungen.",
+  "1. Klicke auf die Buttons oben in der Leiste, um an verschiedene Orte im Dorf reisen zu können.",
+  "2. In der Mine kannst du Materialien sammeln.",
+  "3. Im Markt kannst du Gegenstände kaufen.",
+  "4. Die Schmiede und Taverne erlauben dir, Quests anzunehmen und abzuschließen.",
+  "5. Achte auf deine HP im Dungeon!",
+  "6. Abenteuer erwarten dich! Der Dungeon ist gefährlich, aber voller Belohnungen.",
   "Das Tutorial ist abgeschlossen. Klicke auf 'Weiter', um dein Abenteuer zu beginnen!"
 ];
 
@@ -40,21 +40,11 @@ const Tutorial = () => {
   }, [currentStep]);
 
   return (
-    <div className="Tutorial" style={{ color: '#4e342e', fontFamily: 'Georgia, serif' }}>
-      <h1 style={{ color: '#8b4513' }}>Spiel-Tutorial</h1>
-      <div
-        className="tutorial-content"
-        ref={tutorialRef}
-        style={{
-          backgroundColor: '#f4e3c1',
-          color: '#3e2723',
-          border: '1px solid #a58f2f',
-          borderRadius: '8px',
-          padding: '10px',
-        }}
-      >
+    <div className="Tutorial">
+      <h1>Tutorial</h1>
+      <div className="tutorial-content" ref={tutorialRef}>
         {tutorialSteps.slice(0, currentStep + 1).map((step, index) => (
-          <p key={index} style={{ marginBottom: '10px', lineHeight: '1.5em' }}>
+          <p key={index} className="tutorial-step">
             {step}
           </p>
         ))}
@@ -62,19 +52,6 @@ const Tutorial = () => {
       <button
         onClick={handleNextStep}
         className="tutorial-next-button"
-        style={{
-          backgroundColor: '#160e0c',
-          color: '#f0c040',
-          padding: '10px 20px',
-          fontSize: '1.2em',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          marginTop: '20px',
-          transition: 'background-color 0.3s ease',
-        }}
-        onMouseOver={(e) => (e.target.style.backgroundColor = '#3e2723')}
-        onMouseOut={(e) => (e.target.style.backgroundColor = '#160e0c')}
       >
         {currentStep < tutorialSteps.length - 1 ? 'Weiter' : 'Ab ins Abenteuer!'}
       </button>

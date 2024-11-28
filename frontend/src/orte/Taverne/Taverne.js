@@ -99,6 +99,7 @@ function Taverne() {
   const sellItem = async (itemName) => {
     try {
       const response = await axios.post('http://localhost:3000/tavern/sell', { itemName });
+      setPlayerStatus(response.data.playerStatus);
       setInventoryItems(response.data.inventoryItems);
       setInfoMessage(response.data.message);
       setErrorMessage('');
@@ -240,6 +241,13 @@ function Taverne() {
                   disabled={item.quantity <= 0 || playerStatus.money < item.price}
                 >
                   {item.quantity > 0 ? 'Kaufen' : 'Ausverkauft'}
+                </button>
+                <button
+                  className={`item-button item-button-sell-${index}`}
+                  onClick={() => sellItem(item.name)}
+                  disabled={!inventoryItems.find(invItem => invItem.name === item.name)}
+                >
+                  Verkaufen
                 </button>
               </li>
             ))}

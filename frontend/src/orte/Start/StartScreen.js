@@ -62,7 +62,7 @@ const StartScreen = () => {
     if (isDialogRunning && currentStep < dialogLines.length) {
       const interval = setInterval(() => {
         setCurrentStep((prevStep) => prevStep + 1);
-      }, 3000); // Nächster Satz alle 3 Sekunden
+      }, 4000); // Nächster Satz alle 4 Sekunden
       return () => clearInterval(interval); // Bereinigen
     }
 
