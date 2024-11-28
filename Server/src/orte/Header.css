@@ -1,0 +1,57 @@
+.Header {
+  background-color: #160e0c;
+  border-bottom: 3px solid #a58f2f;
+  padding: 15px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between; /* Ermöglicht unabhängiges Verschieben */
+  align-items: center; /* Zentriert Elemente vertikal */
+  padding: 0 20px; /* Innenabstand für den Header */
+}
+
+/* Stil für den Titel "Schwarzbach" */
+.header-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #f4e3c1;
+  font-family: 'UnifrakturCook', cursive;
+  text-shadow: 2px 2px 4px #000;
+}
+
+/* Navigationselemente */
+.header-nav {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header-nav li {
+  margin: 0 15px; /* Gleichmäßiger Abstand zwischen den Buttons */
+}
+
+.header-nav a {
+  color: #f4e3c1;
+  font-family: 'UnifrakturCook', cursive;
+  font-size: 1.5rem;
+  text-shadow: 2px 2px 4px #000;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.header-nav a:hover {
+  background-color: #d4af37;
+  color: #3e2723;
+  transform: scale(1.1);
+}
+
+.header-nav a.active {
+  border: 2px solid #a58f2f;
+  background-color: #7a2020;
+  color: #c9b040;
+}

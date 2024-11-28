@@ -296,3 +296,24 @@ Diverse Buggs wurden behoben: Spieler konnte weder Waffe noch Rüstung ausrüste
 Ein detailierteres Kernsystem zu entwickeln musste aus Zeitgründen abgebrochen werden. 
 
 Abschließend gab es einige CSS-Anpassungen in den Bereichen Wald und Mine, um die visuelle Darstellung und Benutzerfreundlichkeit weiter zu verbessern.
+
+#################################################################################################################################################
+
+Tagesbericht 28.11.24
+
+Heute wurden sowohl das Frontend als auch das Backend erfolgreich für den Umzug auf AWS vorbereitet. Alle notwendigen Konfigurationen und Tests wurden durchgeführt, 
+um einen reibungslosen Übergang sicherzustellen und die Leistungsfähigkeit der Anwendung in der neuen Umgebung zu gewährleisten.
+
+In der Taverne und der Schmiede wurden neue Verkaufsbuttons implementiert. Diese Buttons funktionieren nun einwandfrei und ermöglichen den Nutzern einen einfachen und intuitiven Zugriff auf die Verkaufsfunktionen, 
+was die Benutzerfreundlichkeit erheblich verbessert.
+
+Im Dungeon wurden die Waffen und Rüstungen überarbeitet. Durch diese Anpassungen wurde das Spielgleichgewicht optimiert, was zu einem ausgewogeneren und faireren Spielerlebnis beiträgt. 
+Die Änderungen basieren auf aktuellem Feedback und sollen das Gameplay nachhaltig verbessern.
+
+Zusätzlich wurden an verschiedenen Stellen kleinere CSS-Anpassungen vorgenommen. Diese visuellen Optimierungen tragen dazu bei, 
+das Erscheinungsbild der Anwendung zu verfeinern und die Benutzeroberfläche ansprechender und konsistenter zu gestalten.
+
+Der Tag verlief insgesamt sehr produktiv mit erfolgreichen Implementierungen und Verbesserungen, die sowohl die Funktionalität als auch das Design der Anwendung deutlich vorangebracht haben. 
+Die durchgeführten Maßnahmen legen eine solide Grundlage für die weiteren Schritte im Projekt und unterstützen die fortlaufende Entwicklung und Optimierung.
+
+#################################################################################################################################################

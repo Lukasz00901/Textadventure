@@ -19,11 +19,14 @@ const marketItems = [
   { name: 'Nüsse', type: 'Trank', price: 3, strength: 3, category: 'consumable', quantity: 10 },
 ];
 
-// Spielerstatus-Variablen
-const sleepCost = 5; // Kosten fürs Schlafen
-
 // Quest-Log
 let questLog = [];
+
+// Hilfsfunktion: Wert eines Items ermitteln (für den Verkauf)
+const getItemWorth = (itemName) => {
+  const item = marketItems.find(item => item.name === itemName);
+  return item ? item.price : 0; // Verkaufspreis ist der gleiche wie Kaufpreis
+};
 
 // Route: Alle Markt-Items abrufen
 router.get('/items', (req, res) => {
@@ -36,13 +39,18 @@ router.get('/player-status', (req, res) => {
     money: playerMoney[0],
     hp: PlayerHP[0],
     maxHp: PlayerMaxHP[0],
-    sleepCost, // Kosten fürs Schlafen hinzufügen
+    sleepCost: 5, // Beispielwert, falls benötigt
   });
 });
 
 // Route: Quest-Log abrufen
 router.get('/quest-log', (req, res) => {
   res.json(questLog);
+});
+
+// Route: Inventar abrufen
+router.get('/inventory', (req, res) => {
+  res.json(inventoryItems);
 });
 
 // Route: Item kaufen
@@ -107,13 +115,14 @@ router.post('/sell', (req, res) => {
 
     // Spielerstatus aktualisieren (z.B. Gold hinzufügen)
     const soldItem = marketItems.find(item => item.name === itemName) || item;
-    playerMoney[0] += soldItem.price;
+    const sellPrice = getItemWorth(itemName);
+    playerMoney[0] += sellPrice;
 
     // Loggen des Verkaufs
-    questLog.push(`Verkauft: ${itemName} für ${soldItem.price} Gold.`);
+    questLog.push(`Verkauft: ${itemName} für ${sellPrice} Gold.`);
 
     res.json({
-      message: 'Item verkauft.',
+      message: `${itemName} wurde verkauft für ${sellPrice} Gold.`,
       inventoryItems,
       playerStatus: {
         money: playerMoney[0],

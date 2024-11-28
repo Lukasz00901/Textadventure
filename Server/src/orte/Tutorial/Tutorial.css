@@ -1,0 +1,47 @@
+.Tutorial {
+  text-align: center;
+  padding: 20px;
+}
+
+.Tutorial h1 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  color: #c9b040; /* Titel-Farbe */
+  font-family: 'UnifrakturCook', cursive, serif;
+}
+
+.tutorial-content {
+  max-width: 600px;
+  margin: 0 auto;
+  height: 300px;
+  overflow-y: auto;
+  border: 3px solid #a58f2f;
+  padding: 10px;
+  background-color: #f4e3c1a8;
+  text-align: left;
+  border-radius: 8px;
+  font-family: 'UnifrakturCook', cursive, serif;
+  font-size: 1.1em;
+  color: #726113; /* Inhalt-Farbe */
+}
+
+.tutorial-step {
+  margin-bottom: 10px;
+  line-height: 1.5em;
+}
+
+.tutorial-next-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1.2em;
+  background-color: #160e0c;
+  color: #f0c040;
+  border: 1px solid #a58f2f;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.tutorial-next-button:hover {
+  background-color: #3e2723;
+}

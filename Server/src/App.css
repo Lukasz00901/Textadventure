@@ -1,0 +1,124 @@
+/* src/App.css */
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+/*.App {
+  text-align: center;
+}*/
+
+/*body {
+  /* background-color: #271816;
+   color: #c9b040;
+   font-family: Arial, sans-serif; /* Entfernt die spezifische Schriftart für den gesamten Body 
+   margin: 0;
+   font-size: 1.2rem; /* Schriftgröße etwas größer gemacht 
+}*/
+
+.Content {
+  padding: 20px;
+}
+
+
+
+.log-container {
+  margin-top: 20px;
+  width: 60%;
+  max-height: 300px;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.log {
+  background-color: #333;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+/*p {
+  margin: 5px 0;
+  color: #c9b040;
+}*/
+
+
+
+/*.App {
+  font-family: 'UnifrakturCook', cursive;
+  /*background-color: #271816;
+  color: #a18711;
+}*/
+
+.market-page {
+  background-image: url('../public/backround/Markt.webp');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  
+}
+
+.inventory-page {
+  background-image: url('../public/backround/inventar.webp');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.mine-page {
+  background-image: url('../public/backround/Erzhöhle.webp');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+}
+
+.wald-page {
+  background-image: url('../public/backround/Wald.webp');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+}
+
+.schmiede-page {
+  background-image: url('../public/backround/Schmiede.webp');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.taverne-page {
+  background-image: url('../public/backround/Taverne.webp');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.dungeon-page {
+  background-image: url('../public/backround/Dungeon.webp');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.start-page {
+  background-image: url('../public/backround/skibidi.webp');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.tutorial-page {
+  background-image: url('../public/backround/Tutorial.webp');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}

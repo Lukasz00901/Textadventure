@@ -12,11 +12,6 @@ function Markt() {
   const [infoMessage, setInfoMessage] = useState('');
   const [questErrorMessage, setQuestErrorMessage] = useState('');
 
-  // Neue State-Variablen für den Marktinteraktion
-  const [talkingToTrader, setTalkingToTrader] = useState(false);
-  const [showSellSection, setShowSellSection] = useState(false);
-  const [selectedSellItem, setSelectedSellItem] = useState('');
-
   // Funktion zum Abrufen der Markt-Items
   const fetchMarketItems = async () => {
     try {
@@ -56,7 +51,6 @@ function Markt() {
       await fetchMarketItems();
       await fetchPlayerStatus();
       await fetchQuestLog();
-      await fetchInventoryItems(); // Inventar beim Laden abrufen
     };
     fetchData();
   }, []);
@@ -65,23 +59,10 @@ function Markt() {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchQuestLog();
-      fetchMarketItems(); // Markt-Items regelmäßig aktualisieren
-      fetchPlayerStatus(); // Spielerstatus regelmäßig aktualisieren
-    }, 5000); // Aktualisiere alle 5 Sekunden
+    }, 1000); // Aktualisiere jede Sekunde
 
     return () => clearInterval(interval); // Aufräumen beim Unmounten
   }, []);
-
-  // Funktion zum Abrufen des Inventars
-  const fetchInventoryItems = async () => {
-    try {
-      const response = await axios.get('http://localhost:3000/market/inventory');
-      setInventoryItems(response.data);
-    } catch (error) {
-      console.error('Error fetching inventory items:', error);
-      setErrorMessage('Fehler beim Laden des Inventars.');
-    }
-  };
 
   // Kauf eines Items vom Markt
   const buyItem = async (itemName) => {
@@ -156,80 +137,11 @@ function Markt() {
     }
   };
 
-  // Funktion zum Umschalten des Gesprächs mit dem Markthändler
-  const handleTalkToTrader = () => {
-    setTalkingToTrader(!talkingToTrader);
-    setShowSellSection(false); // Verkaufsbereich beim Umschalten schließen
-  };
-
-  // Funktion zum Umschalten des Verkaufsbereichs
-  const toggleSellSection = () => {
-    setShowSellSection(!showSellSection);
-    setSelectedSellItem(''); // Ausgewähltes Item zurücksetzen
-  };
-
-  // Funktion zum Handhaben der Auswahl eines Items zum Verkauf
-  const handleSellSelection = (e) => {
-    setSelectedSellItem(e.target.value);
-  };
-
-  // Funktion zur Bestätigung des Verkaufs
-  const confirmSell = async () => {
-    if (selectedSellItem) {
-      await sellItem(selectedSellItem);
-      setSelectedSellItem('');
-      setShowSellSection(false);
-    }
-  };
-
   return (
     <div className="Markt">
       <h1>Marktplatz 💰</h1>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
-      {questErrorMessage && <p className="error-message">{questErrorMessage}</p>}
-      {infoMessage && <p className="info-message">{infoMessage}</p>}
-
-      {/* Button: Mit Markthändler sprechen */}
-      <button className="talk-button" onClick={handleTalkToTrader}>
-        Mit Markthändler sprechen
-      </button>
-
-      {/* Bedingte Anzeige der Buttons */}
-      {talkingToTrader && (
-        <div className="trader-buttons">
-          <button className="sell-button" onClick={toggleSellSection}>
-            Verkaufen
-          </button>
-
-          {/* Verkaufsbereich */}
-          {showSellSection && (
-            <div className="sell-section">
-              {inventoryItems.length > 0 ? (
-                <>
-                  <select value={selectedSellItem} onChange={handleSellSelection}>
-                    <option value="">-- Wähle ein Item zum Verkaufen --</option>
-                    {inventoryItems.map((item) => (
-                      <option key={item.name} value={item.name}>
-                        {item.name} (Anzahl: {item.quantity}, Wert: {item.price} Gold)
-                      </option>
-                    ))}
-                  </select>
-                  <div className="sell-buttons">
-                    <button onClick={confirmSell} disabled={!selectedSellItem}>
-                      Verkaufen
-                    </button>
-                    <button onClick={toggleSellSection}>
-                      Abbrechen
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <p>Keine Items zum Verkaufen vorhanden.</p>
-              )}
-            </div>
-          )}
-        </div>
-      )}
+      
 
       {/* Spielerstatus anzeigen */}
       <div className="player-status">
@@ -289,6 +201,8 @@ function Markt() {
           </div>
         </div>
       </div>
+
+      
     </div>
   );
 }

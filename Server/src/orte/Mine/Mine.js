@@ -1,17 +1,17 @@
-//Frontend Wald.js
+//Frontend Mine.js
 import React, { useState, useEffect, useRef } from 'react';
-import './Wald.css'; // Stelle sicher, dass die CSS-Datei importiert wird
+import './Mine.css'; // Stelle sicher, dass die CSS-Datei importiert wird
 
-const Wald = () => {
-  const [hasAxe, setHasAxe] = useState(false);
+const Mine = () => {
+  const [hasPickaxe, setHasPickaxe] = useState(false);
   const [gatheredResources, setGatheredResources] = useState([]);
   const [isCooldown, setIsCooldown] = useState(false); // *** Hinzugefügt ***
   const [remainingCooldown, setRemainingCooldown] = useState(0); // *** Hinzugefügt ***
   const resourcesEndRef = useRef(null);
 
-  const gatherWood = async () => {
+  const mineOre = async () => {
     try {
-      const response = await fetch('http://87.106.217.227:3000/wald/gather', {
+      const response = await fetch('http://localhost:3000/mine/mine', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -21,7 +21,7 @@ const Wald = () => {
       console.log(data);
 
       if (response.status === 201) {
-        // *** Erfolgreiches Sammeln ***
+        // *** Erfolgreiches Schürfen ***
         setGatheredResources((prevResources) => [
           ...prevResources,
           ...data.addedItems,
@@ -70,10 +70,10 @@ const Wald = () => {
         }, 1000);
       }
     } catch (error) {
-      console.error('Fehler beim Sammeln:', error);
+      console.error('Fehler beim Schürfen:', error);
       setGatheredResources((prevResources) => [
         ...prevResources,
-        { name: 'Fehler beim Sammeln der Ressourcen!', quantity: 0 },
+        { name: 'Fehler beim Schürfen der Erze!', quantity: 0 },
         { separator: true },
       ]);
     }
@@ -94,20 +94,20 @@ const Wald = () => {
   };
 
   return (
-    <div className="wald-container">
-      <h1>Tannenspitzental 🌲</h1>
-      {!hasAxe ? (
+    <div className="mine-container">
+      <h1>Schürferspaß-Deluxe ⛏️</h1>
+      {!hasPickaxe ? (
         <>
-          <p>Ich brauche eine Axt, um Materialien zu sammeln. Hey, da liegt ja eine Axt!</p>
-          <button className="button" onClick={() => setHasAxe(true)}>
-            Axt nehmen
+          <p>Ich brauche eine Hacke, um Erz zu schürfen. Hey, da liegt ja eine Hacke!</p>
+          <button className="button" onClick={() => setHasPickaxe(true)}>
+            Hacke nehmen
           </button>
         </>
       ) : (
         <>
-          <p>Jetzt kann ich die benötigten Materialien sammeln.</p>
-          <button className="button" onClick={gatherWood} disabled={isCooldown}>
-            Materialien Sammeln
+          <p>Jetzt kann ich Erze schürfen.</p>
+          <button className="button" onClick={mineOre} disabled={isCooldown}>
+            Erz Schürfen
           </button>
         </>
       )}
@@ -115,12 +115,12 @@ const Wald = () => {
       {/* *** Anzeige des Cooldowns *** */}
       {isCooldown && (
         <div className="cooldown-message">
-          <p>Warten bis zum nächsten Sammeln: {formatTime(remainingCooldown)}</p>
+          <p>Warten bis zum nächsten sammeln: {formatTime(remainingCooldown)}</p>
         </div>
       )}
 
-      <div className="resource-box-wald">
-        <h2>Gesammelte Materialien:</h2>
+      <div className="resource-box-mine">
+        <h2>Gesammelte Erze:</h2>
         {gatheredResources.length > 0 ? (
           <ul>
             {gatheredResources.map((resource, index) =>
@@ -136,11 +136,11 @@ const Wald = () => {
             <div ref={resourcesEndRef}></div>
           </ul>
         ) : (
-          <p>Es wurden noch keine Materialien gesammelt.</p>
+          <p>Es wurden noch keine Erze geschürft.</p>
         )}
       </div>
     </div>
   );
 };
 
-export default Wald;
+export default Mine;

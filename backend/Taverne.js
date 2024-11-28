@@ -1,8 +1,12 @@
 // backend/Taverne.js
 
 const express = require('express');
+const cors = require('cors'); // Importiere CORS
 const router = express.Router();
 const { inventoryItems, PlayerHP, PlayerMaxHP, playerMoney } = require('./Inventar_Inhalt');
+
+// Aktiviere CORS für alle Routen
+router.use(cors());
 
 // Importiere Mine- und Wald-Items
 const mineItems = [
@@ -18,7 +22,7 @@ const mineItems = [
   { name: "Bleierz", type: "Material", category: "misc", worth: 3, strength: 0 },
   { name: "Lehm", type: "Material", category: "misc", worth: 3, strength: 0 },
   { name: "Kalkstein", type: "Material", category: "misc", worth: 3, strength: 0 },
-  { name: "Schiefer", type: "Material", category: "misc", worth: 3, strength: 0 }, // Korrigiert: "Schiefer"
+  { name: "Schiefer", type: "Material", category: "misc", worth: 3, strength: 0 },
   { name: "Feuerstein", type: "Material", category: "misc", worth: 3, strength: 0 },
   { name: "Ranken", type: "Material", category: "misc", worth: 2, strength: 0 },
 ];
@@ -127,12 +131,12 @@ const generateRandomQuest = () => {
 
 // Taverne-Items
 const tavernItems = [
-  { name: 'Bierkrug', typ: 'Getränk', price: 5, worth: 3, quantity: 20 },
-  { name: 'Weinflasche', typ: 'Getränk', price: 12, worth: 7, quantity: 10 },
-  { name: 'Braten', typ: 'Speise', price: 20, worth: 15, quantity: 8 },
-  { name: 'Eintopf', typ: 'Speise', price: 10, worth: 6, quantity: 15 },
-  { name: 'Honigwein', typ: 'Getränk', price: 18, worth: 12, quantity: 12 },
-  { name: 'Käseplatte', typ: 'Speise', price: 25, worth: 18, quantity: 5 },
+  { name: 'Bierkrug', type: 'Getränk', price: 5, worth: 3, quantity: 20, category: 'drink' },
+  { name: 'Weinflasche', type: 'Getränk', price: 12, worth: 7, quantity: 10, category: 'drink' },
+  { name: 'Braten', type: 'Speise', price: 20, worth: 15, quantity: 8, category: 'food' },
+  { name: 'Eintopf', type: 'Speise', price: 10, worth: 6, quantity: 15, category: 'food' },
+  { name: 'Honigwein', type: 'Getränk', price: 18, worth: 12, quantity: 12, category: 'drink' },
+  { name: 'Käseplatte', type: 'Speise', price: 25, worth: 18, quantity: 5, category: 'food' },
 ];
 
 // Button: Schlafen
@@ -181,9 +185,21 @@ router.get('/quest-log', (req, res) => {
   res.json(questLog);
 });
 
+// Route: Inventar abrufen
+router.get('/inventory', (req, res) => {
+  res.json(inventoryItems);
+});
+
+// Hilfsfunktion: Wert eines Items ermitteln
+const getItemWorth = (item) => {
+  // Nimm den Wert direkt aus dem Item-Objekt
+  return item.worth || 0;
+};
+
 // Route: Item kaufen
 router.post('/buy', (req, res) => {
   const { itemName } = req.body;
+  console.log(`Received buy request for item: ${itemName}`);
 
   const tavernItem = tavernItems.find(item => item.name === itemName);
   if (!tavernItem) {
@@ -205,7 +221,9 @@ router.post('/buy', (req, res) => {
   if (existingItem) {
     existingItem.quantity += 1;
   } else {
-    inventoryItems.push({ name: tavernItem.name, quantity: 1 });
+    // **Wichtig:** Füge alle Eigenschaften des Items hinzu, nicht nur Name und Quantity
+    inventoryItems.push({ ...tavernItem, quantity: 1 });
+    console.log('Added new item to inventory:', { ...tavernItem, quantity: 1 });
   }
 
   // Loggen des Kaufes
@@ -227,17 +245,36 @@ router.post('/buy', (req, res) => {
 // Route: Item verkaufen
 router.post('/sell', (req, res) => {
   const { itemName } = req.body;
+  console.log(`Received sell request for item: ${itemName}`);
   const inventoryItem = inventoryItems.find(item => item.name === itemName);
+
+  console.log('Inventory Item:', inventoryItem);
 
   if (inventoryItem) {
     if (inventoryItem.quantity > 0) {
+      // **Änderung:** Überprüfe die Kategorie direkt aus dem inventoryItem
+      const isMisc = inventoryItem.category === 'misc';
+      console.log(`Is item '${itemName}' misc?`, isMisc ? 'Ja' : 'Nein');
+
+      if (!isMisc) {
+        return res.status(400).json({ message: 'Dieses Item kann nicht verkauft werden.' });
+      }
+
+      // **Änderung:** Verwende den Wert direkt aus dem inventoryItem
+      const itemWorth = getItemWorth(inventoryItem);
+      console.log(`Item Worth for '${itemName}':`, itemWorth);
+
+      if (itemWorth === 0) {
+        console.log(`Item worth for ${itemName} is 0.`);
+        return res.status(400).json({ message: 'Wert des Items konnte nicht ermittelt werden.' });
+      }
+
       inventoryItem.quantity -= 1;
       if (inventoryItem.quantity === 0) {
         const index = inventoryItems.indexOf(inventoryItem);
         inventoryItems.splice(index, 1); // Item entfernen
       }
 
-      const itemWorth = getItemWorth(itemName);
       playerMoney[0] += itemWorth; // Spieler-Geld erhöhen
 
       // Loggen des Verkaufs
@@ -260,12 +297,6 @@ router.post('/sell', (req, res) => {
     res.status(404).json({ message: 'Item nicht im Inventar gefunden.' });
   }
 });
-
-// Hilfsfunktion: Wert eines Items ermitteln
-const getItemWorth = (itemName) => {
-  const item = tavernItems.find(item => item.name === itemName) || inventoryItems.find(item => item.name === itemName);
-  return item ? item.worth : 0;
-};
 
 // Route: Quest annehmen
 router.post('/accept-quest', (req, res) => {
@@ -349,6 +380,17 @@ router.post('/complete-quest', (req, res) => {
       }
     }
   });
+
+  // **Optional:** Belohnung hinzufügen (z.B., "misc"-Item)
+  const rewardItem = { name: "Fasern", type: "Material", category: "misc", worth: 2, strength: 0, quantity: 2 };
+  const existingRewardItem = inventoryItems.find(item => item.name === rewardItem.name);
+  if (existingRewardItem) {
+    existingRewardItem.quantity += rewardItem.quantity;
+  } else {
+    inventoryItems.push(rewardItem);
+    console.log('Added reward item to inventory:', rewardItem);
+  }
+  questLog.push(`Belohnung erhalten: ${rewardItem.name} (${rewardItem.quantity} Stück).`);
 
   // Quest als abgeschlossen markieren
   quest.completed = true;

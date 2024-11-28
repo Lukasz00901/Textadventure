@@ -1,48 +1,54 @@
 // backend/Schmiede.js
 
 const express = require('express');
+const cors = require('cors'); // Importiere CORS
 const router = express.Router();
 const { inventoryItems, PlayerHP, PlayerMaxHP, playerMoney } = require('./Inventar_Inhalt');
 
+// Aktiviere CORS für alle Routen
+router.use(cors());
+
+// Definiere die Schmiede-Items
 const smithyItems = [
   { 
     name: 'Schwert', 
     type: 'weapon', 
-    worth: 10, // Ursprünglich price: 15 → worth: 8
-    price: 20,
+    worth: 10, // Wert für Verkauf
+    price: 20, // Preis für Kauf
     strength: 2, 
     category: 'equipment', 
-    quantity: 1 
+    quantity: 5 
   },
   { 
     name: 'Axt', 
     type: 'weapon', 
-    worth: 17, // Ursprünglich price: 15 → worth: 8
+    worth: 17, 
     price: 35,
     strength: 3, 
     category: 'equipment', 
-    quantity: 1 
+    quantity: 3 
   },
   { 
     name: 'Schild', 
-    type: 'amor', 
-    worth: 10, // Ursprünglich price: 15 → worth: 8
+    type: 'armor', 
+    worth: 10, 
     price: 20,
     strength: 1, 
     category: 'equipment', 
-    quantity: 1 
+    quantity: 4 
   },
   { 
     name: 'Rüstung', 
-    type: 'amor', 
-    worth: 25, // Ursprünglich price: 15 → worth: 8
+    type: 'armor', 
+    worth: 25, 
     price: 50,
     strength: 3, 
     category: 'equipment', 
-    quantity: 1 
+    quantity: 2 
   },
 ];
 
+// Definiere Wald- und Mine-Items (falls benötigt)
 const forestItems = [
   { name: "Fichtenholz", type: "Material", category: "misc", worth: 3, strength: 0 },
   { name: "Rinde", type: "Material", category: "misc", worth: 2, strength: 0 },
@@ -72,16 +78,19 @@ const mineItems = [
   { name: "Ranken", type: "Material", category: "misc", worth: 2, strength: 0 },
 ];
 
+// Kombiniere alle Items (falls benötigt)
 const allItems = [...smithyItems, ...forestItems, ...mineItems];
 
+// Quests und Quest-Log
 let activeQuests = [];
 let questLog = [];
 let completedQuestsCount = 0;
 let lastCooldownStartTime = null;
-const questCooldown = 5 * 1000;
+const questCooldown = 5 * 1000; // 5 Sekunden
 const maxCompletedQuestsBeforeCooldown = 3;
 let questIdCounter = 1;
 
+// Funktion: Zufällige Quest generieren
 const generateRandomQuest = () => {
   const locations = ["Mine", "Wald", "Mine & Wald"];
   const selectedLocation = locations[Math.floor(Math.random() * locations.length)];
@@ -102,6 +111,7 @@ const generateRandomQuest = () => {
     const mineRequirementCount = 1;
     const forestRequirementCount = numberOfRequirements - mineRequirementCount;
 
+    // Füge ein Item aus der Mine hinzu
     while (requirements.length < mineRequirementCount) {
       const randomItem = mineItems[Math.floor(Math.random() * mineItems.length)];
       const randomQuantity = Math.floor(Math.random() * 5) + 1;
@@ -111,6 +121,7 @@ const generateRandomQuest = () => {
       }
     }
 
+    // Füge Items aus dem Wald hinzu
     while (requirements.length < numberOfRequirements) {
       const randomItem = forestItems[Math.floor(Math.random() * forestItems.length)];
       const randomQuantity = Math.floor(Math.random() * 5) + 1;
@@ -147,8 +158,16 @@ const generateRandomQuest = () => {
   };
 };
 
+// Kosten fürs Schlafen
 const sleepCost = 10;
 
+// Hilfsfunktion: Wert eines Items ermitteln
+const getItemWorth = (itemName) => {
+  const item = smithyItems.find(item => item.name === itemName) || inventoryItems.find(item => item.name === itemName);
+  return item ? item.worth : 0;
+};
+
+// Route: Spielerstatus abrufen
 router.get('/player-status', (req, res) => {
   res.json({
     money: playerMoney[0],
@@ -158,6 +177,7 @@ router.get('/player-status', (req, res) => {
   });
 });
 
+// Route: Schlafen
 router.post('/sleep', (req, res) => {
   if (playerMoney[0] >= sleepCost) {
     playerMoney[0] -= sleepCost;
@@ -177,14 +197,22 @@ router.post('/sleep', (req, res) => {
   }
 });
 
+// Route: Alle Schmiede-Items abrufen
 router.get('/items', (req, res) => {
   res.json(smithyItems);
 });
 
+// Route: Quest-Log abrufen
 router.get('/quest-log', (req, res) => {
   res.json(questLog);
 });
 
+// Route: Inventar abrufen
+router.get('/inventory', (req, res) => {
+  res.json(inventoryItems);
+});
+
+// Route: Item kaufen
 router.post('/buy', (req, res) => {
   const { itemName } = req.body;
 
@@ -208,7 +236,7 @@ router.post('/buy', (req, res) => {
   if (existingItem) {
     existingItem.quantity += 1;
   } else {
-    // Geänderte Zeile: Füge alle relevanten Eigenschaften hinzu
+    // Füge alle relevanten Eigenschaften hinzu
     const { name, type, worth, strength, category } = smithyItem;
     inventoryItems.push({ name, type, worth, strength, category, quantity: 1 });
   }
@@ -228,24 +256,53 @@ router.post('/buy', (req, res) => {
   });
 });
 
+// Route: Item verkaufen
 router.post('/sell', (req, res) => {
   const { itemName } = req.body;
   const inventoryItem = inventoryItems.find(item => item.name === itemName);
 
+  console.log(`Received sell request for item: ${itemName}`);
+  console.log('Inventory Item:', inventoryItem);
+
   if (inventoryItem) {
     if (inventoryItem.quantity > 0) {
+      // Überprüfe die Kategorie direkt aus dem inventoryItem
+      const isMisc = inventoryItem.category === 'misc';
+      console.log(`Is item '${itemName}' misc?`, isMisc ? 'Ja' : 'Nein');
+
+      if (!isMisc) {
+        return res.status(400).json({ message: 'Dieses Item kann nicht verkauft werden.' });
+      }
+
+      // Verwende den Wert direkt aus dem inventoryItem
+      const itemWorth = getItemWorth(itemName);
+      console.log(`Item Worth for '${itemName}':`, itemWorth);
+
+      if (itemWorth === 0) {
+        console.log(`Item worth for ${itemName} is 0.`);
+        return res.status(400).json({ message: 'Wert des Items konnte nicht ermittelt werden.' });
+      }
+
       inventoryItem.quantity -= 1;
       if (inventoryItem.quantity === 0) {
         const index = inventoryItems.indexOf(inventoryItem);
-        inventoryItems.splice(index, 1);
+        inventoryItems.splice(index, 1); // Item entfernen
       }
 
-      questLog.push(`Verkauft: ${itemName} für ${getItemWorth(itemName)} Gold.`);
+      playerMoney[0] += itemWorth; // Spieler-Geld erhöhen
+
+      // Loggen des Verkaufs
+      questLog.push(`Verkauft: ${itemName} für ${itemWorth} Gold.`);
 
       res.json({
-        message: 'Item verkauft.',
+        message: `${itemName} wurde verkauft für ${itemWorth} Gold.`,
+        playerStatus: {
+          money: playerMoney[0],
+          hp: PlayerHP[0],
+          maxHp: PlayerMaxHP[0],
+        },
         inventoryItems,
-        questLog,
+        questLog, // Aktualisiertes Quest-Log zurücksenden
       });
     } else {
       res.status(400).json({ message: 'Nicht genügend Items zum Verkaufen.' });
@@ -255,12 +312,9 @@ router.post('/sell', (req, res) => {
   }
 });
 
-const getItemWorth = (itemName) => {
-  const item = smithyItems.find(item => item.name === itemName) || inventoryItems.find(item => item.name === itemName);
-  return item ? item.worth : 0;
-};
-
+// Route: Quest annehmen
 router.post('/accept-quest', (req, res) => {
+  // Überprüfe den Cooldown
   if (lastCooldownStartTime) {
     const now = Date.now();
     const timeSinceCooldownStart = now - lastCooldownStartTime;
@@ -272,12 +326,16 @@ router.post('/accept-quest', (req, res) => {
     }
   }
 
+  // Überprüfe die Anzahl der aktiven Quests
   if (activeQuests.length >= 3) {
     return res.status(400).json({ message: 'Du hast bereits die maximale Anzahl an aktiven Quests (3).' });
   }
 
+  // Generiere eine zufällige Quest
   const newQuest = generateRandomQuest();
   activeQuests.push(newQuest);
+
+  // Loggen der Quest-Annahme
   questLog.push(`Neue Quest angenommen: ${newQuest.name} in ${newQuest.location}.`);
 
   res.json({
@@ -288,10 +346,12 @@ router.post('/accept-quest', (req, res) => {
   });
 });
 
+// Route: Aktive Quests abrufen
 router.get('/quests', (req, res) => {
   res.json(activeQuests);
 });
 
+// Route: Quest abschließen
 router.post('/complete-quest', (req, res) => {
   const { questId } = req.body;
 
@@ -323,6 +383,7 @@ router.post('/complete-quest', (req, res) => {
     });
   }
 
+  // Gegenstände abziehen und aus dem Inventar entfernen, falls Menge 0 erreicht
   quest.requirements.forEach(req => {
     const inventoryItem = inventoryItems.find(item => item.name === req.name);
     if (inventoryItem) {
@@ -334,14 +395,37 @@ router.post('/complete-quest', (req, res) => {
     }
   });
 
+  // Belohnung hinzufügen (z.B., "misc"-Item oder Gold)
+  const rewardItem = { name: "Fasern", type: "Material", category: "misc", worth: 2, strength: 0, quantity: 2 };
+  const existingRewardItem = inventoryItems.find(item => item.name === rewardItem.name);
+  if (existingRewardItem) {
+    existingRewardItem.quantity += rewardItem.quantity;
+  } else {
+    inventoryItems.push(rewardItem);
+    console.log('Added reward item to inventory:', rewardItem);
+  }
+  questLog.push(`Belohnung erhalten: ${rewardItem.name} (${rewardItem.quantity} Stück).`);
+
+  // Quest als abgeschlossen markieren
   quest.completed = true;
+
+  // Entferne die Quest aus den aktiven Quests
   activeQuests.splice(questIndex, 1);
+
+  // Erhöhe den Zähler für abgeschlossene Quests
   completedQuestsCount += 1;
+
+  // Loggen des Quest-Abschlusses
   questLog.push(`Quest abgeschlossen: ${quest.name}. Belohnung erhalten! 10 Gold`);
+
+  // Belohnung hinzufügen (z.B. 10 Gold)
   playerMoney[0] += 10;
 
+  // Überprüfe, ob der Cooldown gestartet werden muss
   if (completedQuestsCount >= maxCompletedQuestsBeforeCooldown) {
     lastCooldownStartTime = Date.now();
+
+    // Loggen des Cooldowns
     questLog.push({
       type: 'Cooldown',
       message: `Cooldown gestartet: 0 Minute(n) und 5 Sekunde(n) verbleibend.`,
@@ -351,21 +435,25 @@ router.post('/complete-quest', (req, res) => {
       },
     });
 
+    // Starte den Cooldown-Timer
     const cooldownInterval = setInterval(() => {
       const now = Date.now();
       const timeSinceCooldownStart = now - lastCooldownStartTime;
 
       if (timeSinceCooldownStart >= questCooldown) {
+        // Cooldown beendet, entferne den Cooldown-Eintrag
         const index = questLog.findIndex(entry => entry.type === 'Cooldown');
         if (index !== -1) {
           questLog.splice(index, 1);
         }
         clearInterval(cooldownInterval);
-        completedQuestsCount = 0;
+        completedQuestsCount = 0; // Setze den Zähler zurück
       } else {
+        // Aktualisiere die verbleibende Zeit
         const remainingTime = questCooldown - timeSinceCooldownStart;
         const remainingSeconds = Math.floor(remainingTime / 1000);
 
+        // Aktualisiere die Nachricht im Cooldown-Eintrag
         const cooldownEntry = questLog.find(entry => entry.type === 'Cooldown');
         if (cooldownEntry) {
           cooldownEntry.message = `Cooldown läuft: ${remainingSeconds} Sekunde(n) verbleibend.`;
@@ -375,7 +463,7 @@ router.post('/complete-quest', (req, res) => {
           };
         }
       }
-    }, 1000);
+    }, 1000); // Aktualisiere jede Sekunde
   }
 
   res.json({

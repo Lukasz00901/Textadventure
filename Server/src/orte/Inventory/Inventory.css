@@ -1,0 +1,167 @@
+/* frontend/src/orte/Inventory/Inventory.css */
+
+/* Schriftart von Google Fonts importieren */
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook&display=swap');
+
+.inventory-container {
+  text-align: center;
+  margin-top: 20px;
+  font-family: 'UnifrakturCook', cursive, serif;
+  color: #f4e3c1; /* Cremeweiße Textfarbe */
+}
+
+.button-group {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid #a77f33; /* Bronzerahmen */
+  background-color: #160e0c; /* Schokoladenbrauner Hintergrund */
+  color: #f7f7f7; /* Cremeweiße Schrift */
+  font-family: 'UnifrakturCook', cursive, serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #a77f33; /* Bronze Hover-Effekt */
+  color: #3a2d2d; /* Brauner Text auf Bronze */
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+  font-family: 'UnifrakturCook', cursive, serif;
+}
+
+/* Scrollbarer Tabellenbereich */
+.table-container {
+  max-height: 555px; /* Setze die maximale Höhe nach Bedarf */
+  overflow-y: auto;
+  margin: 20px auto;
+  width: 950px; /* Passe die Breite nach Bedarf an */
+  border: 2px solid #a77f33; /* Optional: Rahmen für den scrollbaren Bereich */
+
+  background-color: #2e2e2e86; /* Optional: Hintergrundfarbe für den scrollbaren Bereich */
+}
+
+/* Optional: Stil für die Scroll-Leiste (funktioniert nur in Webkit-basierten Browsern) */
+.table-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f100; 
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #a77e337c; 
+
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #7d5a008c; 
+}
+
+.inventory-table {
+  margin: 0 auto;
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%; /* Anpassung auf 100%, um den Container vollständig auszufüllen */
+
+  background-color: #3a2d2d00; /* Transparent */
+  border: 3px solid #a77f33; /* Bronze Rahmen */
+  color: #f4e3c1;
+  font-family: 'UnifrakturCook', cursive, serif;
+}
+
+.table-header {
+  border: 2px solid #a77f33; /* Bronze Rahmen */
+  padding: 10px;
+  font-weight: bold;
+  text-align: left;
+  background-color: #f5deb359; /* Dunklerer Braunton für Header */
+  color: #0A0A0A; /* Dunkler Text */
+  font-family: 'UnifrakturCook', cursive, serif;
+}
+
+.table-cell {
+  border: 1px solid #a77f33; /* Bronze Rahmen */
+  padding: 10px;
+  text-align: left;
+  background-color: #f5deb359; /* Hellerer Braunton */
+  font-family: 'UnifrakturCook', cursive, serif;
+  color: #0A0A0A; /* Dunkler Text */
+}
+
+tr:hover {
+  background-color: #f5deb38f; /* Dezenter Braunton für Hover-Effekt */
+}
+
+.table-cell:hover {
+  background-color: transparent;
+}
+
+/* Inline Delete Form */
+.delete-form {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  align-content: center;
+}
+
+.quantity-input-inline {
+  width: 60px;
+  padding: 5px 10px;
+  border: 2px solid #927c00; /* Rahmenfarbe und -stärke */
+  border-radius: 4px; /* Abgerundete Ecken */
+  font-size: 14px; /* Schriftgröße */
+  text-align: center; /* Text zentrieren */
+  transition: border-color 0.3s, box-shadow 0.3s; /* Übergangseffekte für Interaktionen */
+  /* Hintergrund- und Textfarbe */
+  background-color: #b99b1428;
+  color: #000000;
+}
+
+.quantity-input-inline:focus {
+  border-color: #000000; /* Rahmenfarbe beim Fokus */
+  outline: none; /* Entfernt die Standard-Fokusumrandung */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+}
+
+.quantity-input-inline.error {
+  border-color: #000000; /* Rote Rahmenfarbe bei Fehler */
+  background-color: #000000; /* Hellroter Hintergrund bei Fehler */
+}
+
+.quantity-input-inline:hover {
+  border-color: #000000; /* Rahmenfarbe beim Hover */
+}
+
+.quantity-input-inline::placeholder {
+  color: #000000; /* Farbe des Platzhaltertextes */
+  font-family: 'UnifrakturCook', cursive, serif;
+}
+
+.delete-button-inline {
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 3px;
+  border: 1px solid #00000000; /* Transparenter Rahmen */
+  background-color: #c00303ae; /* Heller Rotton Hintergrund */
+  color: rgb(27, 2, 2); /* Dunkles Rot für die Schrift */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.delete-button-inline:hover {
+  background-color: #a30000; /* Dunkleres Rot beim Hover */
+  color: #ffffff; /* Weiße Schrift beim Hover */
+}

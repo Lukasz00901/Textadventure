@@ -1,0 +1,261 @@
+/* frontend/Schmiede.css */
+
+/* Hauptcontainer */
+.Schmiede {
+  padding: 20px;
+  font-family: 'UnifrakturCook', cursive, serif;
+}
+
+/* Titel */
+.Schmiede h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2em;
+  color: #c9b040;
+}
+
+/* Benachrichtigungen */
+.error-message, .info-message {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.error-message {
+  color: red;
+}
+
+.info-message {
+  color: green;
+}
+
+/* Neuer Button: Mit Schmied sprechen */
+.talk-button {
+  display: block;
+  margin: 0 auto 20px auto;
+  padding: 15px 30px;
+  background-color: #271816;
+  color: #f0c040;
+  border: 3px solid #a58f2f;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.talk-button:hover {
+  background-color: #d4af37;
+  color: #3e2723;
+}
+
+/* Bedingte Buttons: Schlafen und Quest annehmen */
+.keeper-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.sleep-button, .accept-quest-button {
+  padding: 15px 30px;
+  background-color: #271816;
+  color: #c9b040;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sleep-button:hover, .accept-quest-button:hover {
+  background-color: #d4af37;
+  color: #3e2723;
+}
+
+/* Spielerstatus */
+.player-status {
+  margin: 20px 0;
+  padding: 20px;
+  color: #c9b040;
+}
+
+/* Inhalt */
+.content {
+  display: flex;
+  flex-direction: row; /* Horizontale Anordnung */
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 20px; /* Abstand zwischen Log und Quest */
+}
+
+/* Schmiede-Panel: Item-Liste */
+.smithy {
+  max-width: 600px;
+  width: 100%;
+  margin-left: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.smithy h2 {
+  text-align: center;
+  margin-bottom: 5px;
+  font-size: 22px;
+  color: #c9b040;
+  width: 100%;
+  margin-left: -590px;
+}
+
+.smithy ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: calc(100% + 40px); /* Vergrößert die Breite um 40px */
+  margin-left: -20px; /* Schiebt die Liste nach links */
+  background-color: transparent;
+}
+
+.smithy ul li {
+  background-color: #311e1c57;
+  padding: 15px;
+  border: 1px solid #c9b040;
+  border-radius: 5px;
+  color: #c9b040;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-family: 'UnifrakturCook', cursive, serif;
+  font-weight: 700;
+  font-size: 20px;
+  gap: 20px;
+  margin-bottom: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.item-text {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+  align-items: center;
+}
+
+.item-name {
+  flex: 2;
+  text-align: left;
+}
+
+.item-description {
+  flex: 3;
+  text-align: center;
+}
+
+.item-price {
+  flex: 1;
+  text-align: right;
+}
+
+.item-quantity {
+  flex: 1;
+  text-align: right;
+  font-size: 18px;
+  color: #f0c040;
+  white-space: nowrap;
+}
+
+.item-button {
+  padding: 10px 15px;
+  background-color: #271816;
+  color: #c9b040;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: 'UnifrakturCook', cursive, serif;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.item-button:hover {
+  background-color: #d4af37;
+  color: #3e2723;
+}
+
+/* Neuer Bereich: Questlog */
+.quest-log {
+  flex: 1; /* Flexibler Platz für das Quest-Log */
+  max-width: 500px;
+  background-color: #160e0c70;
+  color: #c9b040;
+  border-radius: 5px;
+  padding: 30px;
+  height: 400px; /* Höhe bleibt konstant */
+  scroll-behavior: smooth;
+  margin: 0; /* Entfernt zusätzliche Margins */
+  border: 1px solid #c9b040;
+  box-sizing: border-box; /* Konsistente Maße */
+}
+
+.quest-log-title {
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: #c9b040;
+}
+
+/* Aktive Quest */
+.quest {
+  flex: 1; /* Flexibler Platz für die aktive Quest */
+  padding: 20px 25px;
+  border: 1px solid #c9b040;
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0.7);
+  max-width: 500px;
+  box-sizing: border-box;
+  height: fit-content; /* Höhe passt sich dem Inhalt an */
+}
+
+.quest h2 {
+  text-align: center;
+  font-size: 22px;
+  color: #c9b040;
+  margin-bottom: 15px;
+}
+
+.quest p, .quest ul {
+  margin: 10px 0;
+}
+
+.quest ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #f0c040;
+}
+
+.quest .completed, .quest .in-progress {
+  font-weight: bold;
+  color: #f0c040;
+}
+
+/* Spezifische Cooldown-Meldung nur in aktiven Quests */
+.quest .cooldown-entry {
+  color: #ff4500;
+  font-weight: bold;
+  font-size: 16px;
+  text-decoration: underline;
+  margin-top: 10px;
+}
+
+/* Responsive Anpassungen */
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    gap: 10px; /* Kleinere Abstände im mobilen Layout */
+  }
+
+  .quest-log, .quest {
+    max-width: 100%;
+  }
+}
