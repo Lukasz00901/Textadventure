@@ -155,7 +155,7 @@ router.post('/sleep', (req, res) => {
     PlayerHP[0] = PlayerMaxHP[0]; // Spieler erholt sich vollständig
 
     // Loggen der Schlafaktion
-    questLog.push('Du hast geschlafen und bist wieder fit!');
+    questLog.push(`Du hast geschlafen und bist wieder fit!`);
 
     res.json({
       message: 'Du hast geschlafen und bist wieder fit!',
@@ -237,11 +237,19 @@ router.post('/sell', (req, res) => {
         inventoryItems.splice(index, 1); // Item entfernen
       }
 
+      const itemWorth = getItemWorth(itemName);
+      playerMoney[0] += itemWorth; // Spieler-Geld erhöhen
+
       // Loggen des Verkaufs
-      questLog.push(`Verkauft: ${itemName} für ${getItemWorth(itemName)} Gold.`);
+      questLog.push(`Verkauft: ${itemName} für ${itemWorth} Gold.`);
 
       res.json({
-        message: 'Item verkauft.',
+        message: `${itemName} wurde verkauft für ${itemWorth} Gold.`,
+        playerStatus: {
+          money: playerMoney[0],
+          hp: PlayerHP[0],
+          maxHp: PlayerMaxHP[0],
+        },
         inventoryItems,
         questLog, // Aktualisiertes Quest-Log zurücksenden
       });

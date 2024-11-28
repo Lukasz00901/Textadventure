@@ -1,8 +1,8 @@
 /* src/App.css */
 @import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
-.App {
+/*.App {
   text-align: center;
-}
+}*/
 
 /*body {
   /* background-color: #271816;
@@ -32,20 +32,18 @@
   border-radius: 5px;
 }
 
-p {
+/*p {
   margin: 5px 0;
   color: #c9b040;
-}
+}*/
 
 
 
-.App {
+/*.App {
   font-family: 'UnifrakturCook', cursive;
-  /*background-color: #271816;*/
+  /*background-color: #271816;
   color: #a18711;
-  
-  
-}
+}*/
 
 .market-page {
   background-image: url('../public/backround/Markt.webp');
