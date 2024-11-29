@@ -1,0 +1,13 @@
+.vscode
+/node_modules *
+*.apk
+*.ap_
+*.dex
+*.class
+**/bin/
+**/gen/
+.gradle/
+build/
+local.properties
+**/proguard/
+*.log
