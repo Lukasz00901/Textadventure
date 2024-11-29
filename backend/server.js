@@ -1,17 +1,20 @@
+// backend/app.js oder server.js
+
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const path = require('path');
+require('dotenv').config(); // Stelle sicher, dass du dotenv verwendest, um Umgebungsvariablen zu laden
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
-app.use(bodyParser.json());
-app.use(express.json());
+app.use(cors({
+  origin: 'http://localhost:3001', // Passe dies an deine Frontend-URL an
+}));
+app.use(express.json()); // Parsen von JSON-Körpern
 
-// Beispiel-Routen
+// Beispiel-Routen mit konsistentem /api Prefix
 const inventoryRoutes = require('./Inventory');
 const dungeonRouter = require('./Dungeon');
 const marketRoutes = require('./Markt');
@@ -19,38 +22,17 @@ const waldRoutes = require('./Wald');
 const mineRoutes = require('./Mine');
 const tavernRoutes = require('./Taverne');
 const smithyRoutes = require('./Schmiede');
+const playerRoutes = require('./Player'); // Neuer Router für Spieler-Management
 
-app.use('/inventory', inventoryRoutes);
+// Verwende die Router unter /api Prefix
+app.use('/api/inventory', inventoryRoutes);
 app.use('/api/dungeon', dungeonRouter);
-app.use('/market', marketRoutes);
-app.use('/wald', waldRoutes);
-app.use('/mine', mineRoutes);
-app.use('/tavern', tavernRoutes);
-app.use('/smithy', smithyRoutes);
-
-// In-Memory Speicher für den Spielernamen
-let playerName = '';
-
-// GET-Endpunkt zum Abrufen des Spielernamens
-app.get('/api/player', (req, res) => {
-  console.log('GET /api/player - Aktueller Name:', playerName);
-  res.json({ name: playerName });
-});
-
-// POST-Endpunkt zum Setzen des Spielernamens
-app.post('/api/player', (req, res) => {
-  const { name } = req.body;
-  console.log('POST /api/player - Empfangener Name:', name);
-
-  if (!name || typeof name !== 'string') {
-    console.log('Ungültiger Name:', name);
-    return res.status(400).json({ error: 'Ein gültiger Name ist erforderlich.' });
-  }
-
-  playerName = name;
-  console.log('Name gesetzt:', playerName);
-  res.json({ message: 'Name erfolgreich gesetzt.', name: playerName });
-});
+app.use('/api/market', marketRoutes);
+app.use('/api/wald', waldRoutes);
+app.use('/api/mine', mineRoutes);
+app.use('/api/tavern', tavernRoutes);
+app.use('/api/smithy', smithyRoutes);
+app.use('/api/player', playerRoutes); // Mount den Spieler-Router
 
 // Statische Dateien für die Produktion bereitstellen
 if (process.env.NODE_ENV === 'production') {

@@ -1,180 +1,190 @@
-//Backend Wald.js
+// backend/Wald.js
+
 const express = require('express');
 const router = express.Router();
+const cors = require('cors');
 
-// Importiere das Inventar-Array aus der Datei
-let { inventoryItems } = require('./Inventar_Inhalt');
+// Importiere die Datenzugriffsmodelle
+const { getPlayerById, updatePlayerGathering } = require('./models/playerModel');
+const { addGatheredMaterial } = require('./models/gatheredMaterialsModel');
+const { getItemByNameAndType, addItem } = require('./models/itemModel');
+const { getInventoryByPlayerId, addItemToInventory } = require('./models/inventoryModel');
 
-// Hilfsfunktion, um ein Item im Inventar zu finden
-const findItemIndex = (name) => {
-  return inventoryItems.findIndex((item) => item.name === name);
+// Importiere die Middleware zur Spieleridentifikation
+const { getPlayer } = require('./middlewares/getPlayer');
+
+// Middleware zum Parsen von JSON
+router.use(express.json());
+
+// CORS-Konfiguration (falls nicht bereits global konfiguriert)
+router.use(cors({
+  origin: 'http://localhost:3001' // Passe die erlaubten Ursprünge nach Bedarf an
+}));
+
+// Hilfsfunktion: Wert eines Items ermitteln (für den Verkauf)
+const getItemWorth = async (itemName) => {
+  const item = await getItemByNameAndType(itemName);
+  return item ? item.worth : 0; // Annahme: Wert ist der Verkaufswert
 };
 
-// *** Hinzugefügte Variablen für Cooldown-Mechanismus ***
-let gatherCount = 0;
-let cooldown = false;
-let cooldownEndTime = null;
-
 // Route für das Sammeln von Ressourcen
-router.post('/gather', (req, res) => {
-  const now = Date.now();
+router.post('/gather', getPlayer, async (req, res) => {
+  const playerId = req.player.id;
+  const now = new Date();
 
-  // *** Überprüfen, ob Cooldown aktiv ist ***
-  if (cooldown) {
-    if (now >= cooldownEndTime) {
-      // Cooldown ist abgelaufen
-      cooldown = false;
-      gatherCount = 0;
-    } else {
-      // Cooldown noch aktiv
-      const remainingTime = cooldownEndTime - now;
-      const remainingMinutes = Math.ceil(remainingTime / 60000);
+  const connection = await pool.getConnection();
+
+  try {
+    await connection.beginTransaction();
+
+    // Hole den aktuellen Spielerstatus
+    const [playerRows] = await connection.query('SELECT * FROM players WHERE id = ?', [playerId]);
+    const player = playerRows[0];
+
+    // Überprüfen, ob Cooldown aktiv ist
+    if (player.gather_cooldown_end_time && new Date(player.gather_cooldown_end_time) > now) {
+      const remainingTimeMs = new Date(player.gather_cooldown_end_time) - now;
+      const remainingMinutes = Math.ceil(remainingTimeMs / 60000);
+      await connection.rollback();
       return res.status(429).json({
         message: `Cooldown aktiv. Bitte warte ${remainingMinutes} Minuten.`,
         cooldown: true,
-        remainingTime: remainingTime,
+        remainingTime: remainingTimeMs,
       });
     }
+
+    // Sammelaktionen zählen
+    let gatherCount = player.gather_count + 1;
+    let cooldown = false;
+    let cooldownEndTime = null;
+
+    // Nach 3 Sammelaktionen Cooldown aktivieren
+    if (gatherCount >= 3) {
+      cooldown = true;
+      cooldownEndTime = new Date(now.getTime() + 5 * 60 * 1000); // 5 Minuten
+      gatherCount = 0; // Zurücksetzen nach Cooldown
+    }
+
+    // Definiere die verfügbaren Ressourcen
+    const items = [
+      { name: "Fichtenholz", type: "Material", category: "misc", worth: 3, strength: 0 },
+      { name: "Rinde", type: "Material", category: "misc", worth: 2, strength: 0 },
+      { name: "Stöcke", type: "Material", category: "misc", worth: 2, strength: 0 },
+      { name: "Zapfen", type: "Material", category: "misc", worth: 1, strength: 0 },
+      { name: "Pfifferlinge", type: "Material", category: "misc", worth: 3, strength: 0 },
+      { name: "Steinpilze", type: "Material", category: "misc", worth: 3, strength: 0 },
+      { name: "Harz", type: "Material", category: "misc", worth: 2, strength: 0 },
+      { name: "Kräuter", type: "Material", category: "misc", worth: 2, strength: 0 },
+      { name: "Ranken", type: "Material", category: "misc", worth: 2, strength: 0 },
+    ];
+
+    const addedItems = []; // Nur die tatsächlich hinzugefügten Items
+
+    // Generiere zufällige Mengen für die Ressourcen
+    const resourceQuantities = {
+      "Fichtenholz": Math.floor(Math.random() * 5) + 1,       // 1 bis 5
+      "Rinde": Math.floor(Math.random() * 3) + 1,            // 1 bis 3
+      "Stöcke": Math.floor(Math.random() * 4) + 1,           // 1 bis 4
+      "Zapfen": Math.floor(Math.random() * 2) + 1,           // 1 bis 2
+      "Pfifferlinge": Math.floor(Math.random() * 3) + 1,     // 1 bis 3
+      "Steinpilze": Math.floor(Math.random() * 3) + 1,       // 1 bis 3
+      "Harz": Math.floor(Math.random() * 2) + 1,             // 1 bis 2
+      "Kräuter": Math.floor(Math.random() * 2) + 1,         // 1 bis 2
+      "Ranken": Math.floor(Math.random() * 2) + 1,           // 1 bis 2
+    };
+
+    // Iteriere durch alle möglichen Ressourcen und füge ggf. hinzu
+    for (const item of items) {
+      const quantity = resourceQuantities[item.name];
+      if (quantity > 0) {
+        let existingItem = await getItemByNameAndType(item.name, item.type, connection);
+
+        if (!existingItem) {
+          // Füge das Item zur Items-Tabelle hinzu, falls es noch nicht existiert
+          const newItemId = await addItem({
+            name: item.name,
+            type: item.type,
+            category: item.category,
+            worth: item.worth,
+            strength: item.strength,
+            quantity: 0 // Initialerweise 0, da es im Inventar verwaltet wird
+          }, connection);
+          existingItem = await getItemByNameAndType(item.name, item.type, connection);
+        }
+
+        // Füge das Item zum Inventar hinzu
+        await addItemToInventory(playerId, existingItem.id, quantity, connection);
+        await addGatheredMaterial(playerId, { ...item, quantity }, connection);
+        addedItems.push({ name: item.name, quantity });
+      }
+    }
+
+    // Aktualisiere den Spielerstatus in der Datenbank
+    await updatePlayerGathering(playerId, gatherCount, cooldown ? cooldownEndTime : null, connection);
+
+    await connection.commit();
+
+    res.status(201).json({
+      message: 'Ressourcen erfolgreich gesammelt!',
+      addedItems, // Nur die hinzugefügten Items zurückgeben
+      cooldown: cooldown,
+      cooldownEndTime: cooldown ? cooldownEndTime : null,
+    });
+  } catch (error) {
+    await connection.rollback();
+    console.error('Fehler beim Sammeln:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  } finally {
+    connection.release();
   }
-
-  // *** Sammelaktionen zählen ***
-  gatherCount++;
-
-  // *** Nach 3 Sammelaktionen Cooldown aktivieren ***
-  if (gatherCount >= 3) {
-    cooldown = true;
-    cooldownEndTime = now + 5 * 60 * 1000; // 5 Minuten in Millisekunden
-  }
-
-  const items = [
-    { name: "Fichtenholz", type: "Material", category: "misc", worth: 3, strength: 0 },
-    { name: "Rinde", type: "Material", category: "misc", worth: 2, strength: 0 },
-    { name: "Stöcke", type: "Material", category: "misc", worth: 2, strength: 0 },
-    { name: "Zapfen", type: "Material", category: "misc", worth: 1, strength: 0 },
-    { name: "Pfifferlinge", type: "Material", category: "misc", worth: 3, strength: 0 },
-    { name: "Steinpilze", type: "Material", category: "misc", worth: 3, strength: 0 },
-    { name: "Harz", type: "Material", category: "misc", worth: 2, strength: 0 },
-    { name: "Kräuter", type: "Material", category: "misc", worth: 2, strength: 0 },
-    { name: "Ranken", type: "Material", category: "misc", worth: 2, strength: 0 },
-  ];
-
-  // Generiere zufällige Mengen für die Ressourcen
-  const woodCount = Math.floor(Math.random() * 5) + 1;      // 1 bis 5
-  const barkCount = Math.floor(Math.random() * 3) + 1;      // 1 bis 3
-  const stickCount = Math.floor(Math.random() * 4) + 1;     // 1 bis 4
-  const coneCount = Math.floor(Math.random() * 2) + 1;      // 1 bis 2
-  const pfifferlingeCount = Math.floor(Math.random() * 3) + 1; // 1 bis 3
-  const steinpilzeCount = Math.floor(Math.random() * 3) + 1;  // 1 bis 3
-  const harzCount = Math.floor(Math.random() * 2) + 1;        // 1 bis 2
-  const kraeuterCount = Math.floor(Math.random() * 2) + 1;    // 1 bis 2
-  const rankenCount = Math.floor(Math.random() * 2) + 1;      // 1 bis 2
-
-  // Fichtenholz hinzufügen oder Menge erhöhen
-  const woodIndex = findItemIndex("Fichtenholz");
-  if (woodIndex !== -1) {
-    inventoryItems[woodIndex].quantity += woodCount; // Erhöhe die Menge
-  } else {
-    inventoryItems.push({ ...items[0], quantity: woodCount }); // Neues Item hinzufügen
-  }
-
-  // Rinde hinzufügen oder Menge erhöhen
-  const barkIndex = findItemIndex("Rinde");
-  if (barkIndex !== -1) {
-    inventoryItems[barkIndex].quantity += barkCount; // Erhöhe die Menge
-  } else {
-    inventoryItems.push({ ...items[1], quantity: barkCount }); // Neues Item hinzufügen
-  }
-
-  // Stöcke hinzufügen oder Menge erhöhen
-  const stickIndex = findItemIndex("Stöcke");
-  if (stickIndex !== -1) {
-    inventoryItems[stickIndex].quantity += stickCount; // Erhöhe die Menge
-  } else {
-    inventoryItems.push({ ...items[2], quantity: stickCount }); // Neues Item hinzufügen
-  }
-
-  // Zapfen hinzufügen oder Menge erhöhen
-  const coneIndex = findItemIndex("Zapfen");
-  if (coneIndex !== -1) {
-    inventoryItems[coneIndex].quantity += coneCount; // Erhöhe die Menge
-  } else {
-    inventoryItems.push({ ...items[3], quantity: coneCount }); // Neues Item hinzufügen
-  }
-
-  // Pfifferlinge hinzufügen oder Menge erhöhen
-  const pfifferlingeIndex = findItemIndex("Pfifferlinge");
-  if (pfifferlingeIndex !== -1) {
-    inventoryItems[pfifferlingeIndex].quantity += pfifferlingeCount;
-  } else {
-    inventoryItems.push({ ...items[4], quantity: pfifferlingeCount });
-  }
-
-  // Steinpilze hinzufügen oder Menge erhöhen
-  const steinpilzeIndex = findItemIndex("Steinpilze");
-  if (steinpilzeIndex !== -1) {
-    inventoryItems[steinpilzeIndex].quantity += steinpilzeCount;
-  } else {
-    inventoryItems.push({ ...items[5], quantity: steinpilzeCount });
-  }
-
-  // Harz hinzufügen oder Menge erhöhen
-  const harzIndex = findItemIndex("Harz");
-  if (harzIndex !== -1) {
-    inventoryItems[harzIndex].quantity += harzCount;
-  } else {
-    inventoryItems.push({ ...items[6], quantity: harzCount });
-  }
-
-  // Kräuter hinzufügen oder Menge erhöhen
-  const kraeuterIndex = findItemIndex("Kräuter");
-  if (kraeuterIndex !== -1) {
-    inventoryItems[kraeuterIndex].quantity += kraeuterCount;
-  } else {
-    inventoryItems.push({ ...items[7], quantity: kraeuterCount });
-  }
-
-  // Ranken hinzufügen oder Menge erhöhen
-  const rankenIndex = findItemIndex("Ranken");
-  if (rankenIndex !== -1) {
-    inventoryItems[rankenIndex].quantity += rankenCount;
-  } else {
-    inventoryItems.push({ ...items[8], quantity: rankenCount });
-  }
-
-  // *** Antwort mit Cooldown-Status ***
-  res.status(201).json({
-    message: 'Ressourcen erfolgreich gesammelt!',
-    addedItems: [
-      { name: "Fichtenholz", quantity: woodCount },
-      { name: "Rinde", quantity: barkCount },
-      { name: "Stöcke", quantity: stickCount },
-      { name: "Zapfen", quantity: coneCount },
-      { name: "Pfifferlinge", quantity: pfifferlingeCount },
-      { name: "Steinpilze", quantity: steinpilzeCount },
-      { name: "Harz", quantity: harzCount },
-      { name: "Kräuter", quantity: kraeuterCount },
-      { name: "Ranken", quantity: rankenCount },
-    ],
-    currentInventory: inventoryItems,
-    cooldown: cooldown,
-    cooldownEndTime: cooldownEndTime,
-  });
 });
 
 // Route, um das aktuelle Inventar abzurufen
-router.get('/inventory', (req, res) => {
-  res.status(200).json({
-    message: 'Aktuelles Inventar abgerufen.',
-    inventory: inventoryItems,
-  });
+router.get('/inventory', getPlayer, async (req, res) => {
+  const playerId = req.player.id;
+
+  try {
+    const inventory = await getInventoryByPlayerId(playerId);
+    res.status(200).json({
+      message: 'Aktuelles Inventar abgerufen.',
+      inventory: inventory,
+    });
+  } catch (error) {
+    console.error('Fehler beim Abrufen des Inventars:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  }
 });
 
 // Route, um das Inventar zu löschen (z. B. zum Zurücksetzen)
-router.delete('/inventory', (req, res) => {
-  inventoryItems.length = 0; // Löscht alle Items aus dem Array
-  res.status(200).json({
-    message: 'Inventar geleert.',
-  });
+router.delete('/inventory', getPlayer, async (req, res) => {
+  const playerId = req.player.id;
+
+  const connection = await pool.getConnection();
+
+  try {
+    await connection.beginTransaction();
+
+    // Entferne alle Items aus dem Inventar des Spielers
+    await connection.query('DELETE FROM inventory WHERE player_id = ?', [playerId]);
+
+    // Entferne alle gesammelten Materialien des Spielers
+    await connection.query('DELETE FROM gathered_materials WHERE player_id = ?', [playerId]);
+
+    // Optional: Setze den gather_count und cooldown zurück
+    await updatePlayerGathering(playerId, 0, null, connection);
+
+    await connection.commit();
+
+    res.status(200).json({
+      message: 'Inventar geleert.',
+    });
+  } catch (error) {
+    await connection.rollback();
+    console.error('Fehler beim Leeren des Inventars:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  } finally {
+    connection.release();
+  }
 });
 
 module.exports = router;

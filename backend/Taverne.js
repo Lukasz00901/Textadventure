@@ -1,468 +1,550 @@
 // backend/Taverne.js
 
 const express = require('express');
-const cors = require('cors'); // Importiere CORS
 const router = express.Router();
-const { inventoryItems, PlayerHP, PlayerMaxHP, playerMoney } = require('./Inventar_Inhalt');
+const cors = require('cors'); // Importiere CORS
 
-// Aktiviere CORS für alle Routen
-router.use(cors());
+// Importiere die Datenzugriffsmodelle
+const { getPlayerById, updatePlayerStatus } = require('./models/playerModel');
+const { getTavernItems, getTavernItemByName, decreaseTavernItemQuantity } = require('./models/tavernModel');
+const { getItemByNameAndType, addItem, getItemById } = require('./models/itemModel');
+const { getInventoryByPlayerId, addItemToInventory, removeItemFromInventory } = require('./models/inventoryModel');
+const { addQuestLog, getQuestLogByPlayerId } = require('./models/questLogModel');
+const { generateRandomQuest } = require('./helpers/questGenerator');
+const { addActiveQuest, getActiveQuestsByPlayerId, removeActiveQuest } = require('./models/activeQuestsModel');
 
-// Importiere Mine- und Wald-Items
-const mineItems = [
-  { name: "Eisenerz", type: "Material", category: "misc", worth: 3, strength: 0 },
-  { name: "Kohle", type: "Material", category: "misc", worth: 2, strength: 0 },
-  { name: "Golderz", type: "Material", category: "misc", worth: 4, strength: 0 },
-  { name: "Silbererz", type: "Material", category: "misc", worth: 4, strength: 0 },
-  { name: "Zinnerz", type: "Material", category: "misc", worth: 3, strength: 0 },
-  { name: "Diamanten", type: "Material", category: "misc", worth: 6, strength: 0 },
-  { name: "Kupfererz", type: "Material", category: "misc", worth: 2, strength: 0 },
-  { name: "Zinkerz", type: "Material", category: "misc", worth: 2, strength: 0 },
-  { name: "Schwefelerz", type: "Material", category: "misc", worth: 3, strength: 0 },
-  { name: "Bleierz", type: "Material", category: "misc", worth: 3, strength: 0 },
-  { name: "Lehm", type: "Material", category: "misc", worth: 3, strength: 0 },
-  { name: "Kalkstein", type: "Material", category: "misc", worth: 3, strength: 0 },
-  { name: "Schiefer", type: "Material", category: "misc", worth: 3, strength: 0 },
-  { name: "Feuerstein", type: "Material", category: "misc", worth: 3, strength: 0 },
-  { name: "Ranken", type: "Material", category: "misc", worth: 2, strength: 0 },
-];
+// Importiere die Middleware zur Spieleridentifikation
+const { getPlayer } = require('./middlewares/getPlayer');
 
-const forestItems = [
-  { name: "Fichtenholz", type: "Material", category: "misc", worth: 3, strength: 0 },
-  { name: "Rinde", type: "Material", category: "misc", worth: 2, strength: 0 },
-  { name: "Stöcke", type: "Material", category: "misc", worth: 2, strength: 0 },
-  { name: "Zapfen", type: "Material", category: "misc", worth: 1, strength: 0 },
-  { name: "Pfifferlinge", type: "Material", category: "misc", worth: 3, strength: 0 },
-  { name: "Steinpilze", type: "Material", category: "misc", worth: 3, strength: 0 },
-  { name: "Harz", type: "Material", category: "misc", worth: 2, strength: 0 },
-  { name: "Kräuter", type: "Material", category: "misc", worth: 2, strength: 0 },
-];
+// Importiere die Datenbankverbindung für Transaktionen
+const pool = require('./db');
 
-// Kombiniere Items aus Mine und Wald
-const allItems = [...mineItems, ...forestItems];
+// Middleware zum Parsen von JSON
+router.use(express.json());
 
-// Aktive Quests als Array
-let activeQuests = [];
-
-// Quest-Log
-let questLog = [];
-
-// Zähler für abgeschlossene Quests
-let completedQuestsCount = 0;
-
-// Cooldown-Mechanismus
-let lastCooldownStartTime = null;
-const questCooldown = 5 * 1000; // 5 Sekunden in Millisekunden
-const maxCompletedQuestsBeforeCooldown = 3;
-
-// Quest-ID-Zähler
-let questIdCounter = 1;
-
-// Funktion: Zufällige Quest generieren mit Standortinformation und eindeutiger ID
-const generateRandomQuest = () => {
-  const locations = ["Mine", "Wald", "Wald & Mine"];
-  const selectedLocation = locations[Math.floor(Math.random() * locations.length)];
-
-  let possibleItems = [];
-  let requirements = [];
-  let numberOfRequirements = Math.floor(Math.random() * 3) + 1; // 1 bis 3 Anforderungen
-
-  if (selectedLocation === "Mine") {
-    possibleItems = mineItems;
-  } else if (selectedLocation === "Wald") {
-    possibleItems = forestItems;
-  } else if (selectedLocation === "Wald & Mine") {
-    // Bei "Wald & Mine" sicherstellen, dass mindestens ein Item aus der Mine und eines aus dem Wald kommt
-    if (numberOfRequirements < 2) {
-      numberOfRequirements = 2; // Mindestens zwei Anforderungen, eine aus jeder Quelle
-    }
-
-    const mineRequirementCount = 1;
-    const forestRequirementCount = numberOfRequirements - mineRequirementCount;
-
-    // Füge ein Item aus der Mine hinzu
-    while (requirements.length < mineRequirementCount) {
-      const randomItem = mineItems[Math.floor(Math.random() * mineItems.length)];
-      const randomQuantity = Math.floor(Math.random() * 5) + 1; // 1 bis 5 Stück
-
-      if (!requirements.find(req => req.name === randomItem.name)) {
-        requirements.push({ name: randomItem.name, quantity: randomQuantity });
-      }
-    }
-
-    // Füge Items aus dem Wald hinzu
-    while (requirements.length < numberOfRequirements) {
-      const randomItem = forestItems[Math.floor(Math.random() * forestItems.length)];
-      const randomQuantity = Math.floor(Math.random() * 5) + 1;
-
-      if (!requirements.find(req => req.name === randomItem.name)) {
-        requirements.push({ name: randomItem.name, quantity: randomQuantity });
-      }
-    }
-
-    return {
-      id: questIdCounter++, // Eindeutige ID hinzufügen und erhöhen
-      name: 'Sammle Ressourcen',
-      requirements,
-      location: selectedLocation, // Standort hinzufügen
-      completed: false,
-    };
-  }
-
-  // Für "Mine" und "Wald" wie bisher
-  while (requirements.length < numberOfRequirements) {
-    const randomItem = possibleItems[Math.floor(Math.random() * possibleItems.length)];
-    const randomQuantity = Math.floor(Math.random() * 5) + 1; // 1 bis 5 Stück
-
-    // Prüfen, ob das Item bereits in den Anforderungen ist
-    if (!requirements.find(req => req.name === randomItem.name)) {
-      requirements.push({ name: randomItem.name, quantity: randomQuantity });
-    }
-  }
-
-  return {
-    id: questIdCounter++, // Eindeutige ID hinzufügen und erhöhen
-    name: 'Sammle Ressourcen',
-    requirements,
-    location: selectedLocation, // Standort hinzufügen
-    completed: false,
-  };
-};
-
-// Taverne-Items
-const tavernItems = [
-  { name: 'Bierkrug', type: 'Getränk', price: 5, worth: 3, quantity: 20, category: 'drink' },
-  { name: 'Weinflasche', type: 'Getränk', price: 12, worth: 7, quantity: 10, category: 'drink' },
-  { name: 'Braten', type: 'Speise', price: 20, worth: 15, quantity: 8, category: 'food' },
-  { name: 'Eintopf', type: 'Speise', price: 10, worth: 6, quantity: 15, category: 'food' },
-  { name: 'Honigwein', type: 'Getränk', price: 18, worth: 12, quantity: 12, category: 'drink' },
-  { name: 'Käseplatte', type: 'Speise', price: 25, worth: 18, quantity: 5, category: 'food' },
-];
-
-// Button: Schlafen
-const sleepCost = 5; // Kosten fürs Schlafen
+// CORS-Konfiguration (falls nicht bereits global konfiguriert)
+router.use(cors({
+  origin: 'http://localhost:3001' // Passe die erlaubten Ursprünge nach Bedarf an
+}));
 
 // Route: Spielerstatus abrufen
-router.get('/player-status', (req, res) => {
+router.get('/player-status', getPlayer, async (req, res) => {
+  const player = req.player;
+
   res.json({
-    money: playerMoney[0],
-    hp: PlayerHP[0],
-    maxHp: PlayerMaxHP[0],
-    sleepCost, // Kosten fürs Schlafen hinzufügen
+    money: player.money,
+    hp: player.hp,
+    maxHp: player.max_hp,
+    sleepCost: 5, // Kosten fürs Schlafen hinzufügen
   });
 });
 
 // Route: Schlafen
-router.post('/sleep', (req, res) => {
-  if (playerMoney[0] >= sleepCost) {
-    playerMoney[0] -= sleepCost; // Abziehen der Schlafkosten
-    PlayerHP[0] = PlayerMaxHP[0]; // Spieler erholt sich vollständig
+router.post('/sleep', getPlayer, async (req, res) => {
+  const playerId = req.player.id;
+  const sleepCost = 5;
 
-    // Loggen der Schlafaktion
-    questLog.push(`Du hast geschlafen und bist wieder fit!`);
+  try {
+    const player = await getPlayerById(playerId);
 
-    res.json({
-      message: 'Du hast geschlafen und bist wieder fit!',
-      playerStatus: {
-        money: playerMoney[0],
-        hp: PlayerHP[0],
-        maxHp: PlayerMaxHP[0],
-      },
-      questLog, // Aktualisiertes Quest-Log zurücksenden
-    });
-  } else {
-    res.status(400).json({ message: 'Nicht genug Geld, um zu schlafen.' });
+    if (player.money >= sleepCost) {
+      // Aktualisiere den Spielerstatus
+      await updatePlayerStatus(playerId, {
+        money: player.money - sleepCost,
+        hp: player.max_hp
+      });
+
+      // Loggen des Schlafens
+      await addQuestLog(playerId, 'Du hast geschlafen und bist wieder fit!');
+
+      res.json({
+        message: 'Du hast geschlafen und bist wieder fit!',
+        playerStatus: {
+          money: player.money - sleepCost,
+          hp: player.max_hp,
+          maxHp: player.max_hp,
+        },
+      });
+    } else {
+      res.status(400).json({ message: 'Nicht genug Geld, um zu schlafen.' });
+    }
+  } catch (error) {
+    console.error('Fehler beim Schlafen:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
   }
 });
 
 // Route: Alle Taverne-Items abrufen
-router.get('/items', (req, res) => {
-  res.json(tavernItems);
+router.get('/items', getPlayer, async (req, res) => {
+  try {
+    const tavernItems = await getTavernItems();
+    res.json(tavernItems);
+  } catch (error) {
+    console.error('Fehler beim Abrufen der Taverne-Items:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  }
 });
 
 // Route: Quest-Log abrufen
-router.get('/quest-log', (req, res) => {
-  res.json(questLog);
+router.get('/quest-log', getPlayer, async (req, res) => {
+  const playerId = req.player.id;
+
+  try {
+    const logs = await getQuestLogByPlayerId(playerId);
+    res.json(logs);
+  } catch (error) {
+    console.error('Fehler beim Abrufen des Quest-Logs:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  }
 });
 
 // Route: Inventar abrufen
-router.get('/inventory', (req, res) => {
-  res.json(inventoryItems);
+router.get('/inventory', getPlayer, async (req, res) => {
+  const playerId = req.player.id;
+
+  try {
+    const inventory = await getInventoryByPlayerId(playerId);
+    res.status(200).json({
+      message: 'Aktuelles Inventar abgerufen.',
+      inventory: inventory,
+    });
+  } catch (error) {
+    console.error('Fehler beim Abrufen des Inventars:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  }
 });
 
 // Hilfsfunktion: Wert eines Items ermitteln
-const getItemWorth = (item) => {
-  // Nimm den Wert direkt aus dem Item-Objekt
-  return item.worth || 0;
+const getItemWorth = async (itemName, connection = null) => {
+  const item = await getItemByNameAndType(itemName, null, connection);
+  return item ? item.worth : 0;
 };
 
 // Route: Item kaufen
-router.post('/buy', (req, res) => {
+router.post('/buy', getPlayer, async (req, res) => {
+  const playerId = req.player.id;
   const { itemName } = req.body;
-  console.log(`Received buy request for item: ${itemName}`);
 
-  const tavernItem = tavernItems.find(item => item.name === itemName);
-  if (!tavernItem) {
-    return res.status(404).json({ message: 'Item nicht gefunden.' });
+  if (!itemName) {
+    return res.status(400).json({ message: 'Itemname ist erforderlich.' });
   }
 
-  if (tavernItem.quantity <= 0) {
-    return res.status(400).json({ message: 'Item ist ausverkauft.' });
+  const connection = await pool.getConnection();
+
+  try {
+    await connection.beginTransaction();
+
+    // Hole das Taverne-Item
+    const tavernItem = await getTavernItemByName(itemName, connection);
+
+    if (!tavernItem) {
+      await connection.rollback();
+      return res.status(404).json({ message: 'Item nicht gefunden.' });
+    }
+
+    if (tavernItem.quantity <= 0) {
+      await connection.rollback();
+      return res.status(400).json({ message: 'Item ist ausverkauft.' });
+    }
+
+    const player = await getPlayerById(playerId, connection);
+
+    if (player.money < tavernItem.price) {
+      await connection.rollback();
+      return res.status(400).json({ message: 'Nicht genug Geld, um das Item zu kaufen.' });
+    }
+
+    // Dediere den Preis vom Spieler
+    await updatePlayerStatus(playerId, {
+      money: player.money - tavernItem.price
+    }, connection);
+
+    // Reduziere die Menge des Items in der Taverne
+    await decreaseTavernItemQuantity(tavernItem.id, 1, connection);
+
+    // Füge das Item zum Inventar hinzu
+    await addItemToInventory(playerId, tavernItem.id, 1, connection);
+
+    // Loggen des Kaufs
+    await addQuestLog(playerId, `Gekauft: ${tavernItem.name} für ${tavernItem.price} Münzen.`);
+
+    await connection.commit();
+
+    res.json({
+      message: `${tavernItem.name} wurde gekauft.`,
+      playerStatus: {
+        money: player.money - tavernItem.price,
+        hp: player.hp,
+        maxHp: player.max_hp,
+      },
+      tavernItems: await getTavernItems(connection),
+      inventory: await getInventoryByPlayerId(playerId, connection),
+      questLog: await getQuestLogByPlayerId(playerId, connection),
+    });
+  } catch (error) {
+    await connection.rollback();
+    console.error('Fehler beim Kaufen des Items:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  } finally {
+    connection.release();
   }
-
-  if (playerMoney[0] < tavernItem.price) {
-    return res.status(400).json({ message: 'Nicht genug Geld, um das Item zu kaufen.' });
-  }
-
-  playerMoney[0] -= tavernItem.price;
-  tavernItem.quantity -= 1;
-
-  const existingItem = inventoryItems.find(item => item.name === itemName);
-  if (existingItem) {
-    existingItem.quantity += 1;
-  } else {
-    // **Wichtig:** Füge alle Eigenschaften des Items hinzu, nicht nur Name und Quantity
-    inventoryItems.push({ ...tavernItem, quantity: 1 });
-    console.log('Added new item to inventory:', { ...tavernItem, quantity: 1 });
-  }
-
-  // Loggen des Kaufes
-  questLog.push(`Gekauft: ${tavernItem.name} für ${tavernItem.price} Münzen.`);
-
-  res.json({
-    message: `${tavernItem.name} wurde gekauft.`,
-    playerStatus: {
-      money: playerMoney[0],
-      hp: PlayerHP[0],
-      maxHp: PlayerMaxHP[0],
-    },
-    tavernItems,
-    inventoryItems,
-    questLog, // Aktualisiertes Quest-Log zurücksenden
-  });
 });
 
 // Route: Item verkaufen
-router.post('/sell', (req, res) => {
-  const { itemName } = req.body;
-  console.log(`Received sell request for item: ${itemName}`);
-  const inventoryItem = inventoryItems.find(item => item.name === itemName);
+router.post('/sell', getPlayer, async (req, res) => {
+  const playerId = req.player.id;
+  const { itemName, strength, worth } = req.body;
 
-  console.log('Inventory Item:', inventoryItem);
+  console.log(`Received sell request for item: ${itemName}, Stärke: ${strength}, Wert: ${worth}`);
 
-  if (inventoryItem) {
-    if (inventoryItem.quantity > 0) {
-      // **Änderung:** Überprüfe die Kategorie direkt aus dem inventoryItem
-      const isMisc = inventoryItem.category === 'misc';
-      console.log(`Is item '${itemName}' misc?`, isMisc ? 'Ja' : 'Nein');
+  if (!itemName || strength === undefined || worth === undefined) {
+    return res.status(400).json({ message: 'Itemname, Stärke und Wert sind erforderlich.' });
+  }
 
-      if (!isMisc) {
-        return res.status(400).json({ message: 'Dieses Item kann nicht verkauft werden.' });
-      }
+  const connection = await pool.getConnection();
 
-      // **Änderung:** Verwende den Wert direkt aus dem inventoryItem
-      const itemWorth = getItemWorth(inventoryItem);
-      console.log(`Item Worth for '${itemName}':`, itemWorth);
+  try {
+    await connection.beginTransaction();
 
-      if (itemWorth === 0) {
-        console.log(`Item worth for ${itemName} is 0.`);
-        return res.status(400).json({ message: 'Wert des Items konnte nicht ermittelt werden.' });
-      }
+    // Finde das Item im Inventar basierend auf Name, Stärke und Wert sowie Kategorie 'misc'
+    const [rows] = await connection.query(
+      `
+      SELECT inventory.item_id, inventory.quantity
+      FROM inventory
+      JOIN items ON inventory.item_id = items.id
+      WHERE inventory.player_id = ? AND items.name = ? AND items.strength = ? AND items.worth = ? AND items.category = 'misc'
+      `,
+      [playerId, itemName, strength, worth]
+    );
 
-      inventoryItem.quantity -= 1;
-      if (inventoryItem.quantity === 0) {
-        const index = inventoryItems.indexOf(inventoryItem);
-        inventoryItems.splice(index, 1); // Item entfernen
-      }
-
-      playerMoney[0] += itemWorth; // Spieler-Geld erhöhen
-
-      // Loggen des Verkaufs
-      questLog.push(`Verkauft: ${itemName} für ${itemWorth} Münzen.`);
-
-      res.json({
-        message: `${itemName} wurde verkauft für ${itemWorth} Münzen.`,
-        playerStatus: {
-          money: playerMoney[0],
-          hp: PlayerHP[0],
-          maxHp: PlayerMaxHP[0],
-        },
-        inventoryItems,
-        questLog, // Aktualisiertes Quest-Log zurücksenden
-      });
-    } else {
-      res.status(400).json({ message: 'Nicht genügend Items zum Verkaufen.' });
+    if (rows.length === 0) {
+      await connection.rollback();
+      console.log(`Item nicht gefunden: Name=${itemName}, Stärke=${strength}, Wert=${worth}`);
+      return res.status(404).json({ message: 'Item nicht im Inventar gefunden.' });
     }
-  } else {
-    res.status(404).json({ message: 'Item nicht im Inventar gefunden.' });
+
+    const inventoryItem = rows[0];
+
+    if (inventoryItem.quantity <= 0) {
+      await connection.rollback();
+      return res.status(400).json({ message: 'Nicht genügend Items zum Verkaufen.' });
+    }
+
+    // Hole das Item aus der Items-Tabelle
+    const item = await getItemById(inventoryItem.item_id, connection);
+    if (!item) {
+      await connection.rollback();
+      return res.status(404).json({ message: 'Item nicht gefunden.' });
+    }
+
+    // Bestimme den Verkaufspreis (hier nehmen wir den 'worth' Wert)
+    const itemWorth = item.worth;
+
+    if (itemWorth === 0) {
+      await connection.rollback();
+      return res.status(400).json({ message: 'Wert des Items konnte nicht ermittelt werden.' });
+    }
+
+    // Reduziere die Menge des Items im Inventar
+    await removeItemFromInventory(playerId, inventoryItem.item_id, 1, connection);
+
+    // Erhöhe das Spieler-Geld
+    await updatePlayerStatus(playerId, {
+      money: player.money + itemWorth
+    }, connection);
+
+    // Loggen des Verkaufs
+    await addQuestLog(playerId, `Verkauft: ${item.name} für ${itemWorth} Münzen.`);
+
+    await connection.commit();
+
+    res.json({
+      message: `${item.name} wurde verkauft für ${itemWorth} Münzen.`,
+      playerStatus: {
+        money: player.money + itemWorth,
+        hp: player.hp,
+        maxHp: player.max_hp,
+      },
+      inventory: await getInventoryByPlayerId(playerId, connection),
+      questLog: await getQuestLogByPlayerId(playerId, connection),
+    });
+  } catch (error) {
+    await connection.rollback();
+    console.error('Fehler beim Verkaufen des Items:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  } finally {
+    connection.release();
   }
 });
 
 // Route: Quest annehmen
-router.post('/accept-quest', (req, res) => {
-  // Überprüfe den Cooldown
-  if (lastCooldownStartTime) {
-    const now = Date.now();
-    const timeSinceCooldownStart = now - lastCooldownStartTime;
+router.post('/accept-quest', getPlayer, async (req, res) => {
+  const playerId = req.player.id;
+  const questCooldown = 5 * 60 * 1000; // 5 Minuten
+  const maxCompletedQuestsBeforeCooldown = 3;
 
-    if (timeSinceCooldownStart < questCooldown) {
-      const remainingTime = questCooldown - timeSinceCooldownStart;
-      const remainingSeconds = Math.ceil(remainingTime / 1000);
-      return res.status(400).json({ message: `Du kannst neue Quests erst in ${remainingSeconds} Sekunde(n) annehmen.` });
+  const connection = await pool.getConnection();
+
+  try {
+    await connection.beginTransaction();
+
+    // Hole den aktuellen Spielerstatus
+    const player = await getPlayerById(playerId, connection);
+
+    // Überprüfe den Cooldown
+    if (player.completed_quests_count >= maxCompletedQuestsBeforeCooldown) {
+      const lastCooldownEnd = player.gather_cooldown_end_time ? new Date(player.gather_cooldown_end_time) : null;
+      const now = new Date();
+      if (lastCooldownEnd && lastCooldownEnd > now) {
+        const remainingTimeMs = lastCooldownEnd - now;
+        const remainingMinutes = Math.ceil(remainingTimeMs / 60000);
+        await connection.rollback();
+        return res.status(400).json({ message: `Cooldown aktiv. Bitte warte ${remainingMinutes} Minuten.` });
+      } else {
+        // Setze den Zähler zurück
+        await updatePlayerStatus(playerId, {
+          completed_quests_count: 0,
+          gather_cooldown_end_time: null
+        }, connection);
+      }
     }
+
+    // Überprüfe die Anzahl der aktiven Quests (angenommen, max 3)
+    const activeQuests = await getActiveQuestsByPlayerId(playerId, connection);
+
+    if (activeQuests.length >= 3) {
+      await connection.rollback();
+      return res.status(400).json({ message: 'Du hast bereits die maximale Anzahl an aktiven Quests (3).' });
+    }
+
+    // Generiere eine zufällige Quest
+    const newQuest = generateRandomQuest();
+
+    // Füge die neue Quest zur aktiven Quest-Tabelle hinzu
+    await addActiveQuest(playerId, newQuest, connection);
+
+    // Loggen der Quest-Annahme
+    await addQuestLog(playerId, `Neue Quest angenommen: ${newQuest.name} in ${newQuest.location}.`);
+
+    await connection.commit();
+
+    res.json({
+      message: 'Neue Quest angenommen.',
+      quest: newQuest, // Sende die gesamte Quest mit ID zurück
+      activeQuests: await getActiveQuestsByPlayerId(playerId, connection),
+      questLog: await getQuestLogByPlayerId(playerId, connection),
+    });
+  } catch (error) {
+    await connection.rollback();
+    console.error('Fehler beim Annehmen der Quest:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  } finally {
+    connection.release();
   }
-
-  // Überprüfe die Anzahl der aktiven Quests
-  if (activeQuests.length >= 3) {
-    return res.status(400).json({ message: 'Du hast bereits die maximale Anzahl an aktiven Quests (3).' });
-  }
-
-  // Generiere eine zufällige Quest mit Standortinformation und eindeutiger ID
-  const newQuest = generateRandomQuest();
-  activeQuests.push(newQuest);
-
-  // Loggen der Quest-Annahme
-  questLog.push(`Neue Quest angenommen: ${newQuest.name} in ${newQuest.location}.`);
-
-  res.json({
-    message: 'Neue Quest angenommen.',
-    quest: newQuest, // Sende die gesamte Quest mit ID zurück
-    activeQuests,
-    questLog, // Aktualisiertes Quest-Log zurücksenden
-  });
 });
 
 // Route: Aktive Quests abrufen
-router.get('/quests', (req, res) => {
-  res.json(activeQuests);
+router.get('/quests', getPlayer, async (req, res) => {
+  const playerId = req.player.id;
+
+  try {
+    const activeQuests = await getActiveQuestsByPlayerId(playerId);
+    res.json(activeQuests);
+  } catch (error) {
+    console.error('Fehler beim Abrufen der aktiven Quests:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  }
 });
 
 // Route: Quest abschließen
-router.post('/complete-quest', (req, res) => {
+router.post('/complete-quest', getPlayer, async (req, res) => {
+  const playerId = req.player.id;
   const { questId } = req.body; // Verwende questId statt questName
 
   if (!questId) {
     return res.status(400).json({ message: 'Quest-ID wird benötigt.' });
   }
 
-  const questIndex = activeQuests.findIndex(q => q.id === questId); // Suche nach ID
+  const connection = await pool.getConnection();
 
-  if (questIndex === -1) {
-    return res.status(404).json({ message: 'Aktive Quest nicht gefunden.' });
-  }
+  try {
+    await connection.beginTransaction();
 
-  const quest = activeQuests[questIndex];
+    // Finde die aktive Quest
+    const [questRows] = await connection.query(
+      'SELECT * FROM active_quests WHERE player_id = ? AND quest_id = ?',
+      [playerId, questId]
+    );
 
-  if (quest.completed) {
-    return res.status(400).json({ message: 'Quest bereits abgeschlossen!' });
-  }
+    if (questRows.length === 0) {
+      await connection.rollback();
+      return res.status(404).json({ message: 'Aktive Quest nicht gefunden.' });
+    }
 
-  const missingItems = quest.requirements.filter(req => {
-    const inventoryItem = inventoryItems.find(item => item.name === req.name);
-    return !inventoryItem || inventoryItem.quantity < req.quantity;
-  });
+    const quest = questRows[0];
+    const requirements = JSON.parse(quest.requirements);
 
-  if (missingItems.length > 0) {
-    return res.status(400).json({
-      message: 'Nicht genügend Gegenstände, um die Quest abzuschließen.',
-      missingItems,
+    if (quest.completed) {
+      await connection.rollback();
+      return res.status(400).json({ message: 'Quest bereits abgeschlossen!' });
+    }
+
+    // Hole das Inventar des Spielers
+    const [inventory] = await connection.query(
+      `
+      SELECT items.name, inventory.quantity
+      FROM inventory
+      JOIN items ON inventory.item_id = items.id
+      WHERE inventory.player_id = ?
+      `,
+      [playerId]
+    );
+
+    // Überprüfe, ob der Spieler die Anforderungen erfüllt
+    const missingItems = requirements.filter(req => {
+      const inventoryItem = inventory.find(item => item.name === req.name);
+      return !inventoryItem || inventoryItem.quantity < req.quantity;
     });
-  }
 
-  // Gegenstände abziehen und aus dem Inventar entfernen, falls Menge 0 erreicht
-  quest.requirements.forEach(req => {
-    const inventoryItem = inventoryItems.find(item => item.name === req.name);
-    if (inventoryItem) {
-      inventoryItem.quantity -= req.quantity;
-      if (inventoryItem.quantity <= 0) {
-        const index = inventoryItems.indexOf(inventoryItem);
-        inventoryItems.splice(index, 1); // Item entfernen
+    if (missingItems.length > 0) {
+      await connection.rollback();
+      return res.status(400).json({
+        message: 'Nicht genügend Gegenstände, um die Quest abzuschließen.',
+        missingItems,
+      });
+    }
+
+    // Ziehe die benötigten Gegenstände ab
+    for (const req of requirements) {
+      const [itemRows] = await connection.query(
+        'SELECT id, quantity FROM items WHERE name = ? AND category = "misc"',
+        [req.name]
+      );
+
+      if (itemRows.length === 0) continue;
+
+      const item = itemRows[0];
+      const inventoryItem = inventory.find(inv => inv.name === req.name);
+
+      if (inventoryItem) {
+        if (inventoryItem.quantity > req.quantity) {
+          await connection.query(
+            'UPDATE inventory SET quantity = quantity - ? WHERE player_id = ? AND item_id = ?',
+            [req.quantity, playerId, item.id]
+          );
+        } else {
+          await connection.query(
+            'DELETE FROM inventory WHERE player_id = ? AND item_id = ?',
+            [playerId, item.id]
+          );
+        }
       }
     }
-  });
 
-  // **Optional:** Belohnung hinzufügen (z.B., "misc"-Item)
-  const rewardItem = { name: "Fasern", type: "Material", category: "misc", worth: 2, strength: 0, quantity: 2 };
-  const existingRewardItem = inventoryItems.find(item => item.name === rewardItem.name);
-  if (existingRewardItem) {
-    existingRewardItem.quantity += rewardItem.quantity;
-  } else {
-    inventoryItems.push(rewardItem);
-    console.log('Added reward item to inventory:', rewardItem);
-  }
-  questLog.push(`Belohnung erhalten: ${rewardItem.name} (${rewardItem.quantity} Stück).`);
+    // Füge die Belohnung hinzu (z.B., Münzen oder neue Items)
+    const rewardMoney = 10;
+    await updatePlayerStatus(playerId, {
+      money: req.player.money + rewardMoney
+    }, connection);
 
-  // Quest als abgeschlossen markieren
-  quest.completed = true;
+    // Logge den Quest-Abschluss
+    await addQuestLog(playerId, `Quest abgeschlossen: ${quest.name}. Belohnung erhalten! ${rewardMoney} Münzen`);
 
-  // Entferne die Quest aus den aktiven Quests
-  activeQuests.splice(questIndex, 1);
+    // Entferne die Quest aus den aktiven Quests
+    await removeActiveQuest(playerId, questId, connection);
 
-  // Erhöhe den Zähler für abgeschlossene Quests
-  completedQuestsCount += 1;
+    // Erhöhe den abgeschlossenen Quest-Zähler
+    await connection.query(
+      'UPDATE players SET completed_quests_count = completed_quests_count + 1 WHERE id = ?',
+      [playerId]
+    );
 
-  // Loggen des Quest-Abschlusses
-  questLog.push(`Quest abgeschlossen: ${quest.name}. Belohnung erhalten! 10 Münzen`);
+    // Überprüfe, ob ein Cooldown gestartet werden muss
+    const [updatedPlayerRows] = await connection.query('SELECT completed_quests_count FROM players WHERE id = ?', [playerId]);
+    const updatedPlayer = updatedPlayerRows[0];
 
-  // Belohnung hinzufügen (z.B. 10 Münzen)
-  playerMoney[0] += 10;
+    if (updatedPlayer.completed_quests_count >= 3) {
+      const cooldownEndTime = new Date(Date.now() + 5 * 60 * 1000); // 5 Minuten
+      await updatePlayerStatus(playerId, {
+        gather_cooldown_end_time: cooldownEndTime,
+        completed_quests_count: 0
+      }, connection);
 
-  // Überprüfe, ob der Cooldown gestartet werden muss
-  if (completedQuestsCount >= maxCompletedQuestsBeforeCooldown) {
-    lastCooldownStartTime = Date.now();
+      // Loggen des Cooldowns
+      await addQuestLog(playerId, `Cooldown gestartet: 5 Minuten. Du kannst jetzt keine neuen Quests annehmen.`);
+    }
 
-    // Loggen des Cooldowns
-    questLog.push({
-      type: 'Cooldown',
-      message: `Cooldown gestartet: 0 Minute(n) und 5 Sekunde(n) verbleibend.`,
-      remainingTime: {
-        minutes: 0,
-        seconds: 5,
+    await connection.commit();
+
+    res.json({
+      message: 'Quest abgeschlossen!',
+      playerStatus: {
+        money: req.player.money + rewardMoney,
+        hp: req.player.hp,
+        maxHp: req.player.max_hp,
       },
+      inventory: await getInventoryByPlayerId(playerId, connection),
+      questLog: await getQuestLogByPlayerId(playerId, connection),
+      activeQuests: await getActiveQuestsByPlayerId(playerId, connection),
     });
+  } catch (error) {
+    await connection.rollback();
+    console.error('Fehler beim Abschließen der Quest:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  } finally {
+    connection.release();
+  }
+});
 
-    // Starte den Cooldown-Timer
-    const cooldownInterval = setInterval(() => {
-      const now = Date.now();
-      const timeSinceCooldownStart = now - lastCooldownStartTime;
+// Route: Item hinzufügen (nur zu Testzwecken)
+router.post('/add-item', getPlayer, async (req, res) => {
+  const playerId = req.player.id;
+  const { itemName, type, category, worth, strength, quantity } = req.body;
 
-      if (timeSinceCooldownStart >= questCooldown) {
-        // Cooldown beendet, entferne den Cooldown-Eintrag
-        const index = questLog.findIndex(entry => entry.type === 'Cooldown');
-        if (index !== -1) {
-          questLog.splice(index, 1);
-        }
-        clearInterval(cooldownInterval);
-        completedQuestsCount = 0; // Setze den Zähler zurück
-      } else {
-        // Aktualisiere die verbleibende Zeit
-        const remainingTime = questCooldown - timeSinceCooldownStart;
-        const remainingSeconds = Math.floor(remainingTime / 1000);
-
-        // Aktualisiere die Nachricht im Cooldown-Eintrag
-        const cooldownEntry = questLog.find(entry => entry.type === 'Cooldown');
-        if (cooldownEntry) {
-          cooldownEntry.message = `Cooldown läuft: ${remainingSeconds} Sekunde(n) verbleibend.`;
-          cooldownEntry.remainingTime = {
-            minutes: 0,
-            seconds: remainingSeconds,
-          };
-        }
-      }
-    }, 1000); // Aktualisiere jede Sekunde
+  if (!itemName || !type || !category || worth === undefined || strength === undefined || quantity === undefined) {
+    return res.status(400).json({ message: 'Alle Felder sind erforderlich.' });
   }
 
-  res.json({
-    message: 'Quest abgeschlossen!',
-    playerStatus: {
-      money: playerMoney[0],
-      hp: PlayerHP[0],
-      maxHp: PlayerMaxHP[0],
-    },
-    inventoryItems,
-    questLog, // Aktualisiertes Quest-Log zurücksenden
-    activeQuests,
-  });
+  const connection = await pool.getConnection();
+
+  try {
+    await connection.beginTransaction();
+
+    let existingItem = await getItemByNameAndType(itemName, type, connection);
+
+    if (!existingItem) {
+      // Füge das Item zur Items-Tabelle hinzu
+      const newItemId = await addItem({
+        name: itemName,
+        type,
+        category,
+        worth,
+        strength,
+        quantity: 0 // Initialisieren bei 0, da es ins Inventar gelegt wird
+      }, connection);
+      existingItem = await getItemByNameAndType(itemName, type, connection);
+    }
+
+    // Füge das Item zum Inventar hinzu
+    await addItemToInventory(playerId, existingItem.id, quantity, connection);
+
+    // Loggen des Hinzufügens
+    await addQuestLog(playerId, `Hinzugefügt: ${itemName} (Kategorie: ${category}) für ${quantity} Stück.`);
+
+    await connection.commit();
+
+    res.json({
+      message: `${itemName} wurde dem Inventar hinzugefügt.`,
+      inventory: await getInventoryByPlayerId(playerId, connection),
+      questLog: await getQuestLogByPlayerId(playerId, connection),
+    });
+  } catch (error) {
+    await connection.rollback();
+    console.error('Fehler beim Hinzufügen des Items:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  } finally {
+    connection.release();
+  }
 });
 
 module.exports = router;

@@ -1,175 +1,204 @@
 // backend/Markt.js
+
 const express = require('express');
-const cors = require('cors');
 const router = express.Router();
-const { inventoryItems, PlayerHP, PlayerMaxHP, playerMoney } = require('./Inventar_Inhalt');
+const cors = require('cors');
 
-// Markt-Items
-const marketItems = [
-  { name: 'Kleiner Heiltrank', type: 'Trank', price: 15, worth:7, strength: 15, category: 'consumable', quantity: 10 },
-  { name: 'Mittlerer Heiltrank', type: 'Trank', price: 25, worth: 14, strength: 40, category: 'consumable', quantity: 10 },
-  { name: 'Großer Heiltrank', type: 'Trank', price: 40, worth: 20, strength: 80, category: 'consumable', quantity: 10 },
-  { name: 'Mega Heiltrank', type: 'Trank', price: 60, worth: 30, strength: 150, category: 'consumable', quantity: 10 },
-  { name: 'Mana-Trank', type: 'Trank', price: 75, worth: 37, strength: 190, category: 'consumable', quantity: 10 },
-  { name: 'Brot', type: 'Lebensmittel', price: 4, worth: 2, strength: 5, category: 'consumable', quantity: 10 },
-  { name: 'Apfel', type: 'Trank', price: 2, worth: 1, strength: 3, category: 'consumable', quantity: 10 },
-  { name: 'Ei', type: 'Trank', price: 4, worth: 2, strength: 3, category: 'consumable', quantity: 10 },
-  { name: 'Ziegenkäserad', type: 'Trank', price: 10, worth: 5, strength: 15, category: 'consumable', quantity: 10 },
-  { name: 'Harzer Roller', type: 'Trank', price: 4, worth: 2, strength: 3, category: 'consumable', quantity: 10 },
-  { name: 'Kürbiskuchen', type: 'Trank', price: 6, worth: 3, strength: 6, category: 'consumable', quantity: 10 },
-  { name: 'Nüsse', type: 'Trank', price: 4, worth:6, strength: 3, category: 'consumable', quantity: 10 },
-];
+// Importiere die Datenzugriffsmodelle
+const { getAllMarketItems, getMarketItemByName, decreaseMarketItemQuantity } = require('./models/marketModel');
+const { getPlayerById, updatePlayer } = require('./models/playerModel');
+const { getInventoryByPlayerId, addItemToInventory, removeItemFromInventory } = require('./models/inventoryModel');
+const { getItemByNameAndType, getItemWorth } = require('./models/itemModel');
+const { getQuestLogByPlayerId, addQuestLog } = require('./models/questLogModel');
 
-// Quest-Log
-let questLog = [];
+// Importiere die Middleware zur Spieleridentifikation
+const { getPlayer } = require('./middlewares/getPlayer');
 
-// Hilfsfunktion: Wert eines Items ermitteln (für den Verkauf)
-const getItemWorth = (itemName) => {
-  const item = marketItems.find(item => item.name === itemName);
-  return item ? item.price : 0; // Verkaufspreis ist der gleiche wie Kaufpreis
-};
+// Middleware zum Parsen von JSON
+router.use(express.json());
 
-// Aktiviere CORS für alle Routen
-router.use(cors());
+// CORS-Konfiguration (falls nicht bereits global konfiguriert)
+router.use(cors({
+  origin: 'http://localhost:3001' // Passe die erlaubten Ursprünge nach Bedarf an
+}));
 
 // Route: Alle Markt-Items abrufen
-router.get('/items', (req, res) => {
-  res.json(marketItems);
+router.get('/items', getPlayer, async (req, res) => {
+  try {
+    const marketItems = await getAllMarketItems();
+    res.json(marketItems);
+  } catch (error) {
+    console.error('Fehler beim Abrufen der Markt-Items:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  }
 });
 
 // Route: Spielerstatus abrufen
-router.get('/player-status', (req, res) => {
-  res.json({
-    money: playerMoney[0],
-    hp: PlayerHP[0],
-    maxHp: PlayerMaxHP[0],
-    sleepCost: 5, // Beispielwert, falls benötigt
-  });
+router.get('/player-status', getPlayer, async (req, res) => {
+  try {
+    const player = req.player;
+    res.json({
+      money: player.money,
+      hp: player.hp,
+      maxHp: player.max_hp,
+      sleepCost: 5, // Beispielwert, falls benötigt
+    });
+  } catch (error) {
+    console.error('Fehler beim Abrufen des Spielerstatus:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  }
 });
 
 // Route: Quest-Log abrufen
-router.get('/quest-log', (req, res) => {
-  res.json(questLog);
+router.get('/quest-log', getPlayer, async (req, res) => {
+  try {
+    const questLogs = await getQuestLogByPlayerId(req.player.id);
+    res.json(questLogs);
+  } catch (error) {
+    console.error('Fehler beim Abrufen des Quest-Logs:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  }
 });
 
 // Route: Inventar abrufen
-router.get('/inventory', (req, res) => {
-  res.json(inventoryItems);
+router.get('/inventory', getPlayer, async (req, res) => {
+  try {
+    const inventory = await getInventoryByPlayerId(req.player.id);
+    res.json(inventory);
+  } catch (error) {
+    console.error('Fehler beim Abrufen des Inventars:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
+  }
 });
 
 // Route: Item kaufen
-router.post('/buy', (req, res) => {
+router.post('/buy', getPlayer, async (req, res) => {
+  const playerId = req.player.id;
   const { itemName } = req.body;
-  const marketItem = marketItems.find(item => item.name === itemName);
 
-  if (marketItem && marketItem.quantity > 0) {
-    if (playerMoney[0] < marketItem.price) {
+  if (!itemName) {
+    return res.status(400).json({ message: 'Itemname ist erforderlich.' });
+  }
+
+  try {
+    const marketItem = await getMarketItemByName(itemName);
+
+    if (!marketItem || marketItem.quantity < 1) {
+      return res.status(400).json({ message: 'Item nicht verfügbar.' });
+    }
+
+    if (req.player.money < marketItem.price) {
       return res.status(400).json({ message: 'Nicht genug Geld, um das Item zu kaufen.' });
     }
 
     // Prüfen, ob das Item bereits im Inventar existiert
-    const existingItem = inventoryItems.find(item => item.name === itemName);
+    let existingItem = await getItemByNameAndType(itemName, marketItem.type);
 
     if (existingItem) {
-      // Erhöhe die Menge des bestehenden Items
-      existingItem.quantity += 1;
+      await addItemToInventory(playerId, existingItem.id, 1);
     } else {
-      // Füge das neue Item mit Menge 1 hinzu
-      inventoryItems.push({ ...marketItem, quantity: 1 });
+      // Falls das Item noch nicht in der Items-Tabelle existiert, füge es hinzu
+      const newItemId = await addItem({
+        name: marketItem.name,
+        type: marketItem.type,
+        strength: marketItem.strength,
+        worth: marketItem.worth,
+        category: marketItem.category,
+        quantity: 1
+      });
+      await addItemToInventory(playerId, newItemId, 1);
     }
 
     // Reduziere die Menge im Markt
-    marketItem.quantity -= 1;
+    await decreaseMarketItemQuantity(marketItem.id, 1);
 
-    // Spielerstatus aktualisieren (z.B. Münzen abziehen)
-    playerMoney[0] -= marketItem.price;
+    // Aktualisiere den Spielerstatus (Münzen abziehen)
+    await updatePlayer({
+      id: playerId,
+      money: req.player.money - marketItem.price
+    });
 
     // Loggen des Kaufes
-    questLog.push(`Gekauft: ${marketItem.name} für ${marketItem.price} Münzen.`);
+    await addQuestLog(playerId, `Gekauft: ${marketItem.name} für ${marketItem.price} Münzen.`);
 
     res.json({
       message: `${marketItem.name} wurde gekauft.`,
       playerStatus: {
-        money: playerMoney[0],
-        hp: PlayerHP[0],
-        maxHp: PlayerMaxHP[0],
+        money: req.player.money - marketItem.price,
+        hp: req.player.hp,
+        maxHp: req.player.max_hp,
       },
-      marketItems, // Aktualisierte Markt-Items zurücksenden, falls nötig
-      inventoryItems,
-      questLog, // Aktualisiertes Quest-Log zurücksenden
+      marketItems: await getAllMarketItems(),
+      inventory: await getInventoryByPlayerId(playerId),
+      questLog: await getQuestLogByPlayerId(playerId),
     });
-  } else {
-    res.status(400).json({ message: 'Item nicht verfügbar.' });
+  } catch (error) {
+    console.error('Fehler beim Kaufen des Items:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
   }
 });
 
 // Route: Item verkaufen für Consumables
-router.post('/sell', (req, res) => {
+router.post('/sell', getPlayer, async (req, res) => {
+  const playerId = req.player.id;
   const { itemName, strength, worth } = req.body;
+
   console.log(`Received sell request for item: ${itemName}, Stärke: ${strength}, Wert: ${worth}`);
 
   if (!itemName || strength === undefined || worth === undefined) {
     return res.status(400).json({ message: 'Itemname, Stärke und Wert sind erforderlich.' });
   }
 
-  // Logge das aktuelle Inventar
-  console.log('Aktuelles Inventar:', inventoryItems);
+  try {
+    // Finde das Item im Inventar basierend auf Name, Stärke und Wert sowie Kategorie 'consumable'
+    const inventoryItem = (await getInventoryByPlayerId(playerId)).find(item =>
+      item.name === itemName &&
+      item.category === 'consumable' &&
+      item.strength === strength &&
+      item.worth === worth
+    );
 
-  // Finde das Item im Inventar basierend auf Name, Stärke und Wert sowie Kategorie 'consumable'
-  const inventoryItem = inventoryItems.find(item => 
-    item.name === itemName && 
-    item.category === 'consumable' && 
-    item.strength === strength && 
-    item.worth === worth
-  );
-
-  if (inventoryItem) {
-    console.log(`Gefundenes Item: ${JSON.stringify(inventoryItem)}`);
-
-    if (inventoryItem.quantity > 0) {
-      // Überprüfe die Kategorie direkt aus dem inventoryItem
-      const isConsumable = inventoryItem.category === 'consumable';
-
-      if (!isConsumable) {
-        return res.status(400).json({ message: 'Dieses Item kann nicht verkauft werden.' });
-      }
-
-      // Verwende den Wert direkt aus dem inventoryItem
-      const itemWorth = getItemWorth(inventoryItem.name);
-
-      if (itemWorth === 0) {
-        return res.status(400).json({ message: 'Wert des Items konnte nicht ermittelt werden.' });
-      }
-
-      // Reduziere die Menge des Items
-      inventoryItem.quantity -= 1;
-      if (inventoryItem.quantity === 0) {
-        const index = inventoryItems.indexOf(inventoryItem);
-        inventoryItems.splice(index, 1); // Item entfernen
-      }
-
-      // Erhöhe das Spieler-Geld
-      playerMoney[0] += itemWorth;
-
-      // Loggen des Verkaufs
-      questLog.push(`Verkauft: ${itemName} für ${itemWorth} Münzen.`);
-
-      res.json({
-        message: `${itemName} wurde verkauft für ${itemWorth} Münzen.`,
-        playerStatus: {
-          money: playerMoney[0],
-          hp: PlayerHP[0],
-          maxHp: PlayerMaxHP[0],
-        },
-        inventoryItems,
-        questLog, // Aktualisiertes Quest-Log zurücksenden
-      });
-    } else {
-      res.status(400).json({ message: 'Nicht genügend Items zum Verkaufen.' });
+    if (!inventoryItem) {
+      console.log(`Item nicht gefunden: Name=${itemName}, Stärke=${strength}, Wert=${worth}`);
+      return res.status(404).json({ message: 'Item nicht im Inventar gefunden.' });
     }
-  } else {
-    console.log(`Item nicht gefunden: Name=${itemName}, Stärke=${strength}, Wert=${worth}`);
-    res.status(404).json({ message: 'Item nicht im Inventar gefunden.' });
+
+    if (inventoryItem.quantity <= 0) {
+      return res.status(400).json({ message: 'Nicht genügend Items zum Verkaufen.' });
+    }
+
+    // Verkaufspreis ist der gleiche wie Kaufpreis
+    const itemWorth = await getItemWorth(itemName);
+
+    if (itemWorth === 0) {
+      return res.status(400).json({ message: 'Wert des Items konnte nicht ermittelt werden.' });
+    }
+
+    // Reduziere die Menge des Items
+    await removeItemFromInventory(playerId, inventoryItem.id, 1);
+
+    // Erhöhe das Spieler-Geld
+    await updatePlayer({
+      id: playerId,
+      money: req.player.money + itemWorth
+    });
+
+    // Loggen des Verkaufs
+    await addQuestLog(playerId, `Verkauft: ${itemName} für ${itemWorth} Münzen.`);
+
+    res.json({
+      message: `${itemName} wurde verkauft für ${itemWorth} Münzen.`,
+      playerStatus: {
+        money: req.player.money + itemWorth,
+        hp: req.player.hp,
+        maxHp: req.player.max_hp,
+      },
+      inventory: await getInventoryByPlayerId(playerId),
+      questLog: await getQuestLogByPlayerId(playerId),
+    });
+  } catch (error) {
+    console.error('Fehler beim Verkaufen des Items:', error);
+    res.status(500).json({ error: 'Datenbankfehler' });
   }
 });
 
