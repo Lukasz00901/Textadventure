@@ -257,7 +257,7 @@ router.post('/buy', (req, res) => {
     inventoryItems.push({ name, type, worth, strength, category, quantity: 1 });
   }
 
-  questLog.push(`Gekauft: ${smithyItem.name} für ${smithyItem.price} Gold.`);
+  questLog.push(`Gekauft: ${smithyItem.name} für ${smithyItem.price} Münzen.`);
 
   res.json({
     message: `${smithyItem.name} wurde gekauft.`,
@@ -321,10 +321,10 @@ router.post('/sell', (req, res) => {
       playerMoney[0] += itemWorth;
 
       // Loggen des Verkaufs
-      questLog.push(`Verkauft: ${itemName} für ${itemWorth} Gold.`);
+      questLog.push(`Verkauft: ${itemName} für ${itemWorth} Münzen.`);
 
       res.json({
-        message: `${itemName} wurde verkauft für ${itemWorth} Gold.`,
+        message: `${itemName} wurde verkauft für ${itemWorth} Münzen.`,
         playerStatus: {
           money: playerMoney[0],
           hp: PlayerHP[0],
@@ -426,7 +426,7 @@ router.post('/complete-quest', (req, res) => {
     }
   });
 
-  // **Belohnung hinzufügen (z.B., "equipment"-Item oder Gold)**
+  // **Belohnung hinzufügen (z.B., "equipment"-Item oder Münzen)**
   const rewardItem = { name: "Fasern", type: "Material", category: "misc", worth: 2, strength: 0, quantity: 2 };
   const existingRewardItem = inventoryItems.find(item => item.name === rewardItem.name);
   if (existingRewardItem) {
@@ -447,9 +447,9 @@ router.post('/complete-quest', (req, res) => {
   completedQuestsCount += 1;
 
   // Loggen des Quest-Abschlusses
-  questLog.push(`Quest abgeschlossen: ${quest.name}. Belohnung erhalten! 10 Gold`);
+  questLog.push(`Quest abgeschlossen: ${quest.name}. Belohnung erhalten! 10 Münzen`);
 
-  // Belohnung hinzufügen (z.B. 10 Gold)
+  // Belohnung hinzufügen (z.B. 10 Münzen)
   playerMoney[0] += 10;
 
   // Überprüfe, ob der Cooldown gestartet werden muss

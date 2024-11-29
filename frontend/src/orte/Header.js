@@ -1,3 +1,4 @@
+// frontend/Header.js
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Header.css';
@@ -17,12 +18,11 @@ const Header = () => {
   }, [playerName]);
 
   const toggleDropdown = () => {
-    setIsDropdownOpen(prev => !prev);
-  };
-
-  const handleNavigateStart = () => {
-    navigate('/');
-    setIsDropdownOpen(false);
+    if (isNameValid) {
+      setIsDropdownOpen(prev => !prev);
+    } else {
+      navigate('/');
+    }
   };
 
   const handleLogout = () => {
@@ -51,19 +51,27 @@ const Header = () => {
 
   return (
     <nav className="Header">
-      {/* Titel mit Spielernamen */}
+      {/* Titel mit "Schwarzbach" */}
       <div className="header-title">
-        Schwarzbach{' '}
+        <span className="app-name" onClick={toggleDropdown}>
+          Schwarzbach
+        </span>
         {playerName && (
-          <span className="player-name" onClick={toggleDropdown}>
+          <span className="player-name">
             - {playerName}
           </span>
         )}
         {isDropdownOpen && (
           <div className="dropdown" ref={dropdownRef}>
-            <button onClick={handleLogout} className="dropdown-item">
-              Abmelden
-            </button>
+            {isNameValid ? (
+              <button onClick={handleLogout} className="dropdown-item">
+                Abmelden
+              </button>
+            ) : (
+              <button onClick={() => navigate('/')} className="dropdown-item">
+                Anmelden/Registrieren
+              </button>
+            )}
           </div>
         )}
       </div>

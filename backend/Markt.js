@@ -81,11 +81,11 @@ router.post('/buy', (req, res) => {
     // Reduziere die Menge im Markt
     marketItem.quantity -= 1;
 
-    // Spielerstatus aktualisieren (z.B. Gold abziehen)
+    // Spielerstatus aktualisieren (z.B. Münzen abziehen)
     playerMoney[0] -= marketItem.price;
 
     // Loggen des Kaufes
-    questLog.push(`Gekauft: ${marketItem.name} für ${marketItem.price} Gold.`);
+    questLog.push(`Gekauft: ${marketItem.name} für ${marketItem.price} Münzen.`);
 
     res.json({
       message: `${marketItem.name} wurde gekauft.`,
@@ -152,10 +152,10 @@ router.post('/sell', (req, res) => {
       playerMoney[0] += itemWorth;
 
       // Loggen des Verkaufs
-      questLog.push(`Verkauft: ${itemName} für ${itemWorth} Gold.`);
+      questLog.push(`Verkauft: ${itemName} für ${itemWorth} Münzen.`);
 
       res.json({
-        message: `${itemName} wurde verkauft für ${itemWorth} Gold.`,
+        message: `${itemName} wurde verkauft für ${itemWorth} Münzen.`,
         playerStatus: {
           money: playerMoney[0],
           hp: PlayerHP[0],

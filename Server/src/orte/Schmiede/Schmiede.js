@@ -48,7 +48,7 @@ function Schmiede() {
 
   const fetchPlayerStatus = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/smithy/player-status');
+      const response = await axios.get('http://87.106.217.227:3000/smithy/player-status');
       setPlayerStatus(response.data);
     } catch (error) {
       console.error('Error fetching player status:', error);
@@ -58,7 +58,7 @@ function Schmiede() {
 
   const fetchSmithyItems = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/smithy/items');
+      const response = await axios.get('http://87.106.217.227:3000/smithy/items');
       setSmithyItems(response.data);
     } catch (error) {
       console.error('Error fetching smithy items:', error);
@@ -68,7 +68,7 @@ function Schmiede() {
 
   const fetchQuests = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/smithy/quests');
+      const response = await axios.get('http://87.106.217.227:3000/smithy/quests');
       setActiveQuests(response.data);
     } catch (error) {
       console.error('Error fetching quests:', error);
@@ -78,7 +78,7 @@ function Schmiede() {
 
   const fetchQuestLog = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/smithy/quest-log');
+      const response = await axios.get('http://87.106.217.227:3000/smithy/quest-log');
       setQuestLog(response.data);
     } catch (error) {
       console.error('Error fetching quest log:', error);
@@ -88,7 +88,7 @@ function Schmiede() {
 
   const fetchInventoryItems = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/smithy/inventory');
+      const response = await axios.get('http://87.106.217.227:3000/smithy/inventory');
       setInventoryItems(response.data);
     } catch (error) {
       console.error('Error fetching inventory items:', error);
@@ -98,7 +98,7 @@ function Schmiede() {
 
   const buyItem = async (itemName) => {
     try {
-      const response = await axios.post('http://localhost:3000/smithy/buy', { itemName });
+      const response = await axios.post('http://87.106.217.227:3000/smithy/buy', { itemName });
       setSmithyItems(response.data.smithyItems);
       setPlayerStatus(response.data.playerStatus);
       setInventoryItems(response.data.inventoryItems);
@@ -112,7 +112,7 @@ function Schmiede() {
 
   const sellItem = async (item) => {
     try {
-      const response = await axios.post('http://localhost:3000/smithy/sell', { 
+      const response = await axios.post('http://87.106.217.227:3000/smithy/sell', { 
         itemName: item.name,
         strength: item.strength,
         worth: item.worth
@@ -155,7 +155,7 @@ function Schmiede() {
 
   const completeQuest = async (questId) => {
     try {
-      const response = await axios.post('http://localhost:3000/smithy/complete-quest', { questId });
+      const response = await axios.post('http://87.106.217.227:3000/smithy/complete-quest', { questId });
       setInventoryItems(response.data.inventoryItems);
       setActiveQuests(response.data.activeQuests);
       setQuestLog(response.data.questLog);
@@ -174,7 +174,7 @@ function Schmiede() {
 
   const acceptQuest = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/smithy/accept-quest');
+      const response = await axios.post('http://87.106.217.227:3000/smithy/accept-quest');
       setActiveQuests(response.data.activeQuests);
       setQuestLog(response.data.questLog);
       setErrorMessage('');
@@ -188,7 +188,7 @@ function Schmiede() {
 
   const handleSleep = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/smithy/sleep');
+      const response = await axios.post('http://87.106.217.227:3000/smithy/sleep');
       setPlayerStatus(response.data.playerStatus);
       setInfoMessage(response.data.message);
       setErrorMessage('');

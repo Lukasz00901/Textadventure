@@ -266,7 +266,7 @@ function Schmiede() {
                         key={`${item.name}-${item.strength}-${item.worth}-${index}`} 
                         value={JSON.stringify({ name: item.name, strength: item.strength, worth: item.worth })}
                       >
-                        {item.name} ({item.type === 'armor' ? `Stärke: ${item.strength}` : `Stärke: ${item.strength}`}, Wert: {item.worth} Gold) (Anzahl: {item.quantity})
+                        {item.name} ({item.type === 'armor' ? `Stärke: ${item.strength}` : `Stärke: ${item.strength}`}, Wert: {item.worth} Münzen) (Anzahl: {item.quantity})
                       </option>
                     ))}
                   </select>
@@ -289,7 +289,7 @@ function Schmiede() {
 
       <div className="player-status">
         <h3>Spielerstatus</h3>
-        <p>Gold: {playerStatus.money} 💰</p>
+        <p>Münzen: {playerStatus.money} 💰</p>
         <p>HP: {playerStatus.hp}/{playerStatus.maxHp} ❤️</p>
       </div>
 
@@ -302,7 +302,7 @@ function Schmiede() {
                 <div className="item-text">
                   <span className="item-name">{item.name}</span>
                   <span className="item-description">{item.type}</span>
-                  <span className="item-price">{item.price} Gold</span>
+                  <span className="item-price">{item.price} Münzen</span>
                   <span className="item-quantity">Verfügbar: {item.quantity}</span>
                 </div>
                 <button

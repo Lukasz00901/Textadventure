@@ -47,7 +47,7 @@ function Taverne() {
 
   const fetchPlayerStatus = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/tavern/player-status');
+      const response = await axios.get('http://87.106.217.227:3000/tavern/player-status');
       setPlayerStatus(response.data);
     } catch (error) {
       console.error('Error fetching player status:', error);
@@ -57,7 +57,7 @@ function Taverne() {
 
   const fetchTavernItems = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/tavern/items');
+      const response = await axios.get('http://87.106.217.227:3000/tavern/items');
       setTavernItems(response.data);
     } catch (error) {
       console.error('Error fetching tavern items:', error);
@@ -67,7 +67,7 @@ function Taverne() {
 
   const fetchQuests = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/tavern/quests');
+      const response = await axios.get('http://87.106.217.227:3000/tavern/quests');
       setActiveQuests(response.data);
     } catch (error) {
       console.error('Error fetching quests:', error);
@@ -77,7 +77,7 @@ function Taverne() {
 
   const fetchQuestLog = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/tavern/quest-log');
+      const response = await axios.get('http://87.106.217.227:3000/tavern/quest-log');
       setQuestLog(response.data);
     } catch (error) {
       console.error('Error fetching quest log:', error);
@@ -87,7 +87,7 @@ function Taverne() {
 
   const fetchInventoryItems = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/tavern/inventory');
+      const response = await axios.get('http://87.106.217.227:3000/tavern/inventory');
       setInventoryItems(response.data);
     } catch (error) {
       console.error('Error fetching inventory items:', error);
@@ -97,7 +97,7 @@ function Taverne() {
 
   const buyItem = async (itemName) => {
     try {
-      const response = await axios.post('http://localhost:3000/tavern/buy', { itemName });
+      const response = await axios.post('http://87.106.217.227:3000/tavern/buy', { itemName });
       setTavernItems(response.data.tavernItems);
       setPlayerStatus(response.data.playerStatus);
       setInventoryItems(response.data.inventoryItems);
@@ -111,7 +111,7 @@ function Taverne() {
 
   const sellItem = async (itemName) => {
     try {
-      const response = await axios.post('http://localhost:3000/tavern/sell', { itemName });
+      const response = await axios.post('http://87.106.217.227:3000/tavern/sell', { itemName });
       setPlayerStatus(response.data.playerStatus);
       setInventoryItems(response.data.inventoryItems);
       setInfoMessage(response.data.message);
@@ -125,7 +125,7 @@ function Taverne() {
   // Funktion: Quest abschließen
   const completeQuest = async (questId) => {
     try {
-      const response = await axios.post('http://localhost:3000/tavern/complete-quest', { questId });
+      const response = await axios.post('http://87.106.217.227:3000/tavern/complete-quest', { questId });
       setInventoryItems(response.data.inventoryItems);
       setActiveQuests(response.data.activeQuests);
       setQuestLog(response.data.questLog);
@@ -145,7 +145,7 @@ function Taverne() {
   // Funktion: Quest annehmen
   const acceptQuest = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/tavern/accept-quest');
+      const response = await axios.post('http://87.106.217.227:3000/tavern/accept-quest');
       setActiveQuests(response.data.activeQuests);
       setQuestLog(response.data.questLog);
       setInfoMessage('Neue Quest angenommen.');
@@ -160,7 +160,7 @@ function Taverne() {
   // Funktion: Schlafen
   const handleSleep = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/tavern/sleep');
+      const response = await axios.post('http://87.106.217.227:3000/tavern/sleep');
       setPlayerStatus(response.data.playerStatus);
       setInfoMessage(response.data.message);
       setErrorMessage('');

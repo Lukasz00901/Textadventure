@@ -351,7 +351,7 @@ const handleFight = (res) => {
       levelUpMessage += `\nHerzlichen Glückwunsch! Du hast Level ${gameState.playerLevel} erreicht! Deine maximale HP wurde auf ${gameState.playerMaxHP} erhöht.`;
     }
 
-    let responseMessage = `Du hast gegen ${enemyName} gekämpft und gewonnen! Du erhältst ${moneyEarned} Gold und ${epEarned} EP.`;
+    let responseMessage = `Du hast gegen ${enemyName} gekämpft und gewonnen! Du erhältst ${moneyEarned} Münzen und ${epEarned} EP.`;
 
     if (levelUpMessage) {
       responseMessage += levelUpMessage;
@@ -369,7 +369,7 @@ const handleFight = (res) => {
     PlayerHP[0] = gameState.playerHP;
     playerMoney[0] = gameState.playerMoney;
     res.json({ 
-      message: `Du wurdest von ${enemyName} besiegt! Du verlierst ${moneyLost} Gold und deine HP werden zurückgesetzt.` 
+      message: `Du wurdest von ${enemyName} besiegt! Du verlierst ${moneyLost} Münzen und deine HP werden zurückgesetzt.` 
     });
   }
 };
@@ -465,7 +465,7 @@ const handleTrap = (res) => {
     gameState.playerHP = gameState.playerMaxHP;
     PlayerHP[0] = gameState.playerHP;
     playerMoney[0] = gameState.playerMoney;
-    res.json({ message: `Du hast eine tödliche Falle ausgelöst! Du verlierst ${moneyLost} Gold und deine HP werden zurückgesetzt.` });
+    res.json({ message: `Du hast eine tödliche Falle ausgelöst! Du verlierst ${moneyLost} Münzen und deine HP werden zurückgesetzt.` });
   }
 };
 
@@ -694,7 +694,7 @@ router.post('/buy', (req, res) => {
   }
 
   // Loggen des Kaufes
-  questLog.push(`Gekauft: ${tavernItem.name} für ${tavernItem.price} Gold.`);
+  questLog.push(`Gekauft: ${tavernItem.name} für ${tavernItem.price} Münzen.`);
 
   res.json({
     message: `${tavernItem.name} wurde gekauft.`,
@@ -763,10 +763,10 @@ router.post('/sell', (req, res) => {
       playerMoney[0] += itemWorth; // Spieler-Geld erhöhen
 
       // Loggen des Verkaufs
-      questLog.push(`Verkauft: ${itemName} für ${itemWorth} Gold.`);
+      questLog.push(`Verkauft: ${itemName} für ${itemWorth} Münzen.`);
 
       res.json({
-        message: `${itemName} wurde verkauft für ${itemWorth} Gold.`,
+        message: `${itemName} wurde verkauft für ${itemWorth} Münzen.`,
         playerStatus: {
           money: playerMoney[0],
           hp: PlayerHP[0],
@@ -887,9 +887,9 @@ router.post('/complete-quest', (req, res) => {
   completedQuestsCount += 1;
 
   // Loggen des Quest-Abschlusses
-  questLog.push(`Quest abgeschlossen: ${quest.name}. Belohnung erhalten! 10 Gold`);
+  questLog.push(`Quest abgeschlossen: ${quest.name}. Belohnung erhalten! 10 Münzen`);
 
-  // Belohnung hinzufügen (z.B. 10 Gold)
+  // Belohnung hinzufügen (z.B. 10 Münzen)
   playerMoney[0] += 10;
   gameState.playerMoney = playerMoney[0]; // Synchronisierung
 

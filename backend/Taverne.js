@@ -227,7 +227,7 @@ router.post('/buy', (req, res) => {
   }
 
   // Loggen des Kaufes
-  questLog.push(`Gekauft: ${tavernItem.name} für ${tavernItem.price} Gold.`);
+  questLog.push(`Gekauft: ${tavernItem.name} für ${tavernItem.price} Münzen.`);
 
   res.json({
     message: `${tavernItem.name} wurde gekauft.`,
@@ -278,10 +278,10 @@ router.post('/sell', (req, res) => {
       playerMoney[0] += itemWorth; // Spieler-Geld erhöhen
 
       // Loggen des Verkaufs
-      questLog.push(`Verkauft: ${itemName} für ${itemWorth} Gold.`);
+      questLog.push(`Verkauft: ${itemName} für ${itemWorth} Münzen.`);
 
       res.json({
-        message: `${itemName} wurde verkauft für ${itemWorth} Gold.`,
+        message: `${itemName} wurde verkauft für ${itemWorth} Münzen.`,
         playerStatus: {
           money: playerMoney[0],
           hp: PlayerHP[0],
@@ -402,9 +402,9 @@ router.post('/complete-quest', (req, res) => {
   completedQuestsCount += 1;
 
   // Loggen des Quest-Abschlusses
-  questLog.push(`Quest abgeschlossen: ${quest.name}. Belohnung erhalten! 10 Gold`);
+  questLog.push(`Quest abgeschlossen: ${quest.name}. Belohnung erhalten! 10 Münzen`);
 
-  // Belohnung hinzufügen (z.B. 10 Gold)
+  // Belohnung hinzufügen (z.B. 10 Münzen)
   playerMoney[0] += 10;
 
   // Überprüfe, ob der Cooldown gestartet werden muss

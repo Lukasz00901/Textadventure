@@ -18,7 +18,7 @@ function Markt() {
 
   const fetchMarketItems = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/market/items');
+      const response = await axios.get('http://87.106.217.227:3000/market/items');
       setMarketItems(response.data);
     } catch (error) {
       console.error('Error fetching market items:', error);
@@ -28,7 +28,7 @@ function Markt() {
 
   const fetchPlayerStatus = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/market/player-status');
+      const response = await axios.get('http://87.106.217.227:3000/market/player-status');
       setPlayerStatus(response.data);
     } catch (error) {
       console.error('Error fetching player status:', error);
@@ -38,7 +38,7 @@ function Markt() {
 
   const fetchQuestLog = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/market/quest-log');
+      const response = await axios.get('http://87.106.217.227:3000/market/quest-log');
       setQuestLog(response.data);
     } catch (error) {
       console.error('Error fetching quest log:', error);
@@ -48,7 +48,7 @@ function Markt() {
 
   const fetchInventoryItems = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/market/inventory');
+      const response = await axios.get('http://87.106.217.227:3000/market/inventory');
       setInventoryItems(response.data);
     } catch (error) {
       console.error('Error fetching inventory items:', error);
@@ -78,7 +78,7 @@ function Markt() {
 
   const buyItem = async (itemName) => {
     try {
-      const response = await axios.post('http://localhost:3000/market/buy', { itemName });
+      const response = await axios.post('http://87.106.217.227:3000/market/buy', { itemName });
 
       const updatedItems = marketItems.map((item) =>
         item.name === itemName ? { ...item, quantity: item.quantity - 1 } : item
@@ -114,7 +114,7 @@ function Markt() {
 
   const sellItem = async (itemName, strength, worth) => {
     try {
-      const response = await axios.post('http://localhost:3000/market/sell', { itemName, strength, worth });
+      const response = await axios.post('http://87.106.217.227:3000/market/sell', { itemName, strength, worth });
 
       setInventoryItems((prevInventory) =>
         prevInventory
