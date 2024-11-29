@@ -186,18 +186,7 @@ function Schmiede() {
     }
   };
 
-  const handleSleep = async () => {
-    try {
-      const response = await axios.post('http://localhost:3000/smithy/sleep');
-      setPlayerStatus(response.data.playerStatus);
-      setInfoMessage(response.data.message);
-      setErrorMessage('');
-      setQuestLog(response.data.questLog);
-    } catch (error) {
-      console.error('Error sleeping:', error);
-      setErrorMessage(error.response?.data?.message || 'Fehler beim Schlafen.');
-    }
-  };
+
 
   const handleTalkToKeeper = () => {
     setTalkingToKeeper(!talkingToKeeper);
@@ -237,9 +226,7 @@ function Schmiede() {
       {/* Bedingte Anzeige der Buttons */}
       {talkingToKeeper && (
         <div className="keeper-buttons">
-          <button className="sleep-button" onClick={handleSleep}>
-            Schlafen
-          </button>
+          
           <button
             className="accept-quest-button"
             onClick={acceptQuest}

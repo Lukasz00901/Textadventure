@@ -1,3 +1,5 @@
+// src/components/Tutorial.js
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Tutorial.css';
@@ -23,7 +25,7 @@ const Tutorial = () => {
     if (currentStep < tutorialSteps.length - 1) {
       setCurrentStep(prev => prev + 1);
     } else {
-      navigate('/inventar'); // Navigiere nach dem Tutorial zur Inventarseite oder einer anderen Hauptseite
+      navigate('/map'); // Navigiere nach dem Tutorial zur Map-Seite
     }
   };
 
