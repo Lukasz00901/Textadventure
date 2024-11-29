@@ -11,7 +11,7 @@ const Wald = () => {
 
   const gatherWood = async () => {
     try {
-      const response = await fetch('http://localhost:3000/wald/gather', {
+      const response = await fetch('http://87.106.217.227:3000/wald/gather', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

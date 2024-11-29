@@ -110,9 +110,13 @@ function Schmiede() {
     }
   };
 
-  const sellItem = async (itemName) => {
+  const sellItem = async (item) => {
     try {
-      const response = await axios.post('http://localhost:3000/smithy/sell', { itemName });
+      const response = await axios.post('http://localhost:3000/smithy/sell', { 
+        itemName: item.name,
+        strength: item.strength,
+        worth: item.worth
+      });
       setPlayerStatus(response.data.playerStatus);
       setInventoryItems(response.data.inventoryItems);
       setInfoMessage(response.data.message);
@@ -137,9 +141,15 @@ function Schmiede() {
   // Funktion zur Bestätigung des Verkaufs
   const confirmSell = async () => {
     if (selectedSellItem) {
-      await sellItem(selectedSellItem);
-      setSelectedSellItem('');
-      setShowSellSection(false);
+      try {
+        const itemData = JSON.parse(selectedSellItem);
+        await sellItem(itemData);
+        setSelectedSellItem('');
+        setShowSellSection(false);
+      } catch (error) {
+        console.error('Error parsing selectedSellItem:', error);
+        setErrorMessage('Fehler beim Parsen des ausgewählten Items.');
+      }
     }
   };
 
@@ -209,8 +219,8 @@ function Schmiede() {
 
   const isCooldownActive = questLog.some(entry => entry.type === 'Cooldown');
 
-  // Filtern der "misc"-Items im Inventar
-  const miscInventoryItems = inventoryItems.filter(item => item.category === 'misc');
+  // Filtern der "equipment"-Items im Inventar
+  const equipmentInventoryItems = inventoryItems.filter(item => item.category === 'equipment');
 
   return (
     <div className="Schmiede">
@@ -247,13 +257,16 @@ function Schmiede() {
           {/* Verkaufsbereich */}
           {showSellSection && (
             <div className="sell-section">
-              {miscInventoryItems.length > 0 ? (
+              {equipmentInventoryItems.length > 0 ? (
                 <>
                   <select value={selectedSellItem} onChange={handleSellSelection}>
                     <option value="">-- Wähle ein Item zum Verkaufen --</option>
-                    {miscInventoryItems.map((item) => (
-                      <option key={item.name} value={item.name}>
-                        {item.name} (Anzahl: {item.quantity}, Wert: {item.worth} Gold)
+                    {equipmentInventoryItems.map((item, index) => (
+                      <option 
+                        key={`${item.name}-${item.strength}-${item.worth}-${index}`} 
+                        value={JSON.stringify({ name: item.name, strength: item.strength, worth: item.worth })}
+                      >
+                        {item.name} ({item.type === 'armor' ? `Stärke: ${item.strength}` : `Stärke: ${item.strength}`}, Wert: {item.worth} Gold) (Anzahl: {item.quantity})
                       </option>
                     ))}
                   </select>
@@ -267,7 +280,7 @@ function Schmiede() {
                   </div>
                 </>
               ) : (
-                <p>Keine "misc"-Items zum Verkaufen vorhanden.</p>
+                <p>Keine "equipment"-Items zum Verkaufen vorhanden.</p>
               )}
             </div>
           )}
@@ -285,7 +298,7 @@ function Schmiede() {
           <h2>Items</h2>
           <ul>
             {smithyItems.map((item, index) => (
-              <li key={item.name}>
+              <li key={`${item.name}-${item.strength}-${item.worth}-${index}`}>
                 <div className="item-text">
                   <span className="item-name">{item.name}</span>
                   <span className="item-description">{item.type}</span>

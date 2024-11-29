@@ -21,7 +21,7 @@ const Inventory = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`http://localhost:3000/inventory/${endpoint}`);
+      const response = await fetch(`http://87.106.217.227:3000/inventory/${endpoint}`);
       console.log('Antwort Status:', response.status);
       if (!response.ok) {
         throw new Error('Netzwerkantwort war nicht ok');
@@ -42,7 +42,7 @@ const Inventory = () => {
     console.log(`Lösche ${quantity} von Item:`, itemName);
 
     try {
-      const response = await fetch(`http://localhost:3000/inventory/item/${encodeURIComponent(itemName)}`, {
+      const response = await fetch(`http://87.106.217.227:3000/inventory/item/${encodeURIComponent(itemName)}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

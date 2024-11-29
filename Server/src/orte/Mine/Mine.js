@@ -11,7 +11,7 @@ const Mine = () => {
 
   const mineOre = async () => {
     try {
-      const response = await fetch('http://localhost:3000/mine/mine', {
+      const response = await fetch('http://87.106.217.227:3000/mine/mine', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

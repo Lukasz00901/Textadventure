@@ -3,14 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import './Tutorial.css';
 
 const tutorialSteps = [
-  "Willkommen beim Tutorial! Hier lernst du die Grundlagen des Spiels.",
+  "Willkommen in Schwarzbach! Du befindest dich hier im Tutorial! Hier lernst du die Grundlagen des Spiels, die du brauchst um zu überleben. Ich werde dich über alles wichtige was du wissen musst aufklären. Lass uns beginnen",
   "1. Klicke auf die Buttons oben in der Leiste, um an verschiedene Orte im Dorf reisen zu können.",
   "2. In der Mine kannst du Materialien sammeln.",
   "3. Im Markt kannst du Gegenstände kaufen.",
-  "4. Die Schmiede und Taverne erlauben dir, Quests anzunehmen und abzuschließen.",
-  "5. Achte auf deine HP im Dungeon!",
-  "6. Abenteuer erwarten dich! Der Dungeon ist gefährlich, aber voller Belohnungen.",
-  "Das Tutorial ist abgeschlossen. Klicke auf 'Weiter', um dein Abenteuer zu beginnen!"
+  "4. Die Schmiede und Taverne erlauben dir, mit dem Schmied und dem Tavernenwirt zu sprechen.",
+  "5. Der Dungeon ist gefährlich! Achte auf deine HP!",
+  "6. Im Dungeon musst du die Augen offen halten.",
+  "7. Klickst du auf deinen Namen, dann kannst du dich wieder abmelden.",
+  "Das Tutorial ist abgeschlossen. Klicke auf 'Ab ins Abenteuer!', um zu beginnen!"
 ];
 
 const Tutorial = () => {

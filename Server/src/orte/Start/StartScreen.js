@@ -36,7 +36,7 @@ const StartScreen = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/player', {
+      const response = await fetch('http://87.106.217.227:3000/api/player', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

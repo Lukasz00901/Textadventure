@@ -7,12 +7,15 @@ function Markt() {
   const [marketItems, setMarketItems] = useState([]);
   const [inventoryItems, setInventoryItems] = useState([]);
   const [playerStatus, setPlayerStatus] = useState({ money: 0, hp: 0, maxHp: 0 });
-  const [questLog, setQuestLog] = useState([]); // Zustand für den Questlog
+  const [questLog, setQuestLog] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [infoMessage, setInfoMessage] = useState('');
   const [questErrorMessage, setQuestErrorMessage] = useState('');
 
-  // Funktion zum Abrufen der Markt-Items
+  const [talkingToTrader, setTalkingToTrader] = useState(false);
+  const [showSellSection, setShowSellSection] = useState(false);
+  const [selectedSellItem, setSelectedSellItem] = useState('');
+
   const fetchMarketItems = async () => {
     try {
       const response = await axios.get('http://localhost:3000/market/items');
@@ -23,7 +26,6 @@ function Markt() {
     }
   };
 
-  // Funktion zum Abrufen des Spielerstatus
   const fetchPlayerStatus = async () => {
     try {
       const response = await axios.get('http://localhost:3000/market/player-status');
@@ -34,7 +36,6 @@ function Markt() {
     }
   };
 
-  // Funktion zum Abrufen des Quest-Logs
   const fetchQuestLog = async () => {
     try {
       const response = await axios.get('http://localhost:3000/market/quest-log');
@@ -45,37 +46,45 @@ function Markt() {
     }
   };
 
-  // Fetch market items, Spielerstatus und Quest-Log beim Mounten des Components
+  const fetchInventoryItems = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/market/inventory');
+      setInventoryItems(response.data);
+    } catch (error) {
+      console.error('Error fetching inventory items:', error);
+      setErrorMessage('Fehler beim Laden des Inventars.');
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       await fetchMarketItems();
       await fetchPlayerStatus();
       await fetchQuestLog();
+      await fetchInventoryItems();
     };
     fetchData();
   }, []);
 
-  // Timer zum regelmäßigen Aktualisieren des Quest-Logs
   useEffect(() => {
     const interval = setInterval(() => {
       fetchQuestLog();
-    }, 1000); // Aktualisiere jede Sekunde
+      fetchMarketItems();
+      fetchPlayerStatus();
+    }, 5000);
 
-    return () => clearInterval(interval); // Aufräumen beim Unmounten
+    return () => clearInterval(interval);
   }, []);
 
-  // Kauf eines Items vom Markt
   const buyItem = async (itemName) => {
     try {
       const response = await axios.post('http://localhost:3000/market/buy', { itemName });
 
-      // Aktualisiere die Markt-Items
       const updatedItems = marketItems.map((item) =>
         item.name === itemName ? { ...item, quantity: item.quantity - 1 } : item
       );
       setMarketItems(updatedItems);
 
-      // Aktualisiere das Inventar
       setInventoryItems((prevInventory) => {
         const existingItem = prevInventory.find((item) => item.name === itemName);
         if (existingItem) {
@@ -83,16 +92,14 @@ function Markt() {
             item.name === itemName ? { ...item, quantity: item.quantity + 1 } : item
           );
         } else {
-          return [...prevInventory, { name: itemName, quantity: 1 }];
+          return [...prevInventory, { name: itemName, quantity: 1, type: '', category: '', strength: 0, worth: 0 }];
         }
       });
 
-      // Aktualisiere den Spielerstatus
       if (response.data.playerStatus) {
         setPlayerStatus(response.data.playerStatus);
       }
 
-      // Aktualisiere den Quest-Log
       if (response.data.questLog) {
         setQuestLog(response.data.questLog);
       }
@@ -105,12 +112,10 @@ function Markt() {
     }
   };
 
-  // Verkauf eines Items aus dem Inventar
-  const sellItem = async (itemName) => {
+  const sellItem = async (itemName, strength, worth) => {
     try {
-      const response = await axios.post('http://localhost:3000/market/sell', { itemName });
+      const response = await axios.post('http://localhost:3000/market/sell', { itemName, strength, worth });
 
-      // Aktualisiere das Inventar
       setInventoryItems((prevInventory) =>
         prevInventory
           .map((item) =>
@@ -119,12 +124,10 @@ function Markt() {
           .filter((item) => item.quantity > 0)
       );
 
-      // Aktualisiere den Spielerstatus
       if (response.data.playerStatus) {
         setPlayerStatus(response.data.playerStatus);
       }
 
-      // Aktualisiere den Quest-Log
       if (response.data.questLog) {
         setQuestLog(response.data.questLog);
       }
@@ -137,22 +140,92 @@ function Markt() {
     }
   };
 
+  const handleTalkToTrader = () => {
+    setTalkingToTrader(!talkingToTrader);
+    setShowSellSection(false);
+  };
+
+  const toggleSellSection = () => {
+    setShowSellSection(!showSellSection);
+    setSelectedSellItem('');
+  };
+
+  const handleSellSelection = (e) => {
+    setSelectedSellItem(e.target.value);
+  };
+
+  const confirmSell = async () => {
+    if (selectedSellItem) {
+      try {
+        const itemData = JSON.parse(selectedSellItem);
+        await sellItem(itemData.name, itemData.strength, itemData.worth);
+        setSelectedSellItem('');
+        setShowSellSection(false);
+      } catch (error) {
+        console.error('Error parsing selectedSellItem:', error);
+        setErrorMessage('Fehler beim Parsen des ausgewählten Items.');
+      }
+    }
+  };
+
   return (
     <div className="Markt">
       <h1>Marktplatz 💰</h1>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
-      
+      {questErrorMessage && <p className="error-message">{questErrorMessage}</p>}
+      {infoMessage && <p className="info-message">{infoMessage}</p>}
 
-      {/* Spielerstatus anzeigen */}
+      <button className="talk-button" onClick={handleTalkToTrader}>
+        Mit Markthändler sprechen
+      </button>
+
+      {talkingToTrader && (
+        <div className="trader-buttons">
+          <button className="sell-button" onClick={toggleSellSection}>
+            Verkaufen
+          </button>
+
+          {showSellSection && (
+            <div className="sell-section">
+              {inventoryItems.filter(item => item.category === 'consumable').length > 0 ? (
+                <>
+                  <select value={selectedSellItem} onChange={handleSellSelection}>
+                    <option value="">-- Wähle ein Item zum Verkaufen --</option>
+                    {inventoryItems
+                      .filter(item => item.category === 'consumable')
+                      .map((item, index) => (
+                        <option
+                          key={`${item.name}-${item.strength}-${item.worth}-${index}`}
+                          value={JSON.stringify({ name: item.name, strength: item.strength, worth: item.worth })}
+                        >
+                          {item.name} (Stärke: {item.strength}, Wert: {item.worth} Gold) (Anzahl: {item.quantity})
+                        </option>
+                      ))}
+                  </select>
+                  <div className="sell-buttons">
+                    <button onClick={confirmSell} disabled={!selectedSellItem}>
+                      Verkaufen
+                    </button>
+                    <button onClick={toggleSellSection}>
+                      Abbrechen
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <p>Keine Consumables zum Verkaufen vorhanden.</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="player-status">
         <h3>Spielerstatus</h3>
         <p>Gold: {playerStatus.money} 💰</p>
         <p>HP: {playerStatus.hp}/{playerStatus.maxHp} ❤️</p>
       </div>
 
-      {/* Inhalt mit flexbox */}
       <div className="content">
-        {/* Item-Liste */}
         <div className="market">
           <h2>Items</h2>
           <ul>
@@ -176,24 +249,20 @@ function Markt() {
           </ul>
         </div>
 
-        {/* Quest Log neben der Item-Liste */}
         <div className="quest-section">
           <h2 className="quest-log-title">Markt Log</h2>
           <div className="quest-log">
             <div className="log-content">
               {questLog.map((entry, index) => {
                 if (typeof entry === 'string') {
-                  // Einfacher Text-Eintrag
                   return <p key={index}>{entry}</p>;
                 } else if (entry.type === 'Cooldown') {
-                  // Cooldown-Eintrag - nur die Nachricht anzeigen, da sie bereits die verbleibende Zeit enthält
                   return (
                     <p key={index} className="cooldown-entry">
                       {entry.message}
                     </p>
                   );
                 } else {
-                  // Andere Typen können hier hinzugefügt werden
                   return null;
                 }
               })}
@@ -201,8 +270,6 @@ function Markt() {
           </div>
         </div>
       </div>
-
-      
     </div>
   );
 }
