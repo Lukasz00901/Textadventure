@@ -288,7 +288,7 @@ function Taverne() {
 
       <div className="content">
         <div className="tavern">
-          <h2>Shop Items</h2>
+          <h2>Items</h2>
           <ul>
             {tavernItems.map((item, index) => (
               <li key={item.name}>

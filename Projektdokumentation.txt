@@ -317,3 +317,28 @@ Der Tag verlief insgesamt sehr produktiv mit erfolgreichen Implementierungen und
 Die durchgeführten Maßnahmen legen eine solide Grundlage für die weiteren Schritte im Projekt und unterstützen die fortlaufende Entwicklung und Optimierung.
 
 #################################################################################################################################################
+
+Tagesbericht 29.11.24
+
+**Tagesbericht – 29. November 2024**
+
+Heute haben wir bedeutende Fortschritte erzielt und mehrere wichtige Aufgaben erfolgreich abgeschlossen.
+
+Zunächst haben wir eine weitere Seite in unserer Anwendung implementiert, die eine interaktive Karte (Map) anzeigt. Diese Neuerung verbessert das Nutzererlebnis erheblich, 
+da die Spieler nun nicht mehr direkt vom Tutorial ins Inventar springen. Stattdessen landen sie zunächst auf der Map, von wo aus sie die Möglichkeit haben, 
+sich für den gewünschten Reiter zu entscheiden und entsprechend weiterzuschalten. 
+Diese Änderung ermöglicht eine intuitivere Navigation und gibt den Spielern mehr Kontrolle über ihre nächsten Schritte im Spiel.
+
+Des Weiteren arbeiten wir intensiv an der Weiterentwicklung unserer Datenbank. Ziel ist es, künftig alle Spielgegenstände (Items) über die Datenbank zu verwalten. 
+Diese Umstellung wird die Verwaltung und den Zugriff auf die Items erheblich erleichtern und die Skalierbarkeit unserer Anwendung verbessern. 
+Durch die Integration der Items in die Datenbank können wir zudem zukünftige Erweiterungen und Anpassungen effizienter umsetzen.
+
+Ein weiterer wichtiger Schritt bestand darin, zu testen, ob es möglich ist, Spielernamen ohne den Einsatz einer Datenbank zu speichern. Dieser Test zielte darauf ab, 
+zu überprüfen, ob Spieler, die sich erneut anmelden, den Einstiegsdialog sowie das Tutorial automatisch überspringen können. Die Ergebnisse waren vielversprechend, 
+da diese Funktion erfolgreich implementiert werden konnte. Allerdings haben wir uns entschieden, diesen Ansatz nicht weiterzuverfolgen, 
+da auch die Speicherung der Spielernamen zukünftig über die Datenbank erfolgen soll. Dies gewährleistet eine konsistente und sichere Verwaltung der Spielerinformationen.
+
+Zusammenfassend war der heutige Tag geprägt von bedeutenden Fortschritten in der Benutzerführung und der Backend-Entwicklung. 
+Die Implementierung der Map-Seite und die Weiterarbeit an der Datenbank sind entscheidende Schritte, um die Qualität und Skalierbarkeit unserer Anwendung weiter zu steigern.
+
+#################################################################################################################################################

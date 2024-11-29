@@ -109,7 +109,7 @@ const Dungeon = () => {
       setPlayerLevel(res.data.playerLevel); // Spielerlevel aktualisieren
       setNextEPThreshold(res.data.nextEPThreshold); // Nächste EP-Schwelle aktualisieren
       setCurrentAmor(res.data.currentAmor); // Aktuelle Rüstung aktualisieren
-      console.log(`Spielerstatus geladen: HP ${res.data.PlayerHP}/${res.data.PlayerMaxHP}, Woth: ${res.data.playerMoney}, EP: ${res.data.playerEP}, Level: ${res.data.playerLevel}, Räume abgeschlossen: ${res.data.roomsCompleted}, MaxDifficulty: ${res.data.MaxDifficulty}, Nächste EP-Schwelle: ${res.data.nextEPThreshold}, Aktuelle Rüstung: ${JSON.stringify(res.data.currentAmor)}`); // Debugging-Log
+      console.log(`Spielerstatus geladen: HP ${res.data.PlayerHP}/${res.data.PlayerMaxHP}, Münzen: ${res.data.playerMoney}, EP: ${res.data.playerEP}, Level: ${res.data.playerLevel}, Räume abgeschlossen: ${res.data.roomsCompleted}, MaxDifficulty: ${res.data.MaxDifficulty}, Nächste EP-Schwelle: ${res.data.nextEPThreshold}, Aktuelle Rüstung: ${JSON.stringify(res.data.currentAmor)}`); // Debugging-Log
     } catch (error) {
       console.error(error);
     }
@@ -261,7 +261,7 @@ const Dungeon = () => {
 
         <div className="stat-card">
           <div className="stat-info">
-            <h3>Woth</h3>
+            <h3>Münzen</h3>
             <p>{playerMoney}</p>
           </div>
         </div>
@@ -330,7 +330,7 @@ const Dungeon = () => {
             <option value="">Waffe auswählen</option>
             {inventory.filter(w => w.type === 'weapon').map((w, index) => (
               <option key={index} value={w.name}>
-                {w.name} (Schaden: {w.strength}) - Woth: {w.worth}
+                {w.name} (Schaden: {w.strength}) - Münzen: {w.worth}
               </option>
             ))}
           </select>
@@ -347,7 +347,7 @@ const Dungeon = () => {
             <option value="">Rüstung auswählen</option>
             {availableAmors.map((amor, index) => (
               <option key={index} value={amor.name}>
-                {amor.name} (Abwehr: {amor.strength}) - Woth: {amor.worth}
+                {amor.name} (Abwehr: {amor.strength}) - Münzen: {amor.worth}
               </option>
             ))}
           </select>
@@ -364,7 +364,7 @@ const Dungeon = () => {
             <option value="">Trank auswählen</option>
             {availablePotions.map((potion, index) => (
               <option key={index} value={potion.name}>
-                {potion.name} (Heilwert: {potion.strength}) - {potion.quantity} verfügbar - Woth: {potion.worth}
+                {potion.name} (Heilwert: {potion.strength}) - {potion.quantity} verfügbar - Münzen: {potion.worth}
               </option>
             ))}
           </select>
