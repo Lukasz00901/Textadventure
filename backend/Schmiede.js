@@ -30,7 +30,7 @@ const smithyItems = [
   },
   { 
     name: 'Schild', 
-    type: 'armor', 
+    type: 'amor', 
     worth: 10, 
     price: 20,
     strength: 1, 
@@ -39,7 +39,7 @@ const smithyItems = [
   },
   { 
     name: 'Lederharnisch', 
-    type: 'armor', 
+    type: 'amor', 
     worth: 15, 
     price: 30,
     strength: 2, 
@@ -48,7 +48,7 @@ const smithyItems = [
   },
   { 
     name: 'Rüstung', 
-    type: 'armor', 
+    type: 'amor', 
     worth: 25, 
     price: 50,
     strength: 3, 
