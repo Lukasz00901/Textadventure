@@ -7,7 +7,7 @@ import './Dungeon.css';
 const Dungeon = () => {
   const [difficulty, setDifficulty] = useState(1);
   const [currentWeapon, setCurrentWeapon] = useState(null);
-  const [currentAmor, setCurrentAmor] = useState(null); // Aktuelle Rüstung
+  const [currentarmor, setCurrentarmor] = useState(null); // Aktuelle Rüstung
   const [inventory, setInventory] = useState([]);
   const [playerHP, setPlayerHP] = useState(30);
   const [playerMaxHP, setPlayerMaxHP] = useState(50);
@@ -21,28 +21,34 @@ const Dungeon = () => {
   const [roomName, setRoomName] = useState('');
   const [log, setLog] = useState([]);
   const [selectedWeapon, setSelectedWeapon] = useState('');
-  const [selectedPotion, setSelectedPotion] = useState('');
-  const [selectedAmor, setSelectedAmor] = useState(''); // Ausgewählte Rüstung
+  const [selectedConsumable, setSelectedConsumable] = useState(''); // Ausgewähltes Consumable
+  const [selectedarmor, setSelectedarmor] = useState(''); // Ausgewählte Rüstung
 
   const logEndRef = useRef(null);
 
-  // Hilfsfunktion zur Ermittlung der unlockDifficulty basierend auf dem Tranknamen
-  const getUnlockDifficulty = (potionName) => {
+  // Hilfsfunktion zur Ermittlung der unlockDifficulty basierend auf dem Itemnamen
+  const getUnlockDifficulty = (itemName) => {
     const unlocks = {
+      // Tränke
       'Kleiner Heiltrank': 1,
       'Normaler Heiltrank': 3,
       'Großer Heiltrank': 5,
       'Mega Heiltrank': 7,
-      'Mana-Trank': 9
+      'Mana-Trank': 9,
+      // Consumables
+      'Energiekristall': 2,
+      'Elixier der Stärke': 4,
+      'Verjüngungstrank': 6,
+      // Weitere Consumables hinzufügen...
     };
-    return unlocks[potionName] || 1;
+    return unlocks[itemName] || 1;
   };
 
   useEffect(() => {
     // Initial Daten laden
     fetchDifficulty();
     fetchWeapon();
-    fetchAmor(); // Rüstung laden
+    fetcharmor(); // Rüstung laden
     fetchInventory();
     fetchPlayerStats();
   }, []);
@@ -77,11 +83,11 @@ const Dungeon = () => {
     }
   };
 
-  const fetchAmor = async () => {
+  const fetcharmor = async () => {
     try {
-      const res = await axios.get('http://87.106.217.227:3000/api/dungeon/amor');
-      setCurrentAmor(res.data.currentAmor);
-      console.log(`Aktuelle Rüstung: ${JSON.stringify(res.data.currentAmor)}`); // Debugging-Log
+      const res = await axios.get('http://87.106.217.227:3000/api/dungeon/armor');
+      setCurrentarmor(res.data.currentarmor);
+      console.log(`Aktuelle Rüstung: ${JSON.stringify(res.data.currentarmor)}`); // Debugging-Log
     } catch (error) {
       console.error(error);
     }
@@ -108,8 +114,8 @@ const Dungeon = () => {
       setMaxDifficulty(res.data.MaxDifficulty); // MaxDifficulty aktualisieren
       setPlayerLevel(res.data.playerLevel); // Spielerlevel aktualisieren
       setNextEPThreshold(res.data.nextEPThreshold); // Nächste EP-Schwelle aktualisieren
-      setCurrentAmor(res.data.currentAmor); // Aktuelle Rüstung aktualisieren
-      console.log(`Spielerstatus geladen: HP ${res.data.PlayerHP}/${res.data.PlayerMaxHP}, Woth: ${res.data.playerMoney}, EP: ${res.data.playerEP}, Level: ${res.data.playerLevel}, Räume abgeschlossen: ${res.data.roomsCompleted}, MaxDifficulty: ${res.data.MaxDifficulty}, Nächste EP-Schwelle: ${res.data.nextEPThreshold}, Aktuelle Rüstung: ${JSON.stringify(res.data.currentAmor)}`); // Debugging-Log
+      setCurrentarmor(res.data.currentarmor); // Aktuelle Rüstung aktualisieren
+      console.log(`Spielerstatus geladen: HP ${res.data.PlayerHP}/${res.data.PlayerMaxHP}, Münzen: ${res.data.playerMoney}, EP: ${res.data.playerEP}, Level: ${res.data.playerLevel}, Räume abgeschlossen: ${res.data.roomsCompleted}, MaxDifficulty: ${res.data.MaxDifficulty}, Nächste EP-Schwelle: ${res.data.nextEPThreshold}, Aktuelle Rüstung: ${JSON.stringify(res.data.currentarmor)}`); // Debugging-Log
     } catch (error) {
       console.error(error);
     }
@@ -159,15 +165,15 @@ const Dungeon = () => {
     }
   };
 
-  const handleEquipAmor = async () => {
-    if (!selectedAmor) {
+  const handleEquiparmor = async () => {
+    if (!selectedarmor) {
       setLog(prevLog => [...prevLog, 'Keine Rüstung ausgewählt.']);
       return;
     }
 
     try {
-      const res = await axios.post('http://87.106.217.227:3000/api/dungeon/amor', { amorName: selectedAmor });
-      setCurrentAmor(res.data.currentAmor);
+      const res = await axios.post('http://87.106.217.227:3000/api/dungeon/armor', { armorName: selectedarmor });
+      setCurrentarmor(res.data.currentarmor);
       setLog(prevLog => [...prevLog, res.data.message]);
       console.log(res.data.message); // Debugging-Log
     } catch (error) {
@@ -180,14 +186,14 @@ const Dungeon = () => {
     }
   };
 
-  const handleDrinkPotion = async () => {
-    if (!selectedPotion) {
-      setLog(prevLog => [...prevLog, 'Kein Trank ausgewählt.']);
+  const handleDrinkConsumable = async () => {
+    if (!selectedConsumable) {
+      setLog(prevLog => [...prevLog, 'Kein Heilung/Essen ausgewählt.']);
       return;
     }
 
     try {
-      const res = await axios.post('http://87.106.217.227:3000/api/dungeon/drink-potion', { potionName: selectedPotion });
+      const res = await axios.post('http://87.106.217.227:3000/api/dungeon/drink-potion', { potionName: selectedConsumable });
       setLog(prevLog => [...prevLog, res.data.message]);
       console.log(res.data.message); // Debugging-Log
       fetchPlayerStats();
@@ -219,27 +225,27 @@ const Dungeon = () => {
       fetchPlayerStats();
       fetchInventory();
       fetchWeapon();
-      fetchAmor();
+      fetcharmor();
       fetchDifficulty();
     } catch (error) {
       console.error(error);
     }
   };
 
-  // Filtere Tränke aus dem Inventar, die verfügbar sind basierend auf der aktuellen Schwierigkeitsstufe
-  const availablePotions = inventory.filter(item => 
-    item.type === 'Trank' && 
+  // Filtere Tränke und Consumables aus dem Inventar, die verfügbar sind basierend auf der aktuellen Schwierigkeitsstufe
+  const availableConsumables = inventory.filter(item => 
+    (item.type === 'Trank' || item.category === 'consumable') && 
     item.quantity > 0 && 
     getUnlockDifficulty(item.name) <= difficulty
   );
-  console.log(`Verfügbare Tränke für Schwierigkeitsgrad ${difficulty}: ${availablePotions.map(p => p.name).join(', ')}`); // Debugging-Log
+  console.log(`Verfügbare Consumables für Schwierigkeitsgrad ${difficulty}: ${availableConsumables.map(p => p.name).join(', ')}`); // Debugging-Log
 
   // Filtere Rüstungen aus dem Inventar
-  const availableAmors = inventory.filter(item => 
-    item.type === 'amor' && 
+  const availablearmors = inventory.filter(item => 
+    item.type === 'armor' && 
     item.quantity > 0
   );
-  console.log(`Verfügbare Rüstungen: ${availableAmors.map(a => a.name).join(', ')}`); // Debugging-Log
+  console.log(`Verfügbare Rüstungen: ${availablearmors.map(a => a.name).join(', ')}`); // Debugging-Log
 
   return (
     <div className="dungeon-container">
@@ -261,7 +267,7 @@ const Dungeon = () => {
 
         <div className="stat-card">
           <div className="stat-info">
-            <h3>Woth</h3>
+            <h3>Münzen</h3>
             <p>{playerMoney}</p>
           </div>
         </div>
@@ -282,7 +288,7 @@ const Dungeon = () => {
         <div className="stat-card">
           <div className="stat-info">
             <h3>Rüstung</h3>
-            <p>{currentAmor ? `${currentAmor.name} (Abwehr: ${currentAmor.strength})` : 'Keine Rüstung ausgerüstet'}</p>
+            <p>{currentarmor ? `${currentarmor.name} (Abwehr: ${currentarmor.strength})` : 'Keine Rüstung ausgerüstet'}</p>
           </div>
         </div>
 
@@ -330,45 +336,45 @@ const Dungeon = () => {
             <option value="">Waffe auswählen</option>
             {inventory.filter(w => w.type === 'weapon').map((w, index) => (
               <option key={index} value={w.name}>
-                {w.name} (Schaden: {w.strength}) - Woth: {w.worth}
+                {w.name} (Schaden: {w.strength}) - Münzen: {w.worth}
               </option>
             ))}
           </select>
           <button onClick={handleEquipWeapon}>Waffe ausrüsten</button>
         </div>
 
-        <div className="amor-selector">
-          <label htmlFor="amor-select">Rüstung auswählen:</label>
+        <div className="armor-selector">
+          <label htmlFor="armor-select">Rüstung auswählen:</label>
           <select 
-            id="amor-select" 
-            value={selectedAmor} 
-            onChange={(e) => setSelectedAmor(e.target.value)}
+            id="armor-select" 
+            value={selectedarmor} 
+            onChange={(e) => setSelectedarmor(e.target.value)}
           >
             <option value="">Rüstung auswählen</option>
-            {availableAmors.map((amor, index) => (
-              <option key={index} value={amor.name}>
-                {amor.name} (Abwehr: {amor.strength}) - Woth: {amor.worth}
+            {availablearmors.map((armor, index) => (
+              <option key={index} value={armor.name}>
+                {armor.name} (Abwehr: {armor.strength}) - Münzen: {armor.worth}
               </option>
             ))}
           </select>
-          <button onClick={handleEquipAmor}>Rüstung ausrüsten</button>
+          <button onClick={handleEquiparmor}>Rüstung ausrüsten</button>
         </div>
 
-        <div className="potion-selector">
-          <label htmlFor="potion-select">Trank auswählen:</label>
+        <div className="consumable-selector">
+          <label htmlFor="consumable-select">Heilung/Essen auswählen:</label>
           <select 
-            id="potion-select" 
-            value={selectedPotion} 
-            onChange={(e) => setSelectedPotion(e.target.value)}
+            id="consumable-select" 
+            value={selectedConsumable} 
+            onChange={(e) => setSelectedConsumable(e.target.value)}
           >
-            <option value="">Trank auswählen</option>
-            {availablePotions.map((potion, index) => (
-              <option key={index} value={potion.name}>
-                {potion.name} (Heilwert: {potion.strength}) - {potion.quantity} verfügbar - Woth: {potion.worth}
+            <option value="">Heilung/Essen auswählen</option>
+            {availableConsumables.map((item, index) => (
+              <option key={index} value={item.name}>
+                {item.name} ({item.type === 'Trank' ? 'Trank' : 'Consumable'}) - {item.type === 'Trank' ? `Heilwert: ${item.strength}` : `Effekt: ${item.strength}`} - {item.quantity} verfügbar - Münzen: {item.worth}
               </option>
             ))}
           </select>
-          <button onClick={handleDrinkPotion}>Trank trinken</button>
+          <button onClick={handleDrinkConsumable}>Consumable nutzen</button>
         </div>
 
         <button className="next-room-button" onClick={handleNextRoom}>Nächster Raum</button>

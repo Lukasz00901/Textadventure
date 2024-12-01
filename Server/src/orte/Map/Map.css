@@ -1,0 +1,68 @@
+/* src/components/Map.css */
+
+/* Container für die Map-Komponente */
+.Map {
+    position: relative; /* Ermöglicht die absolute Positionierung des Buttons innerhalb dieses Containers */
+    width: 100%;
+    height: 100vh; /* Volle Höhe des Viewports */
+    background-size: cover; /* Hintergrundbild skalieren, um den gesamten Container zu füllen */
+    background-position: center; /* Hintergrundbild zentrieren */
+    /* Entferne die background-image-Eigenschaft, da das Bild direkt in der Komponente gesetzt wird */
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+  }
+  
+  /* Optional: Hinzufügen eines Overlays für bessere Sichtbarkeit des Buttons */
+  .Map::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Halbtransparentes schwarzes Overlay */
+    z-index: 1; /* Unter dem Button liegen */
+  }
+  
+  /* Styling für den Abenteuer-Button */
+  .abenteuer-button {
+    position: absolute; /* Positioniere den Button absolut innerhalb des Containers */
+    bottom: 20px; /* Abstand vom unteren Rand des Containers */
+    left: 50%; /* Horizontale Positionierung in der Mitte */
+    transform: translateX(-50%); /* Zentriere den Button horizontal */
+    
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff; /* Weiße Schriftfarbe */
+    background-color: #28a745; /* Grüner Hintergrund */
+    border: none; /* Kein Rahmen */
+    border-radius: 5px; /* Abgerundete Ecken */
+    cursor: pointer; /* Mauszeiger als Hand anzeigen */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Übergangseffekte */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Leichter Schatten für Tiefe */
+    z-index: 2; /* Sicherstellen, dass der Button über dem Overlay liegt */
+  }
+  
+  /* Hover-Effekt für den Button */
+  .abenteuer-button:hover {
+    background-color: #218838; /* Dunkleres Grün beim Hover */
+    transform: translateX(-50%) scale(1.05); /* Leichtes Vergrößern beim Hover */
+  }
+  
+  /* Aktiver Zustand (wenn der Button geklickt wird) */
+  .abenteuer-button:active {
+    background-color: #1e7e34; /* Noch dunkleres Grün beim Klicken */
+    transform: translateX(-50%) scale(1); /* Rückkehr zur Originalgröße */
+  }
+  
+  /* Responsive Anpassungen für kleinere Bildschirme */
+  @media (max-width: 600px) {
+    .abenteuer-button {
+      padding: 10px 20px;
+      font-size: 16px;
+      bottom: 15px; /* Weniger Abstand auf kleineren Bildschirmen */
+    }
+  }
+  

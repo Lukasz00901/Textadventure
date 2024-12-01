@@ -186,18 +186,7 @@ function Schmiede() {
     }
   };
 
-  const handleSleep = async () => {
-    try {
-      const response = await axios.post('http://87.106.217.227:3000/smithy/sleep');
-      setPlayerStatus(response.data.playerStatus);
-      setInfoMessage(response.data.message);
-      setErrorMessage('');
-      setQuestLog(response.data.questLog);
-    } catch (error) {
-      console.error('Error sleeping:', error);
-      setErrorMessage(error.response?.data?.message || 'Fehler beim Schlafen.');
-    }
-  };
+
 
   const handleTalkToKeeper = () => {
     setTalkingToKeeper(!talkingToKeeper);
@@ -237,9 +226,7 @@ function Schmiede() {
       {/* Bedingte Anzeige der Buttons */}
       {talkingToKeeper && (
         <div className="keeper-buttons">
-          <button className="sleep-button" onClick={handleSleep}>
-            Schlafen
-          </button>
+          
           <button
             className="accept-quest-button"
             onClick={acceptQuest}
@@ -266,7 +253,7 @@ function Schmiede() {
                         key={`${item.name}-${item.strength}-${item.worth}-${index}`} 
                         value={JSON.stringify({ name: item.name, strength: item.strength, worth: item.worth })}
                       >
-                        {item.name} ({item.type === 'armor' ? `Stärke: ${item.strength}` : `Stärke: ${item.strength}`}, Wert: {item.worth} Gold) (Anzahl: {item.quantity})
+                        {item.name} ({item.type === 'armor' ? `Stärke: ${item.strength}` : `Stärke: ${item.strength}`}, Wert: {item.worth} Münzen) (Anzahl: {item.quantity})
                       </option>
                     ))}
                   </select>
@@ -289,7 +276,7 @@ function Schmiede() {
 
       <div className="player-status">
         <h3>Spielerstatus</h3>
-        <p>Gold: {playerStatus.money} 💰</p>
+        <p>Münzen: {playerStatus.money} 💰</p>
         <p>HP: {playerStatus.hp}/{playerStatus.maxHp} ❤️</p>
       </div>
 
@@ -302,7 +289,7 @@ function Schmiede() {
                 <div className="item-text">
                   <span className="item-name">{item.name}</span>
                   <span className="item-description">{item.type}</span>
-                  <span className="item-price">{item.price} Gold</span>
+                  <span className="item-price">{item.price} Münzen</span>
                   <span className="item-quantity">Verfügbar: {item.quantity}</span>
                 </div>
                 <button
