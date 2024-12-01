@@ -1,6 +1,3 @@
-/* styles.css */
-@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
-
 /* Grundlegende Stile */
 body {
     font-family: Arial, sans-serif;
@@ -8,25 +5,21 @@ body {
     color: #aa920c;
     margin: 0;
     padding: 0;
-     background-image: url('img/backround.png'); /* Der Pfad zum Bild */
+    background-image: url('img/backround.png'); /* Der Pfad zum Hintergrundbild */
     background-size: cover; /* Bild skaliert, um den gesamten Bereich abzudecken */
     background-position: center; /* Bild wird zentriert */
     background-repeat: no-repeat; /* Verhindert das Wiederholen des Bildes */
     background-attachment: fixed;
     font-family: 'UnifrakturCook', cursive, serif;
-
 }
 
 h1 {
     margin-top: 20px;
-
 }
 
-#timer{
-margin-bottom: 20px;
-
+#timer {
+    margin-bottom: 20px;
 }
-
 
 /* Memory-Spielbereich */
 .memory-game {
@@ -54,7 +47,7 @@ margin-bottom: 20px;
     height: 100%;
     transition: transform 0.6s;
     transform-style: preserve-3d;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     transform-origin: center center; /* Drehung um die Mitte */
 }
@@ -78,16 +71,18 @@ margin-bottom: 20px;
 .front-face {
     transform: rotateY(180deg); /* Beibehaltung der Drehung */
     background: #292929; /* Optional: Hintergrundfarbe */
-
 }
 
 .back-face {
-    background: #313131; /* Optional: Hintergrundfarbe */
+    background-image: url('img/back.png'); /* Pfad zum Bild back.png */
+    background-size: cover; /* Bild wird skaliert, um die Rückseite der Karten zu füllen */
+    background-position: center; /* Bild wird zentriert */
+    background-color: #313131; /* Optional: Hintergrundfarbe */
 }
 
 /* Bildgrößen anpassen */
-.front-face img, .back-face img {
-    width: 93%;  /* Bilder füllen die Faces größtenteils aus */
+.front-face img {
+    width: 93%; /* Bilder füllen die Vorderseite größtenteils aus */
     height: 93%;
     object-fit: cover; /* Bild füllt den Container ohne Verzerrung */
     border-radius: 8px;
@@ -114,7 +109,6 @@ margin-bottom: 20px;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.3s;
-
 }
 
 #reset-button:hover {
@@ -124,7 +118,6 @@ margin-bottom: 20px;
 }
 
 /* Responsives Design */
-
 @media (max-width: 900px) {
     .memory-game {
         width: 90%;
@@ -136,13 +129,9 @@ margin-bottom: 20px;
         width: 150px;
         height: 150px;
     }
-
-    .front-face img, .back-face img {
-        width: 90%;
-        height: 90%;
-    }
 }
 
+/* Modal */
 .modal {
     display: none; /* Standardmäßig ausgeblendet */
     position: fixed; /* Bleibt an Ort und Stelle */
@@ -155,7 +144,6 @@ margin-bottom: 20px;
     background-color: rgba(0, 0, 0, 0); /* Schwarzer Hintergrund mit Transparenz */
 }
 
-/* Modal Inhalt */
 .modal-content {
     background-color: #333333;
     margin: 15% auto; /* 15% von oben und zentriert */
@@ -165,52 +153,4 @@ margin-bottom: 20px;
     max-width: 400px; /* Maximale Breite */
     text-align: center;
     border-radius: 8px;
-}
-
-/* Schließen-Button */
-.close-button {
-    color: #a59507;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close-button:hover,
-.close-button:focus {
-    color: rgb(190, 190, 190);
-    text-decoration: none;
-}
-
-.play-again-button{
-background-color: #e74c3c;
-}
-
-
-#play-again-button {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 12px 24px;
-    background-color: #616161; /* Grüner Hintergrund */
-    color: #aa920c;
-    border: none; /* Kein Rahmen */
-    border-radius: 8px; /* Abgerundete Ecken */
-    cursor: pointer; /* Mauszeiger als Hand-Symbol */
-    font-size: 18px; /* Größere Schrift */
-    font-weight: bold; /* Fettere Schrift */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Übergangseffekte */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Leichter Schatten */
-    font-family: 'UnifrakturCook', cursive, serif;
-
-}
-
-#play-again-button:hover {
-    background-color: #5c5c5c; /* Dunkleres Grün beim Hover */
-    transform:scale(1.1)
-}
-
-#play-again-button:active {
-    background-color: #5e5e5e; /* Noch dunkleres Grün beim Klicken */
-    transform: translateY(0); /* Zurück zur Originalposition */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0); /* Intensiverer Schatten beim Klicken */
 }
