@@ -8,9 +8,10 @@ const { inventoryItems, PlayerHP, PlayerMaxHP, playerMoney, playerEP, MaxDifficu
 router.use(express.json());
 
 // CORS-Konfiguration
-const cors = require('cors');
 router.use(cors({
-  origin: 'http://localhost:3001' // Erlaube nur Anfragen von diesem Ursprung
+  origin: '*', // Erlaube alle Ursprünge
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Game State (in-memory, für Produktion sollte eine Datenbank verwendet werden)
