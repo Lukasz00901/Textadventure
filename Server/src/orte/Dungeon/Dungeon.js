@@ -63,12 +63,9 @@ const Dungeon = () => {
     }
   };
 
-  // Verwenden Sie die absolute URL, wie vom Benutzer gewünscht
-  const API_BASE_URL = 'http://87.106.217.227:3000/api/dungeon';
-
   const fetchDifficulty = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/difficulty`);
+      const res = await axios.get('http://87.106.217.227:3000/api/dungeon/difficulty');
       setDifficulty(res.data.difficulty);
       console.log(`Aktueller Schwierigkeitsgrad: ${res.data.difficulty}`); // Debugging-Log
     } catch (error) {
@@ -78,7 +75,7 @@ const Dungeon = () => {
 
   const fetchWeapon = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/weapon`);
+      const res = await axios.get('http://87.106.217.227:3000/api/dungeon/weapon');
       setCurrentWeapon(res.data.currentWeapon);
       console.log(`Aktuelle Waffe: ${JSON.stringify(res.data.currentWeapon)}`); // Debugging-Log
     } catch (error) {
@@ -88,7 +85,7 @@ const Dungeon = () => {
 
   const fetcharmor = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/armor`);
+      const res = await axios.get('http://87.106.217.227:3000/api/dungeon/armor');
       setCurrentarmor(res.data.currentarmor);
       console.log(`Aktuelle Rüstung: ${JSON.stringify(res.data.currentarmor)}`); // Debugging-Log
     } catch (error) {
@@ -98,7 +95,7 @@ const Dungeon = () => {
 
   const fetchInventory = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/inventory`);
+      const res = await axios.get('http://87.106.217.227:3000/api/dungeon/inventory');
       setInventory(res.data.inventoryItems);
       console.log(`Inventar geladen: ${JSON.stringify(res.data.inventoryItems)}`); // Debugging-Log
     } catch (error) {
@@ -108,7 +105,7 @@ const Dungeon = () => {
 
   const fetchPlayerStats = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/player-stats`);
+      const res = await axios.get('http://87.106.217.227:3000/api/dungeon/player-stats');
       setPlayerHP(res.data.PlayerHP);
       setPlayerMaxHP(res.data.PlayerMaxHP);
       setPlayerMoney(res.data.playerMoney);
@@ -132,7 +129,7 @@ const Dungeon = () => {
         return;
       }
 
-      const res = await axios.post(`${API_BASE_URL}/difficulty`, { difficulty: newDifficulty });
+      const res = await axios.post('http://87.106.217.227:3000/api/dungeon/difficulty', { difficulty: newDifficulty });
       setLog(prevLog => [...prevLog, res.data.message]);
       console.log(res.data.message); // Debugging-Log
       fetchDifficulty();
@@ -154,7 +151,7 @@ const Dungeon = () => {
     }
 
     try {
-      const res = await axios.post(`${API_BASE_URL}/weapon`, { weaponName: selectedWeapon });
+      const res = await axios.post('http://87.106.217.227:3000/api/dungeon/weapon', { weaponName: selectedWeapon });
       setCurrentWeapon(res.data.currentWeapon);
       setLog(prevLog => [...prevLog, res.data.message]);
       console.log(res.data.message); // Debugging-Log
@@ -175,7 +172,7 @@ const Dungeon = () => {
     }
 
     try {
-      const res = await axios.post(`${API_BASE_URL}/armor`, { armorName: selectedarmor });
+      const res = await axios.post('http://87.106.217.227:3000/api/dungeon/armor', { armorName: selectedarmor });
       setCurrentarmor(res.data.currentarmor);
       setLog(prevLog => [...prevLog, res.data.message]);
       console.log(res.data.message); // Debugging-Log
@@ -196,7 +193,7 @@ const Dungeon = () => {
     }
 
     try {
-      const res = await axios.post(`${API_BASE_URL}/drink-potion`, { potionName: selectedConsumable });
+      const res = await axios.post('http://87.106.217.227:3000/api/dungeon/drink-potion', { potionName: selectedConsumable });
       setLog(prevLog => [...prevLog, res.data.message]);
       console.log(res.data.message); // Debugging-Log
       fetchPlayerStats();
@@ -213,14 +210,14 @@ const Dungeon = () => {
 
   const handleNextRoom = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/event`);
+      const res = await axios.get('http://87.106.217.227:3000/api/dungeon/event');
       setEvent(res.data.event);
       setRoomName(res.data.roomName);
       setLog(prevLog => [...prevLog, `Du betrittst die ${res.data.roomName}.`]);
       console.log(`Ereignis ausgewählt: ${res.data.event} in Raum: ${res.data.roomName}`); // Debugging-Log
 
       // Trigger Post Event basierend auf dem Event
-      const eventResponse = await axios.post(`${API_BASE_URL}/event`, { event: res.data.event, roomName: res.data.roomName });
+      const eventResponse = await axios.post('http://87.106.217.227:3000/api/dungeon/event', { event: res.data.event, roomName: res.data.roomName });
       setLog(prevLog => [...prevLog, eventResponse.data.message]);
       console.log(eventResponse.data.message); // Debugging-Log
 
