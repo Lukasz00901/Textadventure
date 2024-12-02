@@ -131,12 +131,12 @@ const generateRandomQuest = () => {
 
 // Taverne-Items
 const tavernItems = [
-  { name: 'Bierkrug', type: 'Getränk', price: 5, worth: 3, quantity: 20, category: 'drink' },
-  { name: 'Weinflasche', type: 'Getränk', price: 12, worth: 7, quantity: 10, category: 'drink' },
-  { name: 'Braten', type: 'Speise', price: 20, worth: 15, quantity: 8, category: 'food' },
-  { name: 'Eintopf', type: 'Speise', price: 10, worth: 6, quantity: 15, category: 'food' },
-  { name: 'Honigwein', type: 'Getränk', price: 18, worth: 12, quantity: 12, category: 'drink' },
-  { name: 'Käseplatte', type: 'Speise', price: 25, worth: 18, quantity: 5, category: 'food' },
+  { name: 'Bierkrug', type: 'Getränk', price: 5, worth: 3, strength: 8, quantity: 20, category: 'drink' },
+  { name: 'Weinflasche', type: 'Getränk', price: 12, worth: 7, strength: 8,  quantity: 10, category: 'drink' },
+  { name: 'Braten', type: 'Speise', price: 20, worth: 15, strength: 10, quantity: 8, category: 'food' },
+  { name: 'Eintopf', type: 'Speise', price: 10, worth: 6, strength: 8, quantity: 15, category: 'food' },
+  { name: 'Honigwein', type: 'Getränk', price: 18, worth: 12, strength: 5, quantity: 12, category: 'drink' },
+  { name: 'Käseplatte', type: 'Speise', price: 25, worth: 18, strength: 10, quantity: 5, category: 'food' },
 ];
 
 // Button: Schlafen
