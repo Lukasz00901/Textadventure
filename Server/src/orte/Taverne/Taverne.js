@@ -130,7 +130,7 @@ function Taverne() {
       setActiveQuests(response.data.activeQuests);
       setQuestLog(response.data.questLog);
       setPlayerStatus(response.data.playerStatus);
-      setInfoMessage('Quest abgeschlossen! Du hast 10 Gold erhalten.');
+      setInfoMessage('Quest abgeschlossen! Du hast 10 Münzen erhalten.');
       setErrorMessage('');
     } catch (error) {
       console.error('Error completing quest:', error);
@@ -259,7 +259,7 @@ function Taverne() {
                     <option value="">-- Wähle ein Item zum Verkaufen --</option>
                     {miscInventoryItems.map((item) => (
                       <option key={item.name} value={item.name}>
-                        {item.name} (Anzahl: {item.quantity}, Wert: {item.worth} Gold)
+                        {item.name} (Anzahl: {item.quantity}, Wert: {item.worth} Münzen)
                       </option>
                     ))}
                   </select>
@@ -282,20 +282,20 @@ function Taverne() {
 
       <div className="player-status">
         <h3>Spielerstatus</h3>
-        <p>Gold: {playerStatus.money} 💰</p>
+        <p>Münzen: {playerStatus.money} 💰</p>
         <p>HP: {playerStatus.hp}/{playerStatus.maxHp} ❤️</p>
       </div>
 
       <div className="content">
         <div className="tavern">
-          <h2>Shop Items</h2>
+          <h2>Items</h2>
           <ul>
             {tavernItems.map((item, index) => (
               <li key={item.name}>
                 <div className="item-text">
                   <span className="item-name">{item.name}</span>
                   <span className="item-description">{item.type}</span>
-                  <span className="item-price">{item.price} Gold</span>
+                  <span className="item-price">{item.price} Münzen</span>
                   <span className="item-quantity">Verfügbar: {item.quantity}</span>
                 </div>
                 <button

@@ -46,7 +46,7 @@
 }*/
 
 .market-page {
-  background-image: url('../public/backround/Markt.webp');
+  background-image: url('./backround/Markt.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
@@ -56,7 +56,7 @@
 }
 
 .inventory-page {
-  background-image: url('../public/backround/inventar.webp');
+  background-image: url('./backround/inventar.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
@@ -65,21 +65,21 @@
 }
 
 .mine-page {
-  background-image: url('../public/backround/Erzhöhle.webp');
+  background-image: url('./backround/Erzhöhle.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
 }
 
 .wald-page {
-  background-image: url('../public/backround/Wald.webp');
+  background-image: url('./backround/Wald.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
 }
 
 .schmiede-page {
-  background-image: url('../public/backround/Schmiede.webp');
+  background-image: url('./backround/Schmiede.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
@@ -88,7 +88,7 @@
 }
 
 .taverne-page {
-  background-image: url('../public/backround/Taverne.webp');
+  background-image: url('./backround/Taverne.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
@@ -97,7 +97,7 @@
 }
 
 .dungeon-page {
-  background-image: url('../public/backround/Dungeon.webp');
+  background-image: url('./backround/Dungeon.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
@@ -106,7 +106,7 @@
 }
 
 .start-page {
-  background-image: url('../public/backround/skibidi.webp');
+  background-image: url('./backround/skibidi.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
@@ -115,10 +115,21 @@
 }
 
 .tutorial-page {
-  background-image: url('../public/backround/Tutorial.webp');
+  background-image: url('./backround/Tutorial.webp');
   background-size: cover;
   background-position: center;
   height: 100vh;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.map-page {
+  position: relative;
+  background-image: url('./backround/map.webp');
+  background-color: #f0f0f0; /* Fallback-Hintergrundfarbe */
+  background-size: 100%;
+  background-position: center;
+  height: 80vh;
   background-attachment: fixed;
   background-repeat: no-repeat;
 }

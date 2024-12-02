@@ -1,3 +1,5 @@
+// src/components/Tutorial.js
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Tutorial.css';
@@ -11,7 +13,7 @@ const tutorialSteps = [
   "5. Der Dungeon ist gefährlich! Achte auf deine HP!",
   "6. Im Dungeon musst du die Augen offen halten.",
   "7. Klickst du auf deinen Namen, dann kannst du dich wieder abmelden.",
-  "Das Tutorial ist abgeschlossen. Klicke auf 'Ab ins Abenteuer!', um zu beginnen!"
+  "Das Tutorial ist abgeschlossen. Klicke auf 'Weiter', um dein Abenteuer zu beginnen!"
 ];
 
 const Tutorial = () => {
@@ -23,7 +25,7 @@ const Tutorial = () => {
     if (currentStep < tutorialSteps.length - 1) {
       setCurrentStep(prev => prev + 1);
     } else {
-      navigate('/inventar'); // Navigiere nach dem Tutorial zur Inventarseite oder einer anderen Hauptseite
+      navigate('/map'); // Navigiere nach dem Tutorial zur Map-Seite
     }
   };
 

@@ -12,6 +12,7 @@ import Mine from './orte/Mine/Mine';
 import Taverne from './orte/Taverne/Taverne';
 import Start from './orte/Start/StartScreen'; // Importiere die Startseite
 import Tutorial from './orte/Tutorial/Tutorial'; // Importiere das Tutorial
+import Map from './orte/Map/Map';
 import { PlayerProvider } from './PlayerContext';
 
 // BodyClassManager als lokale Komponente (kann auch importiert werden)
@@ -51,6 +52,9 @@ const BodyClassManager = ({ children }) => {
       case '/start':
         document.body.classList.add('start-page');
         break;
+      case '/map':
+        document.body.classList.add('map-page');
+        break;
       default:
         break;
     }
@@ -81,6 +85,7 @@ const App = () => {
                 <Route path="/wald" element={<Wald />} />
                 <Route path="/mine" element={<Mine />} />
                 <Route path="/taverne" element={<Taverne />} />
+                <Route path="/map" element={<Map />} />
                 <Route path="*" element={<h2>404 - Seite nicht gefunden</h2>} />
               </Routes>
             </div>

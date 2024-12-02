@@ -1,3 +1,5 @@
+// src/components/StartScreen.js
+
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StartScreen.css';
@@ -20,15 +22,18 @@ const StartScreen = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [isDialogRunning, setIsDialogRunning] = useState(false);
+  const [isDialogFinished, setIsDialogFinished] = useState(false);
   const [name, setName] = useState('');
   const [isNameSubmitted, setIsNameSubmitted] = useState(false);
   const dialogRef = useRef(null);
   const { setPlayerName } = useContext(PlayerContext); // Verwende den Context
 
+  // Funktion zum Starten des Dialogs
   const handleStartDialog = () => {
     setIsDialogRunning(true);
   };
 
+  // Funktion zum Speichern des Namens
   const handleSubmitName = async (e) => {
     e.preventDefault();
     if (name.trim() === '') {
@@ -62,18 +67,15 @@ const StartScreen = () => {
     if (isDialogRunning && currentStep < dialogLines.length) {
       const interval = setInterval(() => {
         setCurrentStep((prevStep) => prevStep + 1);
-      }, 4000); // Nächster Satz alle 4 Sekunden
+      }, 1000); // Nächster Satz alle 1 Sekunden
       return () => clearInterval(interval); // Bereinigen
     }
 
     if (currentStep === dialogLines.length) {
-      // Navigiere nach der Einleitung zur Tutorial-Seite
-      const delayTimer = setTimeout(() => {
-        navigate('/tutorial');
-      }, 5000); // 5 Sekunden Verzögerung für den letzten Satz
-      return () => clearTimeout(delayTimer); // Bereinigen
+      // Dialog ist beendet, zeige den 'Weiter' Button
+      setIsDialogFinished(true);
     }
-  }, [isDialogRunning, currentStep, navigate]);
+  }, [isDialogRunning, currentStep]);
 
   // Effekt: Automatisches Scrollen
   useEffect(() => {
@@ -87,6 +89,11 @@ const StartScreen = () => {
       return () => clearInterval(scrollInterval); // Bereinigen
     }
   }, [currentStep]);
+
+  // Funktion zum Navigieren nach dem Dialog
+  const handleWeiter = () => {
+    navigate('/tutorial'); // Navigiere zur Tutorial-Seite oder eine andere Route
+  };
 
   return (
     <div className="StartScreen">
@@ -110,8 +117,15 @@ const StartScreen = () => {
               <p key={index}>{line}</p>
             ))}
           </div>
-          {!isDialogRunning && (
+          {/* Button zum Starten des Dialogs */}
+          {!isDialogRunning && currentStep < dialogLines.length && (
             <button onClick={handleStartDialog} className="start-dialog-button">
+              Weiter
+            </button>
+          )}
+          {/* Button zum Weitergehen nach dem Dialog */}
+          {isDialogFinished && (
+            <button onClick={handleWeiter} className="weiter-button">
               Weiter
             </button>
           )}
