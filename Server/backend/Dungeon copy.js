@@ -1,11 +1,17 @@
-// backend/routes/Dungeon.js
+// backend/Dungeon.js
 
 const express = require('express');
 const router = express.Router();
-const { inventoryItems, PlayerHP, PlayerMaxHP, playerMoney, playerEP, MaxDifficulty } = require('../Inventar_Inhalt');
+const { inventoryItems, PlayerHP, PlayerMaxHP, playerMoney, playerEP, MaxDifficulty } = require('./Inventar_Inhalt');
 
 // Middleware zum Parsen von JSON
 router.use(express.json());
+
+// CORS-Konfiguration
+const cors = require('cors');
+router.use(cors({
+  origin: 'http://localhost:3001' // Erlaube nur Anfragen von diesem Ursprung
+}));
 
 // Game State (in-memory, für Produktion sollte eine Datenbank verwendet werden)
 let gameState = {
@@ -26,25 +32,25 @@ const potions = inventoryItems.filter(item => item.type === 'Trank');
 
 // Definiere die unlockDifficulty für jede Trankart
 const potionUnlockDifficulty = {
-  'Kleiner Heiltrank': 1,
-  'Normaler Heiltrank': 3,
-  'Großer Heiltrank': 5,
-  'Mega Heiltrank': 7,
-  'Mana-Trank': 9
+  'Kleiner Heiltrank': 1,  // Verfügbar ab Schwierigkeitsgrad 1
+  'Normaler Heiltrank': 3,  // Verfügbar ab Schwierigkeitsgrad 3
+  'Großer Heiltrank': 5,    // Verfügbar ab Schwierigkeitsgrad 5
+  'Mega Heiltrank': 7,      // Verfügbar ab Schwierigkeitsgrad 7
+  'Mana-Trank': 9           // Verfügbar ab Schwierigkeitsgrad 9
 };
 
 // Definiere die unlockDifficulty für jede Rüstungsart
 const armorUnlockDifficulty = {
-  'Lederharnisch': 1,
-  'Kettenhemd': 2,
-  'Plattenrüstung': 3,
-  'Schuppenpanzer': 4,
-  'Geweihter Schild': 5,
-  'Stahlrüstung': 6,
-  'Drachenleder': 7,
-  'Magische Robe': 8,
-  'Titanharnisch': 9,
-  'Silberpanzer': 10
+  'Lederharnisch': 1,        // Verfügbar ab Schwierigkeitsgrad 1
+  'Kettenhemd': 2,           // Verfügbar ab Schwierigkeitsgrad 2
+  'Plattenrüstung': 3,       // Verfügbar ab Schwierigkeitsgrad 3
+  'Schuppenpanzer': 4,       // Verfügbar ab Schwierigkeitsgrad 4
+  'Geweihter Schild': 5,     // Verfügbar ab Schwierigkeitsgrad 5
+  'Stahlrüstung': 6,         // Verfügbar ab Schwierigkeitsgrad 6
+  'Drachenleder': 7,         // Verfügbar ab Schwierigkeitsgrad 7
+  'Magische Robe': 8,        // Verfügbar ab Schwierigkeitsgrad 8
+  'Titanharnisch': 9,        // Verfügbar ab Schwierigkeitsgrad 9
+  'Silberpanzer': 10         // Verfügbar ab Schwierigkeitsgrad 10
 };
 
 // Event- und Gegnerlisten
@@ -127,7 +133,7 @@ const tavernItems = [
     category: 'equipment', 
     unlockDifficulty: armorUnlockDifficulty['Plattenrüstung'] 
   },
-  // ... Fügen Sie weitere Rüstungen entsprechend hinzu
+  // ... Füge weitere Rüstungen entsprechend hinzu
 ];
 
 // Utility Funktionen
