@@ -161,20 +161,6 @@ router.post('/gather', (req, res) => {
   });
 });
 
-// Route, um das aktuelle Inventar abzurufen
-router.get('/inventory', (req, res) => {
-  res.status(200).json({
-    message: 'Aktuelles Inventar abgerufen.',
-    inventory: inventoryItems,
-  });
-});
 
-// Route, um das Inventar zu löschen (z. B. zum Zurücksetzen)
-router.delete('/inventory', (req, res) => {
-  inventoryItems.length = 0; // Löscht alle Items aus dem Array
-  res.status(200).json({
-    message: 'Inventar geleert.',
-  });
-});
 
 module.exports = router;
